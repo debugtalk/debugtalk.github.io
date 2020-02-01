@@ -22,6 +22,12 @@ defaultContentLanguage = "zh-cn"           # Default language to use
 [languages.zh-cn]
   languageCode = "zh-cn"
 
+# Highlight options. See https://gohugo.io/content-management/syntax-highlighting/
+pygmentsCodeFences = true # Enable syntax highlighting with GitHub flavoured code fences
+pygmentsUseClasses = true # Use CSS classes to format highlighted code
+pygmentsCodefencesGuessSyntax = true
+pygmentsOptions = "linenos=table"
+
 [author]                  # essential                     # 必需
   name = "debugtalk"
 
