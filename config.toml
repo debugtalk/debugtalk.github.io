@@ -1,7 +1,3 @@
-# This is a simple configuration.
-# If you want to see the full configuration, please check `full-config.toml` .
-# And see https://gohugo.io/getting-started/configuration/ .
-
 baseURL = "https://debugtalk.com/"
 title = "DebugTalk - 探索一个软件工程师的无限可能"
 enableRobotsTXT = true
@@ -14,6 +10,7 @@ rssLimit = 10             # Limit Entry Count to Rss file # 限制 Rss 文章输
 disqusShortname = "debugtalk"           # disqus_shortname
 googleAnalytics = "UA-81639610-1"       # UA-XXXXXXXX-X
 # copyright = "DebugTalk 2017-2020"            # default: author.name ↓        # 默认为下面配置的author.name ↓
+enableGitInfo = true      # use git commit log to generate lastmod record # 可根据 Git 中的提交生成最近更新记录。
 disablePathToLower = true
 preserveTaxonomyNames = true
 
@@ -68,13 +65,13 @@ pygmentsOptions = "linenos=table"
   url = "/index.xml"
 
 [params]
-  since = "2017"            # Site creation time          # 站点建立时间
+  since = "2015"            # Site creation time          # 站点建立时间
   homeFullContent = false    # if false, show post summaries on home page. Othewise show full content.
   rssFullContent = true     # if false, Rss feed instead of the summary
 
   # site info (optional)                                  # 站点信息（可选，不需要的可以直接注释掉）
   logoTitle = "DebugTalk"        # default: the title value    # 默认值: 上面设置的title值
-  keywords = ["HttpRunner", "Python", "Go", "博客", "debugtalk"]
+  keywords = ["HttpRunner", "Python", "Go", "博客", "debugtalk", "接口自动化测试", "性能测试"]
   description = "探索一个软件工程师的无限可能"
 
   # The date format to use; for a list of valid formats, see https://gohugo.io/functions/format/
@@ -86,13 +83,48 @@ pygmentsOptions = "linenos=table"
   # 一些全局开关，你也可以在每一篇内容的 front matter 中针对单篇内容关闭或开启某些功能，在 archetypes/default.md 查看更多信息。
   # Some global options, you can also close or open something in front matter for a single post, see more information from `archetypes/default.md`.
   toc = true                                                                            # 是否开启目录
+  fancybox = true           # see https://github.com/fancyapps/fancybox                 # 是否启用fancybox（图片可点击）
+  bootcdn = false           # In china. @Deprecated: use [params.publicCDN]             # 是否使用bootcdn(@Deprecated: 请使用[params.publicCDN])
+  mathjax = false            # see https://www.mathjax.org/                              # 是否使用mathjax（数学公式）
+  linkToMarkDown = false    # if you config contentCopyright and hugo output .md files. # 是否在链接到markdown原始文件（如果你配置了下面的许可协议并允许hugo生成markdown文件）
   photoswipe = true         # see https://github.com/dimsemenov/PhotoSwipe            # 是否启用PhotoSwipe（图片可点击）
   contentCopyright = '<a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>'
 
   # Link custom CSS and JS assets
   #   (relative to /static/css and /static/js respectively)
-  customCSS = []            # if ['custom.css'], load '/static/css/custom.css' file
-  customJS = []             # if ['custom.js'], load '/static/js/custom.js' file
+  customCSS = ['custom.css']            # if ['custom.css'], load '/static/css/custom.css' file
+  customJS = ['custom.js']             # if ['custom.js'], load '/static/js/custom.js' file
+
+  [params.publicCDN]        # load these files from public cdn                          # 启用公共CDN，需自行定义
+    enable = false
+    jquery = '<script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>'
+    slideout = '<script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>'
+    fancyboxJs = '<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>'
+    fancyboxCss = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">'
+
+  [params.utteranc]         # utteranc is a comment system based on GitHub issues. see https://utteranc.es
+    enable = true
+    repo = "debugtalk/blog"    # The repo to store comments
+    issueTerm = "pathname"
+
+  [params.search.google]    # google custom search, see https://cse.google.com
+    enable = false
+    id = ""
+    title = "Search"
+
+  [params.gitInfo]
+    gitRepo = "https://github.com/debugtalk/blog"
+    showCommitMessage = true
+
+  [params.reward]                                         # 文章打赏
+    enable = false
+    wechat = "/reward_wechat.png"                         # 微信二维码
+    alipay = "/reward_alipay.jpg"                         # 支付宝二维码
+
+  [params.counter.leancloud]  # Chinese leancloud visitor counter  # leancloud 计数器
+  enable = false
+  appId = ""
+  appKey = ""
 
   [params.social]                                         # 社交链接
     a-email = "mailto:mail@debugtalk.com"
