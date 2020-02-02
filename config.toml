@@ -1,5 +1,5 @@
 baseURL = "https://debugtalk.com/"
-title = "DebugTalk - 探索一个软件工程师的无限可能"
+title = "DebugTalk"
 enableRobotsTXT = true
 enableEmoji = true
 theme = "jane"
