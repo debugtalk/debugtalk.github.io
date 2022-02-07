@@ -1,0 +1,668 @@
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<title>从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件 - DebugTalk</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
+<meta name=MobileOptimized content="width">
+<meta name=HandheldFriendly content="true">
+<meta name=applicable-device content="pc,mobile">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=author content="debugtalk">
+<meta name=description content="写在前面 前两天微信突然发来一条系统消息，提示DebugTalk可以开通原创标识了（同时也有了评论功能），虽然一直在期待，但没想到来得这么快，">
+<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
+<meta name=generator content="Hugo 0.92.1">
+<link rel=canonical href=https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-Appium-interrogate-iOS-UI/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
+<link rel=stylesheet href=/css/custom.css>
+<meta property="og:title" content="从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件">
+<meta property="og:description" content="写在前面 前两天微信突然发来一条系统消息，提示DebugTalk可以开通原创标识了（同时也有了评论功能），虽然一直在期待，但没想到来得这么快，">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-Appium-interrogate-iOS-UI/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2016-05-29T00:00:00+00:00">
+<meta property="article:modified_time" content="2016-05-29T00:00:00+00:00">
+<meta itemprop=name content="从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件">
+<meta itemprop=description content="写在前面 前两天微信突然发来一条系统消息，提示DebugTalk可以开通原创标识了（同时也有了评论功能），虽然一直在期待，但没想到来得这么快，"><meta itemprop=datePublished content="2016-05-29T00:00:00+00:00">
+<meta itemprop=dateModified content="2016-05-29T00:00:00+00:00">
+<meta itemprop=wordCount content="5288">
+<meta itemprop=keywords content="Appium,iOS,Ruby,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件">
+<meta name=twitter:description content="写在前面 前两天微信突然发来一条系统消息，提示DebugTalk可以开通原创标识了（同时也有了评论功能），虽然一直在期待，但没想到来得这么快，"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>DebugTalk</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
+<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header id=header class="header container">
+<div class=logo-wrapper>
+<a href=/ class=logo>
+DebugTalk
+</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+</header>
+<div id=mobile-panel>
+<main id=main class="main bg-llight">
+<div class=content-wrapper>
+<div id=content class="content container">
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件</h1>
+<div class=post-meta>
+<time datetime=2016-05-29 class=post-time>
+2016-05-29
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+</div>
+<span class=more-meta> 约 5288 字 </span>
+<span class=more-meta> 预计阅读 11 分钟 </span>
+<span id=busuanzi_container_page_pv>
+| 阅读 <span id=busuanzi_value_page_pv></span>
+</span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class=post-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#写在前面>写在前面</a></li>
+<li><a href=#关于ui控件>关于UI控件</a></li>
+<li><a href=#获取ui控件信息>获取UI控件信息</a>
+<ul>
+<li><a href=#appium-inspector>Appium Inspector</a></li>
+<li><a href=#appium-ruby-console>Appium Ruby Console</a></li>
+</ul>
+</li>
+<li><a href=#定位ui控件>定位UI控件</a></li>
+<li><a href=#对控件执行操作>对控件执行操作</a></li>
+<li><a href=#to-be-continued->To be continued &mldr;</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<h2 id=写在前面>写在前面</h2>
+<p>前两天微信突然发来一条系统消息，提示<code>DebugTalk</code>可以开通原创标识了（同时也有了评论功能），虽然一直在期待，但没想到来得这么快，着实是个不小的惊喜。</p>
+<p>另外，最近在公众号后台也收到好几个朋友的信息，有的是询问某某部分什么时候能发布，有的是希望能加快更新速度。说实话，收到这样的信息虽然会有压力，但真的挺开心的，因为这说明<code>DebugTalk</code>至少能给一部分人带去价值，这说明这件事本身还是值得坚持去做的。</p>
+<p>不过，在更新频率这件事儿上，的确是要跟大家说抱歉了。因为<code>DebugTalk</code>发布的内容全都是原创，主题基本上都是来源于我日常测试工作的经验积累，或者我近期学习一些测试技术的收获总结，这也意味着，我写的东西很多时候并不是自己完全熟悉的（完全掌握的东西也没有足够的动力专门花时间去写）。</p>
+<p>就拿最近连载的《从0到1搭建移动App功能自动化测试平台》系列来说，由于我也是边探索边总结，因此中途难免会遇到一些意想不到的坑，造成额外的耗时，而且为了保证文章能尽量通俗易通，我也需要对涉及到的内容充分进行理解，并且经过大量实践进行验证，然后才能站在半个初学者、半个过来人的角度，重新整理思路，最后以尽可能流畅的思路将主题内容讲解清楚。</p>
+<p>基于这些原因，<code>DebugTalk</code>要做到每日更新是很难了，但是保证每周发布1~2篇还是可以的，希望大家能理解。</p>
+<h2 id=关于ui控件>关于UI控件</h2>
+<p>在上一篇文章中，我们成功地通过Appium Inspector调用模拟器并运行iOS应用，iOS的自动化测试环境也已全部准备就绪了。</p>
+<p>那么接下来，我们就可以开始实现自动化测试了么？</p>
+<p>貌似还不行。在开始之前，我们先想下什么是APP功能自动化测试。</p>
+<p>APP的功能自动化测试，简单地来说，就是让功能测试用例自动地在APP上执行。具体到每一个测试用例，就是能模拟用户行为对UI控件进行操作，自动化地实现一个功能点或者一个流程的操作。再细分到每一步，就是对UI控件进行操作。</p>
+<p>因此，在正式开始编写自动化测试用例之前，我们还需要熟悉如何与APP的UI控件进行交互操作。</p>
+<p>在iOS系统中，UI控件有多种类型，常见的有按钮（UIAButton）、文本（UIAStaticText）、输入框（UIATextField）等等。但不管是对什么类型的UI控件进行操作，基本都可以分解为三步，首先是获取目标控件的属性信息，然后是对目标控件进行定位，最后是对定位到的控件执行动作。</p>
+<h2 id=获取ui控件信息>获取UI控件信息</h2>
+<p>在Appium中，要获取iOS的UI控件元素信息，可以采用两种方式：一种是在前一篇文章中提到的Appium Inspector，另一种是借助Ruby实现的<code>appium_console</code>，在Terminal中通过命令进行查询。</p>
+<h3 id=appium-inspector>Appium Inspector</h3>
+<p>运行Appium Server，并启动【Inspector】后，整体界面如下图所示。</p>
+<p><img src=/images/Appium_inspector_introduction.jpg alt="Appium inspector introduction"></p>
+<p>现对照着这张图对Appium Inspector进行介绍。</p>
+<p>在右边部分，是启动的模拟器，里面运行着我们的待测APP。我们可以像在真机中一样，在模拟器中执行任意功能的操作，当然，模拟器跟真机毕竟还是有区别的，跟传感器相关的功能，例如摄像头、重力感应等，是没法实现的。</p>
+<p>在左边部分，就是<code>Appium Inspector</code>。Inspector主要由如下四个部分组成：</p>
+<ul>
+<li>预览界面区：显示画面与模拟器界面一致；不过，当我们在模拟器中切换界面后，Inspector的预览区中显示图像并不会自动同步，若要同步，需要点击【Refresh】按钮，然后Inspector会将模拟器当前UI信息dump后显示到预览区；在预览区中，可以点击选择任意UI控件。</li>
+<li>UI信息展示区：展示当前界面预览区中所有UI元素的层级关系和UI元素的详细信息；在预览区中点击选择任意UI控件后，在“Details”信息框中展示选中控件的详细信息，包括name、label、value、xpath等属性值；通过层级关系，我们也能了解选中控件在当前界面树状结构中所处的具体位置。</li>
+<li>交互操作区：模拟用户在设备上的操作，例如单击（tap）、滑动（swipe）、晃动（shake）、输入（input）等；操作动作是针对预览界面区选中的控件，因此在操作之前，务必需要先在预览区点击选择UI元素。</li>
+<li>脚本生成区：将用户行为转换为脚本代码；点击【Record】按钮后，会弹出代码区域；在交互操作区进行操作后，就会实时生成对应的脚本代码；代码语言可通过下拉框进行选择，当前支持的语言类型有：C#、Ruby、Objective-C、Java、node.js、Python。</li>
+</ul>
+<p>在实践操作中，Inspector最大的用途就是在可以可视化地查看UI元素信息，并且可以将操作转换为脚本代码，这对初学者尤为有用。</p>
+<p>例如，在预览区点击选中按钮“BUY NOW”，然后在UI信息展示区的Details窗口就可以看到该按钮的所有属性信息。在交互操作区点击【Tap】按钮后，就会模拟用户点击“BUY NOW”按钮，并且在脚本区域生成当次按钮点击的脚本（选择Ruby语言）：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=n>find_element</span><span class=p>(</span><span class=ss>:name</span><span class=p>,</span> <span class=s2>&#34;BUY NOW &gt;&#34;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如上就是使用<code>Appium Inspector</code>的一般性流程。</p>
+<h3 id=appium-ruby-console>Appium Ruby Console</h3>
+<p>有了<code>Appium Inspector</code>，为什么还需要<code>Appium Ruby Console</code>呢？</p>
+<p>其实，<code>Appium Ruby Console</code>也并不是必须的。经过与多个熟悉<code>Appium</code>的前辈交流，他们也从未用过<code>Appium Ruby Console</code>，这说明<code>Appium Ruby Console</code>并不是必须的，没有它也不会影响我们对<code>Appium</code>的使用。</p>
+<p>但是，这并不意味着<code>Appium Ruby Console</code>是多余的。经过这些天对<code>Appium</code>的摸索，我越发地喜欢上<code>Appium Ruby Console</code>，并且使用的频率越来越高，现在已基本上很少使用<code>Appium Inspector</code>了。这种感觉怎么说呢？<code>Inspector</code>相比于<code>Ruby Conosle</code>，就像是<code>GUI</code>相比于<code>Linux Terminal</code>，大家应该能体会了吧。</p>
+<p><code>Appium Inspector</code>的功能是很齐全，GUI操作也很方便，但是，最大的问题就是使用的时候非常慢，在预览界面区切换一个页面常常需要好几秒，甚至数十秒，这是很难让人接受的。</p>
+<p>在上一节中也说到了，Inspector最大的用途就是在可以可视化地查看UI元素信息，并且可以将操作转换为脚本代码。但是当我们对<code>Appium</code>的常用API熟悉以后，我们就不再需要由工具来生成脚本，因为自己直接写会更快，前提是我们能知道目标控件的属性信息（type、name、label、value）。</p>
+<p>在这种情况下，如果能有一种方式可以供我们快速查看当前屏幕的控件属性信息，那该有多好。</p>
+<p>庆幸的是，在阅读<code>Appium</code>官方文档时，发现<code>Appium</code>的确是支持命令行方式的，这就是<code>Appium Ruby Console</code>。</p>
+<p><code>Appium Ruby Console</code>是采用Ruby语言开发的，在使用方式上面和Ruby的<code>irb</code>很类似。</p>
+<p>在使用<code>Appium Ruby Console</code>时，虚拟机的配置信息并不会从GUI中读取，而是要通过配置文件进行指定。</p>
+<p>配置文件的名称统一要求为<code>appium.txt</code>，内容形式如下所示：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>[caps]
+platformName = &#34;ios&#34;
+platformVersion = &#39;9.3&#39;,
+app = &#34;/path/to/UICatalog.app.zip&#34;
+deviceName = &#34;iPhone Simulator&#34;
+</code></pre></td></tr></table>
+</div>
+</div><p>其中，<code>platformName</code>指定虚拟机操作系统类型，“ios”或者"android"；<code>platformVersion</code>指定操作系统的版本，例如iOS的'9.3'，或者Android的'5.1'；<code>app</code>指定被测应用安装包的路径。这三个参数是必须的，与Inspector中的配置也能对应上。</p>
+<p>在使用<code>Appium Ruby Console</code>时，首先需要启动<code>Appium Server</code>，通过<code>GUI</code>或者<code>Terminal</code>均可。</p>
+<p>然后，在Terminal中，进入到<code>appium.txt</code>文件所在的目录，执行<code>arc</code>命令即可启动<code>Appium Ruby Console</code>。<code>arc</code>，即是appium ruby console首字母的组合。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>➜ ls
+appium.txt
+➜ arc
+<span class=o>[</span>1<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt;
+</code></pre></td></tr></table>
+</div>
+</div><p>接下来，就可以通过执行命令查询当前设备屏幕中的控件信息。</p>
+<p>使用频率最高的一个命令是<code>page</code>，通过这个命令可以查看到当前屏幕中所有控件的基本信息。</p>
+<p>例如，当屏幕停留在前面截图中的页面时，执行<code>page</code>命令可以得到如下内容。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>1<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; page
+UIANavigationBar
+   name: HomeView
+   id: <span class=nv>Home</span> <span class=o>=</span>&gt; Home
+       <span class=nv>米</span>    <span class=o>=</span>&gt; m
+       <span class=nv>去看看</span>  <span class=o>=</span>&gt; View
+UIAButton
+   name, label: tabbar category gray
+UIAImage
+   name: debugtalk_logo.png
+UIAButton
+   name, label: tabbar cart gray
+UIATableView
+   value: rows <span class=m>1</span> to <span class=m>4</span> of <span class=m>15</span>
+UIAPageIndicator
+   value: page <span class=m>2</span> of <span class=m>2</span>
+UIATableCell
+   name: For the first <span class=nb>time</span> ever in a hand held camera, the Osmo brings professional, realtime cinema-quality stabilization.
+   id: <span class=nv>米</span> <span class=o>=</span>&gt; m
+UIAStaticText
+   name, label, value: For the first <span class=nb>time</span> ever in a hand held camera, the Osmo brings professional, realtime cinema-quality stabilization.
+   id: <span class=nv>米</span> <span class=o>=</span>&gt; m
+UIAStaticText
+   name, label, value: OSMO
+UIAButton
+   name, label: SHOP NOW &gt;
+UIATableCell
+   name: Ronin
+UIAStaticText
+   name, label, value: Ronin
+UIAStaticText
+   name, label, value: Phantom
+   id: <span class=nv>米</span> <span class=o>=</span>&gt; m
+... <span class=o>(</span>略<span class=o>)</span>
+UIAButton
+   name, label: Store
+   value: <span class=m>1</span>
+   id: <span class=nv>门店</span> <span class=o>=</span>&gt; Store
+... <span class=o>(</span>略<span class=o>)</span>
+UIAButton
+   name, label: My Account
+   id: My <span class=nv>Account</span> <span class=o>=</span>&gt; My Account
+nil
+</code></pre></td></tr></table>
+</div>
+</div><p>通过返回信息，我们就可以看到所有控件的type、name、label、value属性值。如果在某个控件下没有显示label或value，这是因为这个值为空，我们可以不予理会。</p>
+<p>由于<code>page</code>返回的信息太多，可能不便于查看，因此在使用<code>page</code>命令时，也可以指定控件的类型，相当于对当前屏幕的控件进行筛选，只返回指定类型的控件信息。</p>
+<p>指定控件类型时，可以通过string类型进行指定（如 page &ldquo;Image&rdquo;），也可通过symbol类型进行指定（如 page :cell）。指定的类型可只填写部分内容，并且不分区大小写。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>2<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; page <span class=s2>&#34;Image&#34;</span>
+UIAImage
+   name: debugtalk_logo.png
+nil
+<span class=o>[</span>3<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; page :cell
+UIATableCell
+   name: DebugTalk’s smartest flying camera ever.
+   id: <span class=nv>米</span> <span class=o>=</span>&gt; m
+UIATableCell
+   name: Ronin
+UIATableCell
+   name: Phantom
+   id: <span class=nv>米</span> <span class=o>=</span>&gt; m
+nil
+</code></pre></td></tr></table>
+</div>
+</div><p>如果需要查看当前屏幕的所有控件类型，可以执行<code>page_class</code>命令进行查看。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>4<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; page_class
+14x UIAButton
+8x UIAStaticText
+4x UIAElement
+4x UIATableCell
+2x UIAImage
+2x UIAWindow
+1x UIAPageIndicator
+1x UIATableView
+1x UIAStatusBar
+1x UIANavigationBar
+1x UIATabBar
+1x UIAApplication
+nil
+</code></pre></td></tr></table>
+</div>
+</div><p>基本上，<code>page</code>返回的控件信息已经足够满足绝大多数场景需求，但有时候情况比较特殊，需要<code>enabled</code>、<code>xpath</code>、<code>visible</code>、坐标等属性信息，这时就可以通过执行<code>source</code>命令。执行<code>source</code>命令后，就可以返回当前屏幕中所有控件的所有信息，以xml格式进行展现。</p>
+<h2 id=定位ui控件>定位UI控件</h2>
+<p>获取到UI控件的属性信息后，就可以对控件进行定位了。</p>
+<p>首先介绍下最通用的定位方式，<code>find</code>。通过<code>find</code>命令，可以实现在控件的诸多属性值（<code>name</code>、<code>label</code>、<code>value</code>、<code>hint</code>）中查找目标值。查询时不区分大小写，如果匹配结果有多个，则只返回第一个结果。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>5<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; find<span class=o>(</span><span class=s1>&#39;osmo&#39;</span><span class=o>)</span>
+<span class=c1>#&lt;Selenium::WebDriver::Element:0x..febd52a30dcdfea32 id=&#34;2&#34;&gt;</span>
+<span class=o>[</span>6<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; find<span class=o>(</span><span class=s1>&#39;osmo&#39;</span><span class=o>)</span>.label
+<span class=s2>&#34;Osmo&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>另一个通用的定位方式是<code>find_element</code>，它也可以实现对所有控件进行查找，但是相对于<code>find</code>，可以对属性类型进行指定。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>7<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; find_element<span class=o>(</span>:class_name, <span class=s1>&#39;UIATextField&#39;</span><span class=o>)</span>
+<span class=c1>#&lt;Selenium::WebDriver::Element:0x31d87e3848df8804 id=&#34;3&#34;&gt;</span>
+<span class=o>[</span>8<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; find_element<span class=o>(</span>:class_name, <span class=s1>&#39;UIATextField&#39;</span><span class=o>)</span>.value
+<span class=s2>&#34;Email Address&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>不过在实践中发现，采用<code>find</code>、<code>find_element</code>这类通用的定位方式并不好用，因为定位结果经常不是我们期望的。</p>
+<p>经过反复摸索，我推荐根据目标控件的类型，选择对应的定位方式。总结起来，主要有以下三种方式。</p>
+<p>针对Button类型的控件（UIAButton），采用<code>button_exact</code>进行定位：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>9<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; button_exact<span class=o>(</span><span class=s1>&#39;Login&#39;</span><span class=o>)</span>
+<span class=c1>#&lt;Selenium::WebDriver::Element:0x..feaebd8302b6d77cc id=&#34;4&#34;&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>针对Text类型的控件（UIAStaticText），采用<code>text_exact</code>进行定位：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>10<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; text_exact<span class=o>(</span><span class=s1>&#39;Phantom&#39;</span><span class=o>)</span>
+<span class=c1>#&lt;Selenium::WebDriver::Element:0x1347e89100fdcee2 id=&#34;5&#34;&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>针对控件类型进行定位时，采用<code>tag</code>；如下方式等价于<code>find_element(:class_name, 'UIASecureTextField')</code>。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>11<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; tag<span class=o>(</span><span class=s1>&#39;UIASecureTextField&#39;</span><span class=o>)</span>
+<span class=c1>#&lt;Selenium::WebDriver::Element:0x..fc6f5efd05a82cdca id=&#34;6&#34;&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>基本上，这三种方式就已经足够应付绝大多数测试场景了。当然，这三种方式只是我个人经过实践后选择的定位方式，除了这三种，<code>Appium</code>还支持很多种其它定位方式，大家可自行查看<code>Appium</code>官方文档进行选择。</p>
+<p>另外，除了对控件进行定位，有时候我们还想判断当前屏幕中是否存在某个控件（通常用于结果检测判断），这要怎么做呢？</p>
+<p>一种方式是借助于<code>Appium</code>的控件查找机制，即找不到控件时会抛出异常（<code>Selenium::WebDriver::Error::NoSuchElementError</code>）；反过来，当查找某个控件抛出异常时，则说明当前屏幕中不存在该控件。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>12<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; button_exact<span class=o>(</span><span class=s1>&#39;Login_invalid&#39;</span><span class=o>)</span>
+Selenium::WebDriver::Error::NoSuchElementError: An element could not be located on the page using the given search parameters.
+from /Library/Ruby/Gems/2.0.0/gems/appium_lib-8.0.2/lib/appium_lib/common/helper.rb:218:in <span class=sb>`</span>_no_such_element<span class=err>&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>该种方式可行，但比较暴力，基本上不会采用这种方式。</p>
+<p>另一种更好的方式是，查找当前屏幕中指定控件的个数，若个数不为零，则说明控件存在。具体操作上，将<code>button_exact</code>替换为<code>buttons_exact</code>，将<code>text_exact</code>替换为<code>texts_exact</code>。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>12<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; buttons_exact<span class=o>(</span><span class=s1>&#39;Login&#39;</span><span class=o>)</span>.count
+<span class=m>1</span>
+<span class=o>[</span>13<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; buttons_exact<span class=o>(</span><span class=s1>&#39;Login_invalid&#39;</span><span class=o>)</span>.count
+<span class=m>0</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>除此之外，基于Ruby实现的<code>appium_lib</code>还支持<code>exists</code>方法，可直接返回Boolean值。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>14<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; exists <span class=o>{</span> button_exact<span class=o>(</span><span class=s1>&#39;Login&#39;</span><span class=o>)</span> <span class=o>}</span>
+<span class=nb>true</span>
+<span class=o>[</span>15<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; exists <span class=o>{</span> button_exact<span class=o>(</span><span class=s1>&#39;Login_invalid&#39;</span><span class=o>)</span> <span class=o>}</span>
+<span class=nb>false</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=对控件执行操作>对控件执行操作</h2>
+<p>定位到具体的控件后，操作就比较容易了。</p>
+<p>操作类型不多，最常用就是点击（click）和输入（type），这两个操作能覆盖80%以上的场景。</p>
+<p>对于点击操作，才定位到的控件后面添加<code>.click</code>方法；对于输入操作，在定位到的输入框控件后面添加<code>.type</code>方法，并传入输入值。</p>
+<p>例如，账号登录操作就包含输入和点击两种操作类型。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=o>[</span>16<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; find_element<span class=o>(</span>:class_name, <span class=s1>&#39;UIATextField&#39;</span><span class=o>)</span>.type <span class=s1>&#39;leo.lee@debugtalk.com&#39;</span>
+<span class=s2>&#34;&#34;</span>
+<span class=o>[</span>17<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; find_element<span class=o>(</span>:class_name, <span class=s1>&#39;UIASecureTextField&#39;</span><span class=o>)</span>.type <span class=s1>&#39;123456&#39;</span>
+<span class=s2>&#34;&#34;</span>
+<span class=o>[</span>18<span class=o>]</span> pry<span class=o>(</span>main<span class=o>)</span>&gt; button_exact<span class=o>(</span><span class=s1>&#39;Login&#39;</span><span class=o>)</span>.click
+nil
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=to-be-continued->To be continued &mldr;</h2>
+<p>在本文中，我们学习了对iOS UI控件进行交互操作的一般性方法，为编写自动化测试脚本打好了基础。</p>
+<p>在下一篇文章中，我们就要正式开始针对iOS应用编写自动化测试脚本了。</p>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>上次更新</span>
+<span class=item-content>
+2016-05-29
+</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=https://debugtalk.com/tags/Appium/>Appium</a>
+<a href=https://debugtalk.com/tags/iOS/>iOS</a>
+<a href=https://debugtalk.com/tags/Ruby/>Ruby</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/build-app-automated-test-platform-from-0-to-1-write-iOS-testcase-scripts/>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
+</i>
+<span class="prev-text nav-default">从0到1搭建移动App功能自动化测试平台（3）：编写iOS自动化测试脚本</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/archives/%E4%BB%8E0%E5%88%B01%E6%90%AD%E5%BB%BA%E7%A7%BB%E5%8A%A8App%E5%8A%9F%E8%83%BD%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B01%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%AD%E8%BF%90%E8%A1%8CiOS%E5%BA%94%E7%94%A8/>
+<span class="next-text nav-default">从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用</span>
+<span class="prev-text nav-mobile">下一篇</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
+</i>
+</a>
+</nav>
+</footer>
+</article>
+<div class="post bg-white">
+<script src=https://utteranc.es/client.js repo=debugtalk/blog issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+</div>
+<div class=disqus-comment>
+<div class=disqus-button id=load_disqus onclick=load_disqus()>
+显示 Disqus 评论
+</div>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url="https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-Appium-interrogate-iOS-UI/"};function load_disqus(){var a,b;if(window.location.hostname==='localhost')return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='debugtalk',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a),$('#load_disqus').remove()}</script>
+<noscript>Please enable JavaScript to view the
+<a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a>
+</noscript>
+</div>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=icon-links>
+<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
+</a>
+<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
+</a>
+<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
+</a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
+</span>
+<span class=copyright-year>
+&copy;
+2015 -
+2022
+<span class=heart>
+<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
+</i>
+</span><span class=author>
+debugtalk
+</span></span>
+<span id=busuanzi_container>
+访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
+</i>
+</div>
+</div>
+<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
+<script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/load-photoswipe.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<script src=/js/custom.js></script>
+</body>
+</html>

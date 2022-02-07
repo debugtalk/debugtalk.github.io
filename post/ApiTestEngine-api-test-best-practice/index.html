@@ -1,0 +1,452 @@
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<title>接口自动化测试的最佳工程实践（ApiTestEngine） - DebugTalk</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
+<meta name=MobileOptimized content="width">
+<meta name=HandheldFriendly content="true">
+<meta name=applicable-device content="pc,mobile">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=author content="debugtalk">
+<meta name=description content="背景 当前市面上存在的接口测试工具已经非常多，常见的如Postman、JMeter、RobotFramework等，相信大多数测试人员都有使用">
+<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
+<meta name=generator content="Hugo 0.92.1">
+<link rel=canonical href=https://debugtalk.com/post/ApiTestEngine-api-test-best-practice/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
+<link rel=stylesheet href=/css/custom.css>
+<meta property="og:title" content="接口自动化测试的最佳工程实践（ApiTestEngine）">
+<meta property="og:description" content="背景 当前市面上存在的接口测试工具已经非常多，常见的如Postman、JMeter、RobotFramework等，相信大多数测试人员都有使用">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://debugtalk.com/post/ApiTestEngine-api-test-best-practice/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2017-06-18T00:00:00+00:00">
+<meta property="article:modified_time" content="2017-06-18T00:00:00+00:00">
+<meta itemprop=name content="接口自动化测试的最佳工程实践（ApiTestEngine）">
+<meta itemprop=description content="背景 当前市面上存在的接口测试工具已经非常多，常见的如Postman、JMeter、RobotFramework等，相信大多数测试人员都有使用"><meta itemprop=datePublished content="2017-06-18T00:00:00+00:00">
+<meta itemprop=dateModified content="2017-06-18T00:00:00+00:00">
+<meta itemprop=wordCount content="6322">
+<meta itemprop=keywords content="HttpRunner,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="接口自动化测试的最佳工程实践（ApiTestEngine）">
+<meta name=twitter:description content="背景 当前市面上存在的接口测试工具已经非常多，常见的如Postman、JMeter、RobotFramework等，相信大多数测试人员都有使用"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>DebugTalk</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
+<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header id=header class="header container">
+<div class=logo-wrapper>
+<a href=/ class=logo>
+DebugTalk
+</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+</header>
+<div id=mobile-panel>
+<main id=main class="main bg-llight">
+<div class=content-wrapper>
+<div id=content class="content container">
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>接口自动化测试的最佳工程实践（ApiTestEngine）</h1>
+<div class=post-meta>
+<time datetime=2017-06-18 class=post-time>
+2017-06-18
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+</div>
+<span class=more-meta> 约 6322 字 </span>
+<span class=more-meta> 预计阅读 13 分钟 </span>
+<span id=busuanzi_container_page_pv>
+| 阅读 <span id=busuanzi_value_page_pv></span>
+</span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class=post-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#背景>背景</a></li>
+<li><a href=#核心特性>核心特性</a></li>
+<li><a href=#特性拆解介绍>特性拆解介绍</a></li>
+<li><a href=#写在后面>写在后面</a></li>
+<li><a href=#参考>参考</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<h2 id=背景>背景</h2>
+<p>当前市面上存在的接口测试工具已经非常多，常见的如<code>Postman</code>、<code>JMeter</code>、<code>RobotFramework</code>等，相信大多数测试人员都有使用过，至少从接触到的大多数简历的描述上看是这样的。除了这些成熟的工具，也有很多有一定技术能力的测试（开发）人员自行开发了一些接口测试框架，质量也是参差不齐。</p>
+<p>但是，当我打算在项目组中推行接口自动化测试时，搜罗了一圈，也没有找到一款特别满意的工具或框架，总是与理想中的构想存在一定的差距。</p>
+<p>那么理想中的接口自动化测试框架应该是怎样的呢？</p>
+<p>测试工具（框架）脱离业务使用场景都是耍流氓！所以我们不妨先来看下日常工作中的一些常见场景。</p>
+<ul>
+<li>测试或开发人员在定位问题的时候，想调用某个接口查看其是否响应正常；</li>
+<li>测试人员在手工测试某个功能点的时候，需要一个订单号，而这个订单号可以通过顺序调用多个接口实现下单流程；</li>
+<li>测试人员在开始版本功能测试之前，可以先检测下系统的所有接口是否工作正常，确保接口正常后再开始手工测试；</li>
+<li>开发人员在提交代码前需要检测下新代码是否对系统的已有接口产生影响；</li>
+<li>项目组需要每天定时检测下测试环境所有接口的工作情况，确保当天的提交代码没有对主干分支的代码造成破坏；</li>
+<li>项目组需要定时（30分钟）检测下生产环境所有接口的工作情况，以便及时发现生产环境服务不可用的情况；</li>
+<li>项目组需要不定期对核心业务场景进行性能测试，期望能减少人力投入，直接复用接口测试中的工作成果。</li>
+</ul>
+<p>可以看到，以上罗列的场景大家应该都很熟悉，这都是我们在日常工作中经常需要去做的事情。但是在没有一款合适工具的情况下，效率往往十分低下，或者就是某些重要工作压根就没有开展，例如接口回归测试、线上接口监控等。</p>
+<p>先说下最简单的手工调用接口测试。可能有人会说，<code>Postman</code>就可以满足需求啊。的确，<code>Postman</code>作为一款通用的接口测试工具，它可以构造接口请求，查看接口响应，从这个层面上来说，它是满足了接口测试的功能需求。但是在具体的项目中，使用<code>Postman</code>并不是那么高效。</p>
+<p>不妨举个最常见的例子。</p>
+<blockquote>
+<p>某个接口的请求参数非常多，并且接口请求要求有<code>MD5</code>签名校验；签名的方式为在Headers中包含一个<code>sign</code>参数，该参数值通过对<code>URL</code>、<code>Method</code>、<code>Body</code>的拼接字符串进行<code>MD5</code>计算后得到。</p>
+</blockquote>
+<p>回想下我们要对这个接口进行测试时是怎么做的。首先，我们需要先参照接口文档的描述，手工填写完所有接口参数；然后，按照签名校验方式，对所有参数值进行拼接得到一个字符串，在另一个MD5计算工具计算得到其MD5值，将签名值填入<code>sign</code>参数；最后，才是发起接口请求，查看接口响应，并人工检测响应是否正常。最坑爹的是，我们每次需要调用这个接口的时候，以上工作就得重新来一遍。这样的实际结果是，面对参数较多或者需要签名验证的接口时，测试人员可能会选择忽略不进行接口测试。</p>
+<p>除了单个接口的调用，很多时候我们也需要组合多个接口进行调用。例如测试人员在测试物流系统时，经常需要一个特定组合条件下生成的订单号。而由于订单号关联的业务较多，很难直接在数据库中生成，因此当前业务测试人员普遍采取的做法，就是每次需要订单号时模拟下单流程，顺序调用多个相应的接口来生成需要的订单号。可以想象，在手工调用单个接口都如此麻烦的情况下，每次都要手工调用多个接口会有多么的费时费力。</p>
+<p>再说下接口自动化调用测试。这一块儿大多接口测试框架都支持，普遍的做法就是通过代码编写接口测试用例，或者采用数据驱动的方式，然后在支持命令行（CLI）调用的情况下，就可以结合<code>Jenkins</code>或者<code>crontab</code>实现持续集成，或者定时接口监控的功能。</p>
+<p>思路是没有问题的，问题在于实际项目中的推动落实情况。要说自动化测试用例最靠谱的维护方式，还是直接通过代码编写测试用例，可靠且不失灵活性，这也是很多经历过惨痛教训的老手的感悟，甚至网络上还出现了一些反测试框架的言论。但问题在于项目中的测试人员并不是都会写代码，也不是对其强制要求就能马上学会的。这种情况下，要想在具体项目中推动接口自动化测试就很难，就算我可以帮忙写一部分，但是很多时候接口测试用例也是要结合业务逻辑场景的，我也的确是没法在这方面投入太多时间，毕竟对接的项目实在太多。所以也是基于这类原因，很多测试框架提倡采用数据驱动的方式，将业务测试用例和执行代码分离。不过由于很多时候业务场景比较复杂，大多数框架测试用例模板引擎的表达能力不足，很难采用简洁的方式对测试场景进行描述，从而也没法很好地得到推广使用。</p>
+<p>可以列举的问题还有很多，这些也的确都是在互联网企业的日常测试工作中真实存在的痛点。</p>
+<p>基于以上背景，我产生了开发<a href=https://github.com/debugtalk/ApiTestEngine><code>ApiTestEngine</code></a>的想法。</p>
+<p>对于<a href=https://github.com/debugtalk/ApiTestEngine><code>ApiTestEngine</code></a>的定位，与其说它是一个工具或框架，它更多的应该是一套接口自动化测试的最佳工程实践，而<code>简洁优雅实用</code>应该是它最核心的特点。</p>
+<p>当然，每位工程师对<code>最佳工程实践</code>的理念或多或少都会存在一些差异，也希望大家能多多交流，在思维的碰撞中共同进步。</p>
+<h2 id=核心特性>核心特性</h2>
+<p><a href=https://github.com/debugtalk/ApiTestEngine><code>ApiTestEngine</code></a>的核心特性概述如下：</p>
+<ul>
+<li>支持API接口的多种请求方法，包括 GET/POST/HEAD/PUT/DELETE 等</li>
+<li>测试用例与代码分离，测试用例维护方式简洁优雅，支持<code>YAML</code></li>
+<li>测试用例描述方式具有表现力，可采用简洁的方式描述输入参数和预期输出结果</li>
+<li>接口测试用例具有可复用性，便于创建复杂测试场景</li>
+<li>测试执行方式简单灵活，支持单接口调用测试、批量接口调用测试、定时任务执行测试</li>
+<li>测试结果统计报告简洁清晰，附带详尽日志记录，包括接口请求耗时、请求响应数据等</li>
+<li>身兼多职，同时实现接口管理、接口自动化测试、接口性能测试（结合Locust）</li>
+<li>具有可扩展性，便于扩展实现Web平台化</li>
+</ul>
+<h2 id=特性拆解介绍>特性拆解介绍</h2>
+<blockquote>
+<p>支持API接口的多种请求方法，包括 GET/POST/HEAD/PUT/DELETE 等</p>
+</blockquote>
+<p>个人偏好，编程语言选择Python。而采用Python实现HTTP请求，最好的方式就是采用<a href=http://docs.python-requests.org/en/master/><code>Requests</code></a>库了，简洁优雅，功能强大。</p>
+<blockquote>
+<p>测试用例与代码分离，测试用例维护方式简洁优雅，支持<code>YAML</code></p>
+</blockquote>
+<p>要实现测试用例与代码的分离，最好的做法就是做一个测试用例加载引擎和一个测试用例执行引擎，这也是之前在做<a href=https://github.com/debugtalk/AppiumBooster><code>AppiumBooster</code></a>框架的时候总结出来的最优雅的实现方式。当然，这里需要事先对测试用例制定一个标准的数据结构规范，作为测试用例加载引擎和测试用例执行引擎的桥梁。</p>
+<p>需要说明的是，测试用例数据结构必须包含接口测试用例完备的信息要素，包括接口请求的信息内容（URL、Headers、Method等参数），以及预期的接口请求响应结果（StatusCode、ResponseHeaders、ResponseContent）。</p>
+<p>这样做的好处在于，不管测试用例采用什么形式进行描述（<a href=http://pyyaml.org/><code>YAML</code></a>、JSON、CSV、Excel、XML等），也不管测试用例是否采用了业务分层的组织思想，只要在测试用例加载引擎中实现对应的转换器，都可以将业务测试用例转换为标准的测试用例数据结构。而对于测试用例执行引擎而言，它无需关注测试用例的具体描述形式，只需要从标准的测试用例数据结构中获取到测试用例信息要素，包括接口请求信息和预期接口响应信息，然后构造并发起HTTP请求，再将HTTP请求的响应结果与预期结果进行对比判断即可。</p>
+<p>至于为什么明确说明支持<a href=http://pyyaml.org/><code>YAML</code></a>，这是因为个人认为这是最佳的测试用例描述方式，表达简洁不累赘，同时也能包含非常丰富的信息。当然，这只是个人喜好，如果喜欢采用别的方式，只需要扩展实现对应的转换器即可。</p>
+<blockquote>
+<p>测试用例描述方式具有表现力，可采用简洁的方式描述输入参数和预期输出结果</p>
+</blockquote>
+<p>测试用例与框架代码分离以后，对业务逻辑测试场景的描述重任就落在测试用例上了。比如我们选择采用<a href=http://pyyaml.org/><code>YAML</code></a>来描述测试用例，那么我们就应该能在<a href=http://pyyaml.org/><code>YAML</code></a>中描述各种复杂的业务场景。</p>
+<p>那么怎么理解这个“表现力”呢？</p>
+<p>简单的参数值传参应该都容易理解，我们举几个相对复杂但又比较常见的例子。</p>
+<ul>
+<li>接口请求参数中要包含当前的时间戳；</li>
+<li>接口请求参数中要包含一个16位的随机字符串；</li>
+<li>接口请求参数中包含签名校验，需要对多个请求参数进行拼接后取md5值；</li>
+<li>接口响应头（Headers）中要包含一个<code>X-ATE-V</code>头域，并且需要判断该值是否大于100；</li>
+<li>接口响应结果中包含一个字符串，需要校验字符串中是否包含10位长度的订单号；</li>
+<li>接口响应结果为一个多层嵌套的json结构体，需要判断某一层的某一个元素值是否为True。</li>
+</ul>
+<p>可以看出，以上几个例子都是没法直接在测试用例里面描述参数值的。如果是采用Python脚本来编写测试用例还好解决，只需要通过Python函数实现即可。但是现在测试用例和框架代码分离了，我们没法在<a href=http://pyyaml.org/><code>YAML</code></a>里面执行Python函数，这该怎么办呢？</p>
+<p>答案就是，定义函数转义符，实现自定义模板。</p>
+<p>这种做法其实也不难理解，也算是模板语言通用的方式。例如，我们将<code>${}</code>定义为转义符，那么在<code>{}</code>内的内容就不再当做是普通的字符串，而应该转义为变量值，或者执行函数得到实际结果。当然，这个需要我们在测试用例执行引擎进行适配实现，最简单方式就是提取出<code>${}</code>中的字符串，通过<code>eval</code>计算得到表达式的值。如果要实现更复杂的功能，我们也可以将接口测试中常用的一些功能封装为一套关键字，然后在编写测试用例的时候使用这些关键字。</p>
+<blockquote>
+<p>接口测试用例具有可复用性，便于创建复杂测试场景</p>
+</blockquote>
+<p>很多情况下，系统的接口都是有业务逻辑关联的。例如，要请求调用登录接口，需要先请求获取验证码的接口，然后在登录请求中带上获取到的验证码；而要请求数据查询的接口，又要在请求参数中包含登录接口返回的session值。这个时候，我们如果针对每一个要测的业务逻辑，都单独描述要请求的接口，那么就会造成大量的重复描述，测试用例的维护也十分臃肿。</p>
+<p>比较好的做法是，将每一个接口调用单独封装为一条测试用例，然后在描述业务测试场景时，选择对应的接口，按照顺序拼接为业务场景测试用例，就像搭积木一般。如果你之前读过<a href=https://github.com/debugtalk/AppiumBooster><code>AppiumBooster</code></a>的介绍，应该还会联想到，我们可以将常用的功能组成模块用例集，然后就可以在更高的层面对模块用例集进行组装，实现更复杂的测试场景。</p>
+<p>不过，这里有一个非常关键的问题需要解决，就是如何在接口测试用例之前传参的问题。其实实现起来也不复杂，我们可以在接口请求响应结果中指定一个变量名，然后将接口返回关键值提取出来后赋值给那个变量；然后在其它接口请求参数中，传入这个<code>${变量名}</code>即可。</p>
+<blockquote>
+<p>测试执行方式简单灵活，支持单接口调用测试、批量接口调用测试、定时任务执行测试</p>
+</blockquote>
+<p>通过背景中的例子可以看出，需要使用接口测试工具的场景很多，除了定时地对所有接口进行自动化测试检测外，很多时候在手工测试的时候也需要采用接口测试工具进行辅助，也就是<code>半手工+半自动化</code>的模式。</p>
+<p>而业务测试人员在使用测试工具的时候，遇到的最大问题在于除了需要关注业务功能本身，还需要花费很多时间去处理技术实现细节上的东西，例如签名校验这类情况，而且往往后者在重复操作中占用的时间更多。</p>
+<p>这个问题的确是没法避免的，毕竟不同系统的接口千差万别，不可能存在一款工具可以自动处理所有情况。但是我们可以尝试将接口的技术细节实现和业务参数进行拆分，让业务测试人员只需要关注业务参数部分。</p>
+<p>具体地，我们可以针对每一个接口配置一个模板，将其中与业务功能无关的参数以及技术细节封装起来，例如签名校验、时间戳、随机值等，而与业务功能相关的参数配置为可传参的模式。</p>
+<p>这样做的好处在于，与业务功能无关的参数以及技术细节我们只需要封装配置一次，而且这个工作可以由开发人员或者测试开发人员来实现，减轻业务测试人员的压力；接口模板配置好后，测试人员只需要关注与业务相关的参数即可，结合业务测试用例，就可以在接口模板的基础上很方便地配置生成多个接口测试用例。</p>
+<blockquote>
+<p>测试结果统计报告简洁清晰，附带详尽日志记录，包括接口请求耗时、请求响应数据等</p>
+</blockquote>
+<p>测试结果统计报告，应该遵循简洁而不简单的原则。“简洁”，是因为大多数时候我们只需要在最短的时间内判断所有接口是否运行正常即可。而“不简单”，是因为当存在执行失败的测试用例时，我们期望能获得接口测试时尽可能详细的数据，包括测试时间、请求参数、响应内容、接口响应耗时等。</p>
+<p>之前在读<code>locust</code>源码时，其对<a href=https://github.com/locustio/locust/blob/master/locust/clients.py><code>HTTP</code>客户端</a>的封装方式给我留下了深刻的印象。它采用的做法是，继承<code>requests.Session</code>类，在子类<code>HttpSession</code>中重写覆盖了<code>request</code>方法，然后在<code>request</code>方法中对<code>requests.Session.request</code>进行了一层封装。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>request_meta</span> <span class=o>=</span> <span class=p>{}</span>
+
+<span class=c1># set up pre_request hook for attaching meta data to the request object</span>
+<span class=n>request_meta</span><span class=p>[</span><span class=s2>&#34;method&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=n>method</span>
+<span class=n>request_meta</span><span class=p>[</span><span class=s2>&#34;start_time&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=n>time</span><span class=o>.</span><span class=n>time</span><span class=p>()</span>
+
+<span class=n>response</span> <span class=o>=</span> <span class=bp>self</span><span class=o>.</span><span class=n>_send_request_safe_mode</span><span class=p>(</span><span class=n>method</span><span class=p>,</span> <span class=n>url</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>)</span>
+
+<span class=c1># record the consumed time</span>
+<span class=n>request_meta</span><span class=p>[</span><span class=s2>&#34;response_time&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=nb>int</span><span class=p>((</span><span class=n>time</span><span class=o>.</span><span class=n>time</span><span class=p>()</span> <span class=o>-</span> <span class=n>request_meta</span><span class=p>[</span><span class=s2>&#34;start_time&#34;</span><span class=p>])</span> <span class=o>*</span> <span class=mi>1000</span><span class=p>)</span>
+
+<span class=n>request_meta</span><span class=p>[</span><span class=s2>&#34;content_size&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=nb>int</span><span class=p>(</span><span class=n>response</span><span class=o>.</span><span class=n>headers</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s2>&#34;content-length&#34;</span><span class=p>)</span> <span class=ow>or</span> <span class=mi>0</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>而<code>HttpLocust</code>的每一个虚拟用户（client）都是一个<code>HttpSession</code>实例，这样每次在执行<code>HTTP</code>请求的时候，既可充分利用<a href=http://docs.python-requests.org/en/master/><code>Requests</code></a>库的强大功能，同时也能将请求的响应时间、响应体大小等原始性能数据进行保存，实现可谓十分优雅。</p>
+<p>受到该处启发，要保存接口的详细请求响应数据也可采用同样的方式。例如，要保存<code>Response</code>的<code>Headers</code>、<code>Body</code>只需要增加如下两行代码：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>request_meta</span><span class=p>[</span><span class=s2>&#34;response_headers&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=n>response</span><span class=o>.</span><span class=n>headers</span>
+<span class=n>request_meta</span><span class=p>[</span><span class=s2>&#34;response_content&#34;</span><span class=p>]</span> <span class=o>=</span> <span class=n>response</span><span class=o>.</span><span class=n>content</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>身兼多职，同时实现接口管理、接口自动化测试、接口性能测试（结合Locust）</p>
+</blockquote>
+<p>其实像接口性能测试这样的需求，不应该算到接口自动化测试框架的职责范围之内。但是在实际项目中需求就是这样，又要做接口自动化测试，又要做接口性能测试，而且还不想同时维护两套代码。</p>
+<p>多亏有了<code>locust</code>性能测试框架，接口自动化和性能测试脚本还真能合二为一。</p>
+<p>前面也讲了，<code>HttpLocust</code>的每一个虚拟用户（client）都是一个<code>HttpSession</code>实例，而<code>HttpSession</code>又继承自<code>requests.Session</code>类，所以<code>HttpLocust</code>的每一个虚拟用户（client）也是<code>requests.Session</code>类的实例。</p>
+<p>同样的，我们在用<a href=http://docs.python-requests.org/en/master/><code>Requests</code></a>库做接口测试时，请求客户端其实也是<code>requests.Session</code>类的实例，只是我们通常用的是<code>requests</code>的简化用法。</p>
+<p>以下两种用法是等价的。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>resp</span> <span class=o>=</span> <span class=n>requests</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s1>&#39;https://debugtalk.com&#39;</span><span class=p>)</span>
+
+<span class=c1># 等价于</span>
+<span class=n>client</span> <span class=o>=</span> <span class=n>requests</span><span class=o>.</span><span class=n>Session</span><span class=p>()</span>
+<span class=n>resp</span> <span class=o>=</span> <span class=n>client</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=s1>&#39;https://debugtalk.com&#39;</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>有了这一层关系以后，要在接口自动化测试和性能测试之间切换就很容易了。在接口测试框架内，可以通过如下方式初始化<code>HTTP</code>客户端。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=fm>__init__</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>origin</span><span class=p>,</span> <span class=n>kwargs</span><span class=p>,</span> <span class=n>http_client_session</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+   <span class=bp>self</span><span class=o>.</span><span class=n>http_client_session</span> <span class=o>=</span> <span class=n>http_client_session</span> <span class=ow>or</span> <span class=n>requests</span><span class=o>.</span><span class=n>Session</span><span class=p>()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>默认情况下，<code>http_client_session</code>是<code>requests.Session</code>的实例，用于进行接口测试；当需要进行性能测试时，只需要传入<code>locust</code>的<code>HttpSession</code>实例即可。</p>
+<blockquote>
+<p>具有可扩展性，便于扩展实现Web平台化</p>
+</blockquote>
+<p>当要将测试平台推广至更广阔的用户群体（例如产品经理、运营人员）时，对框架实现Web化就在所难免了。在Web平台上查看接口测试用例运行情况、对接口模块进行配置、对接口测试用例进行管理，的确会便捷很多。</p>
+<p>不过对于接口测试框架来说，<code>Web平台</code>只能算作锦上添花的功能。我们在初期可以优先实现命令行（CLI）调用方式，规范好数据存储结构，后期再结合Web框架（如Flask）增加实现Web平台功能。</p>
+<h2 id=写在后面>写在后面</h2>
+<p>以上便是我对<a href=https://github.com/debugtalk/ApiTestEngine><code>ApiTestEngine</code></a>特性的详细介绍，也算是我个人对接口自动化测试<code>最佳工程实践</code>的理念阐述。</p>
+<p>当前，<a href=https://github.com/debugtalk/ApiTestEngine><code>ApiTestEngine</code></a>还处于开发过程中，代码也开源托管在GitHub上，欢迎<code>Star</code>关注。</p>
+<p>GitHub项目地址：https://github.com/debugtalk/ApiTestEngine</p>
+<h2 id=参考>参考</h2>
+<ul>
+<li><a href=https://debugtalk.com/post/build-ideal-app-automation-test-framework/>《打造心目中理想的自动化测试框架（AppiumBooster）》</a></li>
+<li><a href=http://myzhan.github.io/2016/03/04/giving-up-robotframework/>《告别robotframework》</a></li>
+<li><a href=https://github.com/svanoort/pyresttest/blob/master/advanced_guide.md>《Advanced Guide For PyRestTest》</a></li>
+</ul>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>上次更新</span>
+<span class=item-content>
+2017-06-18
+</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=https://debugtalk.com/tags/HttpRunner/>HttpRunner</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/ApiTestEngine-0-setup-CI-test/>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
+</i>
+<span class="prev-text nav-default">ApiTestEngine 演进之路（0）开发未动，测试先行</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/post/introduction-to-testing-engineer-daily-work/>
+<span class="next-text nav-default">【科普】互联网测试岗位的工作日常</span>
+<span class="prev-text nav-mobile">下一篇</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
+</i>
+</a>
+</nav>
+</footer>
+</article>
+<div class="post bg-white">
+<script src=https://utteranc.es/client.js repo=debugtalk/blog issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+</div>
+<div class=disqus-comment>
+<div class=disqus-button id=load_disqus onclick=load_disqus()>
+显示 Disqus 评论
+</div>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url="https://debugtalk.com/post/ApiTestEngine-api-test-best-practice/"};function load_disqus(){var a,b;if(window.location.hostname==='localhost')return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='debugtalk',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a),$('#load_disqus').remove()}</script>
+<noscript>Please enable JavaScript to view the
+<a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a>
+</noscript>
+</div>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=icon-links>
+<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
+</a>
+<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
+</a>
+<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
+</a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
+</span>
+<span class=copyright-year>
+&copy;
+2015 -
+2022
+<span class=heart>
+<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
+</i>
+</span><span class=author>
+debugtalk
+</span></span>
+<span id=busuanzi_container>
+访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
+</i>
+</div>
+</div>
+<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
+<script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/load-photoswipe.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<script src=/js/custom.js></script>
+</body>
+</html>

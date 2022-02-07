@@ -1,0 +1,462 @@
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<title>Android App持续集成性能测试：启动流量（2） - DebugTalk</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
+<meta name=MobileOptimized content="width">
+<meta name=HandheldFriendly content="true">
+<meta name=applicable-device content="pc,mobile">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=author content="debugtalk">
+<meta name=description content="在上一篇文章中，介绍了一种测试Android App启动流量的方法。当时也提到了，通过读取/proc/uid_stat/&amp;lt;UID&amp;gt;">
+<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
+<meta name=generator content="Hugo 0.92.1">
+<link rel=canonical href=https://debugtalk.com/post/Android-performance-test-start-traffic-tcpdump-wireshark/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
+<link rel=stylesheet href=/css/custom.css>
+<meta property="og:title" content="Android App持续集成性能测试：启动流量（2）">
+<meta property="og:description" content="在上一篇文章中，介绍了一种测试Android App启动流量的方法。当时也提到了，通过读取/proc/uid_stat/<UID>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://debugtalk.com/post/Android-performance-test-start-traffic-tcpdump-wireshark/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2016-05-03T00:00:00+00:00">
+<meta property="article:modified_time" content="2016-05-03T00:00:00+00:00">
+<meta itemprop=name content="Android App持续集成性能测试：启动流量（2）">
+<meta itemprop=description content="在上一篇文章中，介绍了一种测试Android App启动流量的方法。当时也提到了，通过读取/proc/uid_stat/<UID>"><meta itemprop=datePublished content="2016-05-03T00:00:00+00:00">
+<meta itemprop=dateModified content="2016-05-03T00:00:00+00:00">
+<meta itemprop=wordCount content="2476">
+<meta itemprop=keywords content="Android,启动流量,tcpdump,wireshark,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="Android App持续集成性能测试：启动流量（2）">
+<meta name=twitter:description content="在上一篇文章中，介绍了一种测试Android App启动流量的方法。当时也提到了，通过读取/proc/uid_stat/<UID>"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>DebugTalk</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
+<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header id=header class="header container">
+<div class=logo-wrapper>
+<a href=/ class=logo>
+DebugTalk
+</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+</header>
+<div id=mobile-panel>
+<main id=main class="main bg-llight">
+<div class=content-wrapper>
+<div id=content class="content container">
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>Android App持续集成性能测试：启动流量（2）</h1>
+<div class=post-meta>
+<time datetime=2016-05-03 class=post-time>
+2016-05-03
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
+</div>
+<span class=more-meta> 约 2476 字 </span>
+<span class=more-meta> 预计阅读 5 分钟 </span>
+<span id=busuanzi_container_page_pv>
+| 阅读 <span id=busuanzi_value_page_pv></span>
+</span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class=post-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#tcpdump>tcpdump</a></li>
+<li><a href=#人工分析pcap文件>人工分析pcap文件</a></li>
+<li><a href=#自动化测试脚本>自动化测试脚本</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>在上一篇文章中，介绍了一种测试Android App启动流量的方法。当时也提到了，通过读取<code>/proc/uid_stat/&lt;UID>/</code>目录下的<code>tcp_rcv</code>和<code>tcp_snd</code>文件，只能得到App的流量总值，无法得到更细化的数据。</p>
+<p>例如，UC浏览器国际版在启动后，会和美国的服务器进行通讯交互，如果我们想测试浏览器在启动后与美国服务器的通讯流量，要怎么实现呢？。</p>
+<p>本文便是针对这类场景的测试需求，讲解如何采用<code>tcpdump</code>测试得到更细化的流量数据。</p>
+<h2 id=tcpdump>tcpdump</h2>
+<p><code>tcpdump</code>，是一个在Unix-like系统中通用的网络抓包工具，当然，这个工具在Android系统中也是可以使用的。</p>
+<p>对于工具本身，本文不做过多介绍。为了防止有读者之前完全没有<code>tcpdump</code>的使用经验，在这里我只简单地进行几点说明：</p>
+<ul>
+<li>大多Android系统默认未集成tcpdump工具，我们需要事先将专门针对Android系统编译好的的tcpdump导入到Android系统，例如<code>/data/local/tmp/tcpdump</code>；当然，我们也不用自己编译，在<a href=http://www.androidtcpdump.com><code>androidtcpdump</code></a>网站就可以下载到编译好的tcpdump二进制文件。</li>
+<li>运行<code>tcpdump</code>工具时需要root权限。</li>
+<li>tcpdump命令支持许多参数，常见的有：
+<ul>
+<li><code>-i</code>指定网卡（interface），<code>any</code>表示不限网卡；</li>
+<li><code>-c</code>指定接收的packets数量，接收完成后自动停止抓包；</li>
+<li><code>-w</code>指定输出文件，输出文件的格式为pcap；</li>
+<li><code>-s</code>(<code>--snapshot-length</code>)指定在每个packet中最多截取的字节数，设置为0时表示截取上限取默认值262144；</li>
+<li><code>-v</code>/<code>-vv</code>/<code>-vvv</code>，指定输出的详细程度，针对流量测试，我们不需要非常详尽的输出数据，取<code>-v</code>即可。</li>
+</ul>
+</li>
+</ul>
+<p>基于以上对<code>tcpdump</code>的介绍，我们要测试浏览器在启动后与美国服务器的通讯流量，就只需要先启动浏览器，然后在<code>adb shell</code>中执行以下命令即可。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>1<span class=p>|</span>shell@hammerhead:/ $ su -c /data/local/tmp/tcpdump -v -i any -s <span class=m>0</span> -c <span class=m>2000</span> -w /sdcard/us.pcap
+tcpdump: listening on any, link-type LINUX_SLL <span class=o>(</span>Linux cooked<span class=o>)</span>, capture size <span class=m>262144</span> bytes
+<span class=m>2000</span> packets captured
+<span class=m>2024</span> packets received by filter
+<span class=m>0</span> packets dropped by kernel
+</code></pre></td></tr></table>
+</div>
+</div><p>在这里之所有指定接收packets数为2000，是因为浏览器启动后并不是立即与美国服务器进行通讯。所以在这里设置了一个比较大的值，确保浏览器与美国服务器的异步通讯数据能包含在这2000packets之中。当然，这个2000只是一个工程实践得到的经验值，具体取多少还是要依赖于具体场景。</p>
+<p>经过一段时间的抓包后，就生产了抓包结果，即<code>/sdcard/us.pcap</code>。</p>
+<h2 id=人工分析pcap文件>人工分析pcap文件</h2>
+<p>拿到pcap文件只是第一步，我们必须要对这个文件进行解析才能得到我们想要的结果。</p>
+<p>那么，通过什么方法解析pcap文件呢？</p>
+<p>先简单介绍下pcap。pcap，即<code>packet capture</code>的缩写，是一种通用的网络抓包数据存储格式。既然是通用，因此它除了可以被<code>tcpdump</code>解析外，还支持被多种网络工具解析，其中，就包括大家熟知的<code>wireshark</code>。</p>
+<p>至于为什么有了<code>tcpdump</code>还要用<code>wireshark</code>来解析，这主要还是因为<code>wireshark</code>是图形界面，操作和使用上更友好一些。</p>
+<p>在<code>wireshark</code>中分析pcap文件十分简单，只需要直接打开文件，就可以看到抓包过程中捕获的所有网络通讯数据。不过，由于我们抓包获得的数据是系统层面的，除了我们关注的与美国服务器的通讯交互外，还包含了非常多的其它通讯信息。</p>
+<p>好在<code>wireshark</code>有非常强大的筛选功能。对于本案例，我们可以先确定出美国服务器的host或IP，例如host为<code>ucus.ucweb.com</code>，那么我们就可以在筛选器中通过<code>http.host == "ucus.ucweb.com"</code>语句，即可筛选出所有本地与美国服务器的通讯交互数据。</p>
+<p><img src=/images/wireshark_host_filter.png alt="wireshark host filter"></p>
+<p>对于更丰富的筛选功能，大家可以根据实际需求查询<code>wireshark</code>的帮助文档，在此就不再进行展开。</p>
+<p>从上图的筛选结果中可以看到，美国服务器的地址为<code>168.235.199.134</code>。那接下来如何查看通讯的流量大小呢？</p>
+<p>首先，找出该次请求的<code>TCP Stream</code>。</p>
+<p><img src=/images/wireshark_tcp_stream_menu.png alt="wireshark tcp stream menu"></p>
+<p>在筛选出的<code>TCP Stream</code>中，将各条记录的Length进行求和，即可得到总的大小。</p>
+<p><img src=/images/wireshark_tcp_stream_data.png alt="wireshark tcp stream data"></p>
+<p>例如，发送流量的总和，即<code>100.84.126.160</code>-><code>168.235.199.134</code>的总和，加和总值为3722bytes；接收流量的总和，即<code>168.235.199.134</code>-><code>100.84.126.160</code>的总和，加和总值为6300bytes。</p>
+<p>当然，这里只是为了讲解计算流量的原理，实际上，我们并不需要去进行这个计算，可以直接读取得到总值。</p>
+<p>【Statistics】->【Endpoints】</p>
+<p><img src=/images/wireshark_endpoints_menu.png alt="wireshark endpoints menu"></p>
+<p>在Endpoints界面中，选择<code>TCP</code> tab，勾选“Limit to display filter”，即可看到通讯流量汇总数据。</p>
+<p><img src=/images/wireshark_tcp_stream_data.png alt="wireshark tcp stream data"></p>
+<p>可以看出，这个的汇总数值与前面计算得到的数值完全相同。</p>
+<h2 id=自动化测试脚本>自动化测试脚本</h2>
+<p>通过前面的人工分析，我们已经掌握了分析特定流量的一般性方法。然而，要想将此种场景的流量测试加入持续集成自动化测试系统，采用以上方法显然是不行的。</p>
+<p>那么，要怎样才能在代码中完成对pcap文件的分析呢？</p>
+<p>好在已经有前辈做了相应的工作，在GitHub上就找到了一个开源项目<a href=https://github.com/andrewf/pcap2har><code>pcap2har</code></a>，可以实现对pcap文件的解析。</p>
+<p><code>pcap2har</code>项目的详细介绍请大家自行查看项目文档。</p>
+<p>针对本文中的测试场景，解析pcap文件的代码实现如下。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=ch>#!/usr/bin/env python</span>
+<span class=c1>#coding=utf-8</span>
+
+<span class=kn>import</span> <span class=nn>dpkt</span>
+<span class=kn>from</span> <span class=nn>pcap2har</span> <span class=kn>import</span> <span class=n>pcap</span>
+<span class=kn>from</span> <span class=nn>pcap2har</span> <span class=kn>import</span> <span class=n>http</span>
+
+
+<span class=k>def</span> <span class=nf>parsePcapFile</span><span class=p>(</span><span class=n>pcap_file</span><span class=p>,</span> <span class=n>target_host</span><span class=p>):</span>
+    <span class=c1># parse pcap file</span>
+    <span class=n>dispatcher</span> <span class=o>=</span> <span class=n>pcap</span><span class=o>.</span><span class=n>EasyParsePcap</span><span class=p>(</span><span class=n>filename</span><span class=o>=</span><span class=n>pcap_file</span><span class=p>)</span>
+
+    <span class=n>traffic_total</span> <span class=o>=</span> <span class=mi>0</span>
+    <span class=n>traffic_receive_total</span> <span class=o>=</span> <span class=mi>0</span>
+    <span class=n>traffic_send_total</span> <span class=o>=</span> <span class=mi>0</span>
+    <span class=n>url_list</span> <span class=o>=</span> <span class=p>[]</span>
+
+    <span class=c1># stream为tcp数据流，当为长链接时一个tcp流里面可以有多个http请求</span>
+    <span class=k>for</span> <span class=n>stream</span> <span class=ow>in</span> <span class=n>dispatcher</span><span class=o>.</span><span class=n>tcp</span><span class=o>.</span><span class=n>flows</span><span class=p>():</span>
+        <span class=c1># fwd为请求大小，如果小于200则肯定不是正常的HTTP请求，忽略</span>
+        <span class=k>if</span> <span class=n>stream</span><span class=o>.</span><span class=n>fwd</span><span class=o>.</span><span class=n>caplen</span> <span class=o>&lt;</span> <span class=mi>200</span><span class=p>:</span>
+            <span class=k>continue</span>
+
+        <span class=n>pointer</span> <span class=o>=</span> <span class=mi>0</span>
+        <span class=k>while</span> <span class=n>pointer</span> <span class=o>&lt;</span> <span class=nb>len</span><span class=p>(</span><span class=n>stream</span><span class=o>.</span><span class=n>fwd</span><span class=o>.</span><span class=n>data</span><span class=p>):</span>
+            <span class=k>try</span><span class=p>:</span>
+                <span class=n>myrequest</span> <span class=o>=</span> <span class=n>http</span><span class=o>.</span><span class=n>Request</span><span class=p>(</span><span class=n>stream</span><span class=o>.</span><span class=n>fwd</span><span class=p>,</span> <span class=n>pointer</span><span class=p>)</span> <span class=c1>#解析请求头</span>
+            <span class=k>except</span> <span class=n>dpkt</span><span class=o>.</span><span class=n>Error</span> <span class=k>as</span> <span class=n>error</span><span class=p>:</span>  <span class=c1># if the message failed</span>
+                <span class=k>break</span>
+            <span class=k>except</span><span class=p>:</span>
+                <span class=k>raise</span>
+
+            <span class=n>pointer</span> <span class=o>+=</span> <span class=n>myrequest</span><span class=o>.</span><span class=n>data_consumed</span>
+            <span class=n>myhead</span> <span class=o>=</span> <span class=n>myrequest</span><span class=o>.</span><span class=n>msg</span><span class=o>.</span><span class=n>headers</span>
+
+            <span class=c1># 请求头大小&lt;200时忽略</span>
+            <span class=k>if</span> <span class=n>myrequest</span><span class=o>.</span><span class=n>data_consumed</span> <span class=o>&lt;</span> <span class=mi>200</span><span class=p>:</span>
+                <span class=k>continue</span>
+
+            <span class=k>if</span> <span class=n>myhead</span><span class=p>[</span><span class=s2>&#34;host&#34;</span><span class=p>]</span> <span class=o>==</span> <span class=n>target_host</span><span class=p>:</span>
+                <span class=n>traffic_receive_total</span> <span class=o>+=</span> <span class=n>stream</span><span class=o>.</span><span class=n>rev</span><span class=o>.</span><span class=n>caplen</span>
+                <span class=n>traffic_send_total</span> <span class=o>+=</span> <span class=n>stream</span><span class=o>.</span><span class=n>fwd</span><span class=o>.</span><span class=n>caplen</span>
+                <span class=n>traffic_total</span> <span class=o>+=</span> <span class=n>stream</span><span class=o>.</span><span class=n>streamlen</span>
+                <span class=n>url_list</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>myrequest</span><span class=o>.</span><span class=n>fullurl</span><span class=p>)</span>
+
+    <span class=n>traffic_data</span> <span class=o>=</span> <span class=p>{</span>
+        <span class=s1>&#39;total&#39;</span><span class=p>:</span> <span class=n>traffic_total</span><span class=p>,</span>
+        <span class=s1>&#39;tcp_snd&#39;</span><span class=p>:</span> <span class=n>traffic_send_total</span><span class=p>,</span>
+        <span class=s1>&#39;tcp_rcv&#39;</span><span class=p>:</span> <span class=n>traffic_receive_total</span><span class=p>,</span>
+        <span class=s1>&#39;url_list&#39;</span><span class=p>:</span> <span class=n>url_list</span>
+    <span class=p>}</span>
+    <span class=k>return</span> <span class=n>traffic_data</span>
+
+
+<span class=k>if</span> <span class=vm>__name__</span> <span class=o>==</span> <span class=s1>&#39;__main__&#39;</span><span class=p>:</span>
+    <span class=n>pcap_file</span> <span class=o>=</span> <span class=s2>&#34;&#34;</span>
+    <span class=n>target_host</span> <span class=o>=</span> <span class=s2>&#34;ucus.ucweb.com&#34;</span>
+    <span class=nb>print</span> <span class=n>parsePcapFile</span><span class=p>(</span><span class=n>pcap_file</span><span class=p>,</span> <span class=n>target_host</span><span class=p>)</span>
+    <span class=c1># output: {&#39;url_list&#39;: [&#39;http://ucus.ucweb.com/usquery.php&#39;], &#39;total&#39;: 10022, &#39;tcp_rcv&#39;: 6300, &#39;tcp_snd&#39;: 3722}</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>上次更新</span>
+<span class=item-content>
+2016-05-03
+</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=https://debugtalk.com/tags/Android/>Android</a>
+<a href=https://debugtalk.com/tags/%E5%90%AF%E5%8A%A8%E6%B5%81%E9%87%8F/>启动流量</a>
+<a href=https://debugtalk.com/tags/tcpdump/>tcpdump</a>
+<a href=https://debugtalk.com/tags/wireshark/>wireshark</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/Android-performance-test-start-traffic-uid-stat/>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
+</i>
+<span class="prev-text nav-default">Android App持续集成性能测试：启动流量（1）</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/post/manage-Jenkins-via-remote-api/>
+<span class="next-text nav-default">通过 API 远程管理 Jenkins</span>
+<span class="prev-text nav-mobile">下一篇</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
+</i>
+</a>
+</nav>
+</footer>
+</article>
+<div class="post bg-white">
+<script src=https://utteranc.es/client.js repo=debugtalk/blog issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+</div>
+<div class=disqus-comment>
+<div class=disqus-button id=load_disqus onclick=load_disqus()>
+显示 Disqus 评论
+</div>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url="https://debugtalk.com/post/Android-performance-test-start-traffic-tcpdump-wireshark/"};function load_disqus(){var a,b;if(window.location.hostname==='localhost')return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='debugtalk',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a),$('#load_disqus').remove()}</script>
+<noscript>Please enable JavaScript to view the
+<a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a>
+</noscript>
+</div>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=icon-links>
+<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
+</a>
+<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
+</a>
+<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
+</a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
+</span>
+<span class=copyright-year>
+&copy;
+2015 -
+2022
+<span class=heart>
+<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
+</i>
+</span><span class=author>
+debugtalk
+</span></span>
+<span id=busuanzi_container>
+访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
+</i>
+</div>
+</div>
+<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
+<script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/load-photoswipe.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<script src=/js/custom.js></script>
+</body>
+</html>

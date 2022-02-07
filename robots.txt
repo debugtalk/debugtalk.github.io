@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://debugtalk.com/sitemap.xml

@@ -1,0 +1,594 @@
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<title>对 Android 设备 CPU 进行锁频 - DebugTalk</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
+<meta name=MobileOptimized content="width">
+<meta name=HandheldFriendly content="true">
+<meta name=applicable-device content="pc,mobile">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=author content="debugtalk">
+<meta name=description content="本文对Android设备CPU的状态查看方法和锁频（lock frequency）方法进行详细介绍。这有什么用？作为测试工程师，你值得了解。 C">
+<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
+<meta name=generator content="Hugo 0.92.1">
+<link rel=canonical href=https://debugtalk.com/post/Android-CPU-lock-frequency/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
+<link rel=stylesheet href=/css/custom.css>
+<meta property="og:title" content="对 Android 设备 CPU 进行锁频">
+<meta property="og:description" content="本文对Android设备CPU的状态查看方法和锁频（lock frequency）方法进行详细介绍。这有什么用？作为测试工程师，你值得了解。 C">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://debugtalk.com/post/Android-CPU-lock-frequency/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2016-04-18T00:00:00+00:00">
+<meta property="article:modified_time" content="2020-02-01T19:10:21+08:00">
+<meta itemprop=name content="对 Android 设备 CPU 进行锁频">
+<meta itemprop=description content="本文对Android设备CPU的状态查看方法和锁频（lock frequency）方法进行详细介绍。这有什么用？作为测试工程师，你值得了解。 C"><meta itemprop=datePublished content="2016-04-18T00:00:00+00:00">
+<meta itemprop=dateModified content="2020-02-01T19:10:21+08:00">
+<meta itemprop=wordCount content="3695">
+<meta itemprop=keywords content="Android,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="对 Android 设备 CPU 进行锁频">
+<meta name=twitter:description content="本文对Android设备CPU的状态查看方法和锁频（lock frequency）方法进行详细介绍。这有什么用？作为测试工程师，你值得了解。 C"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>DebugTalk</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
+<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header id=header class="header container">
+<div class=logo-wrapper>
+<a href=/ class=logo>
+DebugTalk
+</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+</header>
+<div id=mobile-panel>
+<main id=main class="main bg-llight">
+<div class=content-wrapper>
+<div id=content class="content container">
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>对 Android 设备 CPU 进行锁频</h1>
+<div class=post-meta>
+<time datetime=2016-04-18 class=post-time>
+2016-04-18
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
+</div>
+<span class=more-meta> 约 3695 字 </span>
+<span class=more-meta> 预计阅读 8 分钟 </span>
+<span id=busuanzi_container_page_pv>
+| 阅读 <span id=busuanzi_value_page_pv></span>
+</span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class=post-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#cpu频率>CPU频率</a></li>
+<li><a href=#锁频的用途>锁频的用途</a></li>
+<li><a href=#查看cpu状态信息>查看CPU状态信息</a>
+<ul>
+<li><a href=#1view-overall-cpu-info>1、view overall cpu info</a></li>
+<li><a href=#2view-specified-cpu-info>2、view specified cpu info</a></li>
+</ul>
+</li>
+<li><a href=#更改cpu状态信息>更改CPU状态信息</a>
+<ul>
+<li><a href=#1set-overall-cpu-info>1、set overall cpu info</a></li>
+<li><a href=#2set-specified-cpu-info>2、set specified cpu info</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>本文对Android设备CPU的状态查看方法和锁频（lock frequency）方法进行详细介绍。这有什么用？作为测试工程师，你值得了解。</p>
+<h2 id=cpu频率>CPU频率</h2>
+<p>首先说下CPU的频率。我们都知道，CPU的工作频率越高，运算就越快，但能耗也更高。然而很多时候，设备并不需要那么高的计算性能，这个时候，我们就希望能降低CPU的工作频率，追求较低的能耗，以此实现更长的待机时间。</p>
+<p>基于此需求，当前电子设备的CPU都会存在多个工作频率，并能根据实际场景进行CPU频率的自动切换，以此达到平衡计算性能与能耗的目的。</p>
+<h2 id=锁频的用途>锁频的用途</h2>
+<p>那么为什么需要锁频呢？</p>
+<p>对于普通用户来说，可能对这些场景比较熟悉：</p>
+<ul>
+<li>在家用笔记本电脑玩游戏的时候，电脑连着电源，不在乎能耗，只想要尽可能高的性能，这个时候就选择高性能模式，即保持CPU在最高频率工作。</li>
+<li>旅行途中使用笔记本电脑，靠电池供电，希望电脑能待机尽可能久，这时就选择省电模式，即CPU保持在最低频率运行。</li>
+</ul>
+<p>作为一名测试工程师，我们在进行软件测试的时候，为了让测试结果真实反映软件本身的效率，从控制变量法的角度，我们希望测试结果尽量不受到硬件本身的影响。这个时候，我们就可以尝试对设备的CPU进行锁频，即保证在测试的过程中，硬件设备的CPU运行在一个恒定的频率。</p>
+<p>说到这里先埋个伏笔，在chromium官方测试库中，部分测试场景在初始化测试环境时，就会将设备所有CPU的频率调到最高状态，后续我会单独以一篇博客的形式对那部分的源码进行分析。对于等不及的朋友，可以先去看下源码，源码路径为<code>pylib/perf/PerfControl.SetHighPerfMode</code>。</p>
+<h2 id=查看cpu状态信息>查看CPU状态信息</h2>
+<p>在修改CPU的状态之前，我们需要先查看CPU的属性和状态信息，这样才能有针对性地进行正确的设置。</p>
+<p>对于CPU的状态，我们通常会关注两类信息，一是整体层面的，即CPU运行的核数；二是细节层面的，即各个CPU的工作状态，包括所处工作模式、频率大小等。</p>
+<p>在Android系统中，CPU相关的信息存储在<code>/sys/devices/system/cpu</code>目录的文件中，我们可以通过读取该目录下的特定文件获得当前设备的CPU状态信息，也可以通过对该目录下的特定文件进行写值，实现对CPU频率等状态信息的更改。</p>
+<p>本文以<code>Nexus 5</code>（系统版本5.1.1）为例，后面的例子均以该设备为例。不同的机型和Android系统版本可能会存在一些差异，请知悉。</p>
+<p>在<code>/sys/devices/system/cpu</code>目录中，文件结构如下所示。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ ll
+drwxr-xr-x root     root              2016-01-20 01:36 cpu0
+drwxr-xr-x root     root              2016-01-20 21:06 cpu1
+drwxr-xr-x root     root              2016-01-20 21:07 cpu2
+drwxr-xr-x root     root              2016-01-20 21:07 cpu3
+-rw------- root     root         <span class=m>4096</span> 1970-01-17 10:27 cpuctl
+drwxr-xr-x root     root              1970-01-17 10:27 cpufreq
+drwxr-xr-x root     root              1970-01-17 10:27 cpuidle
+-r--r--r-- root     root         <span class=m>4096</span> 1970-01-17 10:27 kernel_max
+-r--r--r-- root     root         <span class=m>4096</span> 1970-01-17 10:27 offline
+-r--r--r-- root     root         <span class=m>4096</span> 1970-01-17 10:27 online
+-r--r--r-- root     root         <span class=m>4096</span> 1970-01-17 10:27 possible
+drwxr-xr-x root     root              1970-01-17 10:27 power
+-r--r--r-- root     root         <span class=m>4096</span> 1970-01-17 10:27 present
+-rw-r--r-- root     root         <span class=m>4096</span> 1970-01-17 10:27 uevent
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=1view-overall-cpu-info>1、view overall cpu info</h3>
+<p>在<code>possible</code>文件中，存储的是当前设备可用的CPU，显示形式以数字的形式。例如<code>0-3</code>代表的就是当前设备总共有4个核，编号分别为0，1，2，3。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ cat possible
+0-3
+</code></pre></td></tr></table>
+</div>
+</div><p>在<code>online</code>文件中，存储的是当前设备正在运行的CPU。因为有时候设备不需要很高的性能，就可以将部分CPU关闭。不过需要注意的是，不管什么时候，<code>CPU0</code>始终都会处于运行状态。<code>online</code>文件的存储格式与<code>possible</code>类似，如果只有部分CPU运行，且CPU编号不连续的时候，会以逗号进行隔开；例如，<code>0,2</code>表示当前CPU0和CPU2处于运行状态。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ cat online
+0,2
+</code></pre></td></tr></table>
+</div>
+</div><p>对应的，<code>offline</code>文件标示的是当前设备处于关闭状态的CPU，这和<code>online</code>作为互补，并集刚好就是设备的所有CPU，即<code>possible</code>文件中的内容。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ cat offline
+1,3
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=2view-specified-cpu-info>2、view specified cpu info</h3>
+<p>接下来，我们要获取到特定CPU的信息，就需要进入到对应的文件夹，例如，<code>cpu0/</code>对应的就是CPU0的信息。</p>
+<p>在<code>/sys/devices/system/cpu/cpu0</code>目录中，文件结构如下所示。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ ll cpu0
+drwxr-xr-x root     root              2016-01-20 01:37 cpufreq
+drwxr-xr-x root     root              1970-01-17 10:27 cpuidle
+-r-------- root     root         <span class=m>4096</span> 1970-01-17 10:27 crash_notes
+-rw-r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:36 online
+drwxr-xr-x root     root              1970-01-17 10:27 power
+drwxr-xr-x root     root              1970-01-17 10:27 rq-stats
+lrwxrwxrwx root     root              1970-01-17 10:27 subsystem
+drwxr-xr-x root     root              1970-01-17 10:27 topology
+-rw-r--r-- root     root         <span class=m>4096</span> 1970-01-17 10:27 uevent
+</code></pre></td></tr></table>
+</div>
+</div><p>其中，<code>online</code>文件的内容表示当前CPU是否处于运行状态，若处于运行状态，则内容为1，否则为0；这个和上面讲到的<code>/sys/devices/system/cpu/online</code>能进行对应。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ cat cpu0/online
+<span class=m>1</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在<code>cpu0/cpufreq/</code>目录下，存储的就是与CPU0的频率相关的信息，文件结构如下所示。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ ll cpu0/cpufreq/
+-rw-r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:57 UV_mV_table
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:57 affected_cpus
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:57 cpu_utilization
+-r-------- root     root         <span class=m>4096</span> 2016-01-20 01:57 cpuinfo_cur_freq
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 02:00 cpuinfo_max_freq
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:39 cpuinfo_min_freq
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:57 cpuinfo_transition_latency
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:57 related_cpus
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:39 scaling_available_frequencies
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:57 scaling_available_governors
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:50 scaling_cur_freq
+-r--r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:57 scaling_driver
+-rw-r--r-- root     root         <span class=m>4096</span> 2016-01-20 01:50 scaling_governor
+-rw-r--r-- root     root         <span class=m>4096</span> 2016-01-20 08:29 scaling_max_freq
+-rw-r--r-- root     root         <span class=m>4096</span> 2016-01-20 08:29 scaling_min_freq
+-rw-r--r-- root     root         <span class=m>4096</span> 2016-01-20 02:52 scaling_setspeed
+</code></pre></td></tr></table>
+</div>
+</div><p>在这个目录中，我们需要关注的文件比较多。</p>
+<p>首先是<code>scaling_available_governors</code>和<code>scaling_governor</code>。这里的<code>governor</code>大家可以理解为CPU的工作模式，<code>scaling_available_governors</code>中存储了当前CPU支持的所有工作模式，而<code>scaling_governor</code>存储的是CPU当前所处的工作模式。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>shell@hammerhead:/sys/devices/system/cpu $ cat cpu0/cpufreq/scaling_available_governors
+impulse dancedance smartmax interactive conservative ondemand userspace powersave Lionheart bioshock performance
+
+shell@hammerhead:/sys/devices/system/cpu $ cat cpu0/cpufreq/scaling_governor
+performance
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，<code>Nexus 5</code>支持非常多的工作模式，这里只对几个常见的模式进行简单说明。</p>
+<ul>
+<li>performance：最高性能模式，即使系统负载非常低，cpu也在最高频率下运行。</li>
+<li>powersave：省电模式，与performance模式相反，cpu始终在最低频率下运行。</li>
+<li>ondemand：CPU频率跟随系统负载进行变化。</li>
+<li>userspace：可以简单理解为自定义模式，在该模式下可以对频率进行设定。</li>
+</ul>
+<p>对于各种模式对应的含义和策略，在此不进行展开，大家有兴趣的可以自行搜索。</p>
+<p>然后是CPU的工作频率范围，对应的文件有<code>cpuinfo_max_freq</code>、<code>cpuinfo_min_freq</code>、<code>scaling_max_freq</code>、<code>scaling_min_freq</code>。</p>
+<p>以<code>cpuinfo_</code>为前缀的表示CPU硬件支持的频率范围，反映的是CPU自身的特性，与CPU的工作模式无关。而以<code>scaling_</code>为前缀的表示CPU在当前工作模式下的频率范围。</p>
+<p>那么，当前CPU工作的频率是多少，我们要怎么查看呢？</p>
+<p>查看<code>cpuinfo_cur_freq</code>或<code>scaling_cur_freq</code>即可。<code>cpuinfo_cur_freq</code>代表通过硬件实际上读到的频率值，而<code>scaling_cur_freq</code>则是软件当前的设置值，多数情况下这两个值是一致的，但是也有可能因为硬件的原因，有微小的差异。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>root@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq <span class=c1># cat cpuinfo_cur_freq</span>
+<span class=m>1574400</span>
+root@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq <span class=c1># cat scaling_cur_freq</span>
+<span class=m>1574400</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id=更改cpu状态信息>更改CPU状态信息</h2>
+<p>最后回到我们本文的主题，如何对CPU的频率进行设定呢？</p>
+<p>这也和CPU信息查看对应，分为对CPU整体运行情况的设置，和对特定CPU工作模式的设定。</p>
+<p>在此，有两点需要特别进行说明。</p>
+<p>首先，对于高通的CPU，存在一个系统服务，叫作<code>mpdecision service</code>。当这个系统服务处于运行状态时，我们无法对CPU的状态信息进行更改。因此，如果我们要更改高通CPU的工作模式，第一步要做的就是终止<code>mpdecision</code>系统服务。</p>
+<p>操作起来也很简单，在Android shell里面执行如下命令即可。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>stop mpdecision
+</code></pre></td></tr></table>
+</div>
+</div><p>第二点需要注意的是，如果我们想要实现对特定CPU的工作状态进行设置，就必须将<code>scaling_governor</code>设置为<code>userspace</code>，只有这样，我们才能对<code>scaling_setspeed</code>进行设置。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>root@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq <span class=c1># cat scaling_setspeed</span>
+&lt;unsupported&gt;
+
+root@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq <span class=c1># echo userspace &gt; scaling_governor</span>
+root@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq <span class=c1># cat scaling_setspeed</span>
+<span class=m>1574400</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=1set-overall-cpu-info>1、set overall cpu info</h3>
+<p>从宏观层面，我们可以对CPU运行的核数进行设置，即可实现对特定CPU的开启和关闭。当然，我们在前面已经说过，CPU0始终会处于运行状态，因此我们无法将CPU0进行关闭。</p>
+<p>设置的方式很简单，就是往<code>/sys/devices/system/cpu/cpu[i]/online</code>文件中写值即可，写1时开启指定CPU，写0时关闭指定CPU。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=c1># turn off cpu1</span>
+root@hammerhead:/sys/devices/system/cpu/cpu1 <span class=c1># echo 0 &gt; online</span>
+root@hammerhead:/sys/devices/system/cpu/cpu1 <span class=c1># cat online</span>
+<span class=m>0</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id=2set-specified-cpu-info>2、set specified cpu info</h3>
+<p>在对特定CPU的频率进行设定前，我们需要知道的是，CPU并不能工作在任意频率下，我们只能将CPU的频率设定为它支持的数值。</p>
+<p>通过查看<code>scaling_available_frequencies</code>，我们可以获得当前CPU支持的频率值。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>root@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq <span class=c1># cat scaling_available_frequencies</span>
+<span class=m>300000</span> <span class=m>422400</span> <span class=m>652800</span> <span class=m>729600</span> <span class=m>883200</span> <span class=m>960000</span> <span class=m>1036800</span> <span class=m>1190400</span> <span class=m>1267200</span> <span class=m>1497600</span> <span class=m>1574400</span> <span class=m>1728000</span> <span class=m>1958400</span> <span class=m>2265600</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>接下来，我们就可以对CPU的工作频率进行设置了。</p>
+<p>如何进行设置呢？刚开始的时候，我觉得将特定的频率值写入<code>scaling_setspeed</code>或<code>scaling_cur_freq</code>就可以了，通过Google搜索得到的方法中也是这种方式。</p>
+<p>但经过尝试，发现并不可行。为什么会这样？我也还没有找到答案，希望知道原因的朋友能告诉我。</p>
+<p>最后经过尝试，发现通过同时将<code>scaling_max_freq</code>和<code>scaling_min_freq</code>设置为目标频率值，就可以成功地对CPU频率完成设置。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=c1># before setting</span>
+shell@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq $ cat scaling_cur_freq
+<span class=m>1574400</span>
+
+<span class=c1># setting</span>
+shell@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq $ <span class=nb>echo</span> <span class=m>1728000</span> &gt; scaling_min_freq
+shell@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq $ <span class=nb>echo</span> <span class=m>1728000</span> &gt; scaling_max_freq
+
+<span class=c1># after setting</span>
+shell@hammerhead:/sys/devices/system/cpu/cpu0/cpufreq $ cat scaling_cur_freq
+<span class=m>1728000</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>上次更新</span>
+<span class=item-content>
+2020-02-01
+<a href=https://github.com/debugtalk/blog/commit/b7cb9c90d5f63c4b337f0752d0d8a8e3bc5a4739 title="init blog powered by hugo">
+(b7cb9c9)
+</a>
+<br>init blog powered by hugo
+</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=https://debugtalk.com/tags/Android/>Android</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/traps-in-sql-null/>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
+</i>
+<span class="prev-text nav-default">SQL语句中关于NULL的那些坑</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/post/Android-performance-test-UI-Automation-with-Python/>
+<span class="next-text nav-default">Android App持续集成性能测试：使用Python实现UI自动化</span>
+<span class="prev-text nav-mobile">下一篇</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
+</i>
+</a>
+</nav>
+</footer>
+</article>
+<div class="post bg-white">
+<script src=https://utteranc.es/client.js repo=debugtalk/blog issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+</div>
+<div class=disqus-comment>
+<div class=disqus-button id=load_disqus onclick=load_disqus()>
+显示 Disqus 评论
+</div>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url="https://debugtalk.com/post/Android-CPU-lock-frequency/"};function load_disqus(){var a,b;if(window.location.hostname==='localhost')return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='debugtalk',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a),$('#load_disqus').remove()}</script>
+<noscript>Please enable JavaScript to view the
+<a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a>
+</noscript>
+</div>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=icon-links>
+<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
+</a>
+<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
+</a>
+<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
+</a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
+</span>
+<span class=copyright-year>
+&copy;
+2015 -
+2022
+<span class=heart>
+<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
+</i>
+</span><span class=author>
+debugtalk
+</span></span>
+<span id=busuanzi_container>
+访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
+</i>
+</div>
+</div>
+<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
+<script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/load-photoswipe.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<script src=/js/custom.js></script>
+</body>
+</html>

@@ -1,0 +1,902 @@
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<title>ApiTestEngine 演进之路（3）测试用例中实现 Python 函数的定义 - DebugTalk</title>
+<meta name=renderer content="webkit">
+<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
+<meta name=MobileOptimized content="width">
+<meta name=HandheldFriendly content="true">
+<meta name=applicable-device content="pc,mobile">
+<meta name=theme-color content="#f8f5ec">
+<meta name=msapplication-navbutton-color content="#f8f5ec">
+<meta name=apple-mobile-web-app-capable content="yes">
+<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
+<meta name=mobile-web-app-capable content="yes">
+<meta name=author content="debugtalk">
+<meta name=description content="在《ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式》中，我们臆想了一种简洁优雅的用例描述方式，接下来，我们就从技术实现的">
+<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
+<meta name=generator content="Hugo 0.92.1">
+<link rel=canonical href=https://debugtalk.com/post/ApiTestEngine-3-define-functions-in-yaml-testcases/>
+<link rel=icon href=/favicon.ico>
+<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
+<link rel=stylesheet href=/css/custom.css>
+<meta property="og:title" content="ApiTestEngine 演进之路（3）测试用例中实现 Python 函数的定义">
+<meta property="og:description" content="在《ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式》中，我们臆想了一种简洁优雅的用例描述方式，接下来，我们就从技术实现的">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://debugtalk.com/post/ApiTestEngine-3-define-functions-in-yaml-testcases/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2017-07-11T00:00:00+00:00">
+<meta property="article:modified_time" content="2017-07-11T00:00:00+00:00">
+<meta itemprop=name content="ApiTestEngine 演进之路（3）测试用例中实现 Python 函数的定义">
+<meta itemprop=description content="在《ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式》中，我们臆想了一种简洁优雅的用例描述方式，接下来，我们就从技术实现的"><meta itemprop=datePublished content="2017-07-11T00:00:00+00:00">
+<meta itemprop=dateModified content="2017-07-11T00:00:00+00:00">
+<meta itemprop=wordCount content="5873">
+<meta itemprop=keywords content="HttpRunner,lambda,"><meta name=twitter:card content="summary">
+<meta name=twitter:title content="ApiTestEngine 演进之路（3）测试用例中实现 Python 函数的定义">
+<meta name=twitter:description content="在《ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式》中，我们臆想了一种简洁优雅的用例描述方式，接下来，我们就从技术实现的"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+</head>
+<body>
+<div id=mobile-navbar class=mobile-navbar>
+<div class=mobile-header-logo>
+<a href=/ class=logo>DebugTalk</a>
+</div>
+<div class=mobile-navbar-icon>
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+<nav id=mobile-menu class="mobile-menu slideout-menu">
+<ul class=mobile-menu-list>
+<li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li><li class=mobile-menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
+<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
+<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
+<div class=pswp__bg></div>
+<div class=pswp__scroll-wrap>
+<div class=pswp__container>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+<div class=pswp__item></div>
+</div>
+<div class="pswp__ui pswp__ui--hidden">
+<div class=pswp__top-bar>
+<div class=pswp__counter></div>
+<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<button class="pswp__button pswp__button--share" title=Share></button>
+<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+<div class=pswp__preloader>
+<div class=pswp__preloader__icn>
+<div class=pswp__preloader__cut>
+<div class=pswp__preloader__donut></div>
+</div>
+</div>
+</div>
+</div>
+<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+<div class=pswp__share-tooltip></div>
+</div>
+<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+</button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+</button>
+<div class=pswp__caption>
+<div class=pswp__caption__center></div>
+</div>
+</div>
+</div>
+</div>
+<header id=header class="header container">
+<div class=logo-wrapper>
+<a href=/ class=logo>
+DebugTalk
+</a>
+</div>
+<nav class=site-navbar>
+<ul id=menu class=menu>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/>主页</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
+</li>
+<li class=menu-item>
+<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
+</li>
+</ul>
+</nav>
+</header>
+<div id=mobile-panel>
+<main id=main class="main bg-llight">
+<div class=content-wrapper>
+<div id=content class="content container">
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>ApiTestEngine 演进之路（3）测试用例中实现 Python 函数的定义</h1>
+<div class=post-meta>
+<time datetime=2017-07-11 class=post-time>
+2017-07-11
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+</div>
+<span class=more-meta> 约 5873 字 </span>
+<span class=more-meta> 预计阅读 12 分钟 </span>
+<span id=busuanzi_container_page_pv>
+| 阅读 <span id=busuanzi_value_page_pv></span>
+</span>
+</div>
+</header>
+<div class=post-toc id=post-toc>
+<h2 class=post-toc-title>文章目录</h2>
+<div class=post-toc-content>
+<nav id=TableOfContents>
+<ul>
+<li><a href=#实现函数的定义>实现函数的定义</a></li>
+<li><a href=#方法一通过lambda实现函数定义>方法一：通过lambda实现函数定义</a></li>
+<li><a href=#方法二自定义函数模块并进行导入>方法二：自定义函数模块并进行导入</a></li>
+<li><a href=#总结>总结</a></li>
+<li><a href=#相关文章>相关文章</a></li>
+</ul>
+</nav>
+</div>
+</div>
+<div class=post-content>
+<p>在<a href=https://debugtalk.com/post/ApiTestEngine-2-best-testcase-description/>《ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式》</a>中，我们臆想了一种简洁优雅的用例描述方式，接下来，我们就从技术实现的角度，逐项进行深入讲解，将臆想变成现实。</p>
+<p>本文先解决第一个问题，“如何在用例描述（<code>YAML/JSON</code>）中实现函数的定义和调用”。</p>
+<blockquote>
+<p>在写作的过程中，发现要将其中的原理阐述清楚，要写的内容实在是太多，因此将问题再拆分为“函数定义”和“函数调用”两部分，本文只讲解“函数定义”部分的内容。</p>
+</blockquote>
+<h2 id=实现函数的定义>实现函数的定义</h2>
+<p>在之前，我们假设存在<code>gen_random_string</code>这样一个生成指定位数随机字符串的函数，以及<code>gen_md5</code>这样一个计算签名校验值的函数，我们不妨先尝试通过<code>Python</code>语言进行具体的实现。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>import</span> <span class=nn>hashlib</span>
+<span class=kn>import</span> <span class=nn>random</span>
+<span class=kn>import</span> <span class=nn>string</span>
+
+<span class=k>def</span> <span class=nf>gen_random_string</span><span class=p>(</span><span class=n>str_len</span><span class=p>):</span>
+    <span class=k>return</span> <span class=s1>&#39;&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span>
+        <span class=n>random</span><span class=o>.</span><span class=n>choice</span><span class=p>(</span><span class=n>string</span><span class=o>.</span><span class=n>ascii_letters</span> <span class=o>+</span> <span class=n>string</span><span class=o>.</span><span class=n>digits</span><span class=p>)</span> <span class=k>for</span> <span class=n>_</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>str_len</span><span class=p>))</span>
+
+<span class=k>def</span> <span class=nf>gen_md5</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>):</span>
+    <span class=k>return</span> <span class=n>hashlib</span><span class=o>.</span><span class=n>md5</span><span class=p>(</span><span class=s2>&#34;&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>args</span><span class=p>)</span><span class=o>.</span><span class=n>encode</span><span class=p>(</span><span class=s1>&#39;utf-8&#39;</span><span class=p>))</span><span class=o>.</span><span class=n>hexdigest</span><span class=p>()</span>
+
+<span class=n>gen_random_string</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span> <span class=c1># =&gt; A2dEx</span>
+
+<span class=n>TOKEN</span> <span class=o>=</span> <span class=s2>&#34;debugtalk&#34;</span>
+<span class=n>data</span> <span class=o>=</span> <span class=s1>&#39;{&#34;name&#34;: &#34;user&#34;, &#34;password&#34;: &#34;123456&#34;}&#39;</span>
+<span class=n>random</span> <span class=o>=</span> <span class=s2>&#34;A2dEx&#34;</span>
+<span class=n>gen_md5</span><span class=p>(</span><span class=n>TOKEN</span><span class=p>,</span> <span class=n>data</span><span class=p>,</span> <span class=n>random</span><span class=p>)</span> <span class=c1># =&gt; a83de0ff8d2e896dbd8efb81ba14e17d</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>熟悉<code>Python</code>语言的人对以上代码应该都不会有理解上的难度。可能部分新接触<code>Python</code>的同学对<code>gen_md5</code>函数的<code>*args</code>传参方式会比较陌生，我也简单地补充下基础知识。</p>
+<p>在<code>Python</code>中，函数参数共有四种，必选参数、默认参数、可变参数和关键字参数。</p>
+<p>必选参数和默认参数大家应该都很熟悉，绝大多数编程语言里面都有类似的概念。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>func</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>a</span><span class=o>=</span><span class=mi>1</span><span class=p>,</span> <span class=n>b</span><span class=o>=</span><span class=mi>2</span><span class=p>):</span>
+    <span class=k>return</span> <span class=n>x</span> <span class=o>+</span> <span class=n>y</span> <span class=o>+</span> <span class=n>a</span> <span class=o>+</span> <span class=n>b</span>
+
+<span class=n>func</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>)</span> <span class=c1># =&gt; 6</span>
+<span class=n>func</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=n>b</span><span class=o>=</span><span class=mi>3</span><span class=p>)</span> <span class=c1># =&gt; 7</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在上面例子中，<code>x</code>和<code>y</code>是必选参数，<code>a</code>和<code>b</code>是默认参数。除了显示地定义必选参数和默认参数，我们还可以通过使用可变参数和关键字参数的形式，实现更灵活的函数参数定义。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>func</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
+    <span class=k>return</span> <span class=nb>sum</span><span class=p>(</span><span class=n>args</span><span class=p>)</span> <span class=o>+</span> <span class=nb>sum</span><span class=p>(</span><span class=n>kwargs</span><span class=o>.</span><span class=n>values</span><span class=p>())</span>
+
+<span class=n>args</span> <span class=o>=</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>]</span>
+<span class=n>kwargs</span> <span class=o>=</span> <span class=p>{</span><span class=s1>&#39;a&#39;</span><span class=p>:</span><span class=mi>3</span><span class=p>,</span> <span class=s1>&#39;b&#39;</span><span class=p>:</span><span class=mi>4</span><span class=p>}</span>
+<span class=n>func</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>)</span> <span class=c1># =&gt; 10</span>
+
+<span class=n>args</span> <span class=o>=</span> <span class=p>[]</span>
+<span class=n>kwargs</span> <span class=o>=</span> <span class=p>{</span><span class=s1>&#39;a&#39;</span><span class=p>:</span><span class=mi>3</span><span class=p>,</span> <span class=s1>&#39;b&#39;</span><span class=p>:</span><span class=mi>4</span><span class=p>,</span> <span class=s1>&#39;c&#39;</span><span class=p>:</span> <span class=mi>5</span><span class=p>}</span>
+<span class=n>func</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>)</span> <span class=c1># =&gt; 12</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>之所以说更灵活，是因为当使用可变参数和关键字参数时（<code>func(*args, **kwargs)</code>），我们在调用函数时就可以传入0个或任意多个必选参数和默认参数，所有必选参数将作为<code>tuple/list</code>的形式传给可变参数（<code>args</code>），并将所有默认参数作为<code>dict</code>的形式传给关键字参数（<code>kwargs</code>）。另外，可变参数和关键字参数也并不是要同时使用，只使用一种也是可以的。</p>
+<p>在前面定义的<code>gen_md5(*args)</code>函数中，我们就可以将任意多个字符串传入，然后得到拼接字符串的<code>MD5</code>值。</p>
+<p>现在再回到测试用例描述文件，由于是纯文本格式（<code>YAML/JSON</code>），我们没法直接写<code>Python</code>代码，那要怎样才能定义函数呢？</p>
+<p>之前接触过一些函数式编程，所以我首先想到的是借助<code>lambda</code>实现匿名函数。如果对函数式编程不了解，可以看下我之前写过的一篇文章，<a href=https://debugtalk.com/post/python-functional-programming-getting-started/>《Python的函数式编程&ndash;从入门到⎡放弃⎦》</a>。</p>
+<h2 id=方法一通过lambda实现函数定义>方法一：通过lambda实现函数定义</h2>
+<p>使用<code>lambda</code>有什么好处呢？</p>
+<p>最简单直接的一点，通过<code>lambda</code>关键字，我们可以将函数写到一行里面。例如，同样是前面提到的<code>gen_random_string</code>函数和<code>gen_md5</code>函数，通过<code>lambda</code>的实现方式就是如下的形式。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>gen_random_string</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>str_len</span><span class=p>:</span> <span class=s1>&#39;&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>random</span><span class=o>.</span><span class=n>choice</span><span class=p>(</span><span class=n>string</span><span class=o>.</span><span class=n>ascii_letters</span> <span class=o>+</span> <span class=n>string</span><span class=o>.</span><span class=n>digits</span><span class=p>)</span> <span class=k>for</span> <span class=n>_</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>str_len</span><span class=p>))</span>
+<span class=n>gen_md5</span> <span class=o>=</span> <span class=k>lambda</span> <span class=o>*</span><span class=n>str_args</span><span class=p>:</span> <span class=n>hashlib</span><span class=o>.</span><span class=n>md5</span><span class=p>(</span><span class=s1>&#39;&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>str_args</span><span class=p>)</span><span class=o>.</span><span class=n>encode</span><span class=p>(</span><span class=s1>&#39;utf-8&#39;</span><span class=p>))</span>
+
+<span class=n>gen_random_string</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span> <span class=c1># =&gt; A2dEx</span>
+
+<span class=n>TOKEN</span> <span class=o>=</span> <span class=s2>&#34;debugtalk&#34;</span>
+<span class=n>data</span> <span class=o>=</span> <span class=s1>&#39;{&#34;name&#34;: &#34;user&#34;, &#34;password&#34;: &#34;123456&#34;}&#39;</span>
+<span class=n>random</span> <span class=o>=</span> <span class=s2>&#34;A2dEx&#34;</span>
+<span class=n>gen_md5</span><span class=p>(</span><span class=n>TOKEN</span><span class=p>,</span> <span class=n>data</span><span class=p>,</span> <span class=n>random</span><span class=p>)</span> <span class=c1># =&gt; a83de0ff8d2e896dbd8efb81ba14e17d</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看出，采用<code>lambda</code>定义的函数跟之前的函数功能完全一致，调用方式相同，运算结果也完全一样。</p>
+<p>然后，我们在测试用例里面，通过新增一个<code>function_binds</code>模块，就可以将函数定义与函数名称绑定了。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-YAML data-lang=YAML>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>create user which does not exist</span><span class=w>
+</span><span class=w>    </span><span class=nt>function_binds</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span><span class=nt>gen_random_string</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;lambda str_len: &#39;&#39;.join(random.choice(string.ascii_letters + string.digits) for _ in range(str_len))&#34;</span><span class=w>
+</span><span class=w>        </span><span class=nt>gen_md5</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;lambda *str_args: hashlib.md5(&#39;&#39;.join(str_args).encode(&#39;utf-8&#39;))
+</span><span class=s2>    variables:
+</span><span class=s2>        - TOKEN: debugtalk
+</span><span class=s2>        - random: ${gen_random_string(5)}
+</span><span class=s2>        - json: {&#34;</span><span class=l>name&#34;: &#34;user&#34;, &#34;password&#34;: &#34;123456&#34;}</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>authorization</span><span class=p>:</span><span class=w> </span><span class=l>${gen_md5($TOKEN, $json, $random)}</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>可能有些同学还是无法理解，在上面<code>YAML</code>文件中，即使将函数定义与函数名称绑定了，但是加载<code>YAML</code>文件后，函数名称对应的值也只是一个字符串而已，这还是没法运行啊。</p>
+<p>这就又要用到<code>eval</code>黑科技了。通过<code>eval</code>函数，可以执行字符串表达式，并返回表达式的值。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>gen_random_string</span> <span class=o>=</span> <span class=s2>&#34;lambda str_len: &#39;&#39;.join(random.choice(string.ascii_letters + string.digits) for _ in range(str_len))&#34;</span>
+
+<span class=n>func</span> <span class=o>=</span> <span class=nb>eval</span><span class=p>(</span><span class=n>gen_random_string</span><span class=p>)</span>
+
+<span class=n>func</span> <span class=c1># =&gt; &lt;function &lt;lambda&gt; at 0x10e19a398&gt;</span>
+<span class=n>func</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span> <span class=c1># =&gt; &#34;A2dEx&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在上面的代码中，<code>gen_random_string</code>为<code>lambda</code>字符串表达式，通过<code>eval</code>执行后，就转换为一个函数对象，然后就可以像正常定义的函数一样调用了。</p>
+<p>如果你看到这里还没有疑问，那么说明你肯定没有亲自实践。事实上，上面执行<code>func(5)</code>的时候并不会返回预期结果，而是会抛出如下异常。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>&gt;&gt;&gt; func<span class=o>(</span>5<span class=o>)</span>
+Traceback <span class=o>(</span>most recent call last<span class=o>)</span>:
+  File <span class=s2>&#34;&lt;stdin&gt;&#34;</span>, line 1, in &lt;module&gt;
+  File <span class=s2>&#34;&lt;string&gt;&#34;</span>, line 1, in &lt;lambda&gt;
+  File <span class=s2>&#34;&lt;string&gt;&#34;</span>, line 1, in &lt;genexpr&gt;
+NameError: global name <span class=s1>&#39;random&#39;</span> is not defined
+</code></pre></td></tr></table>
+</div>
+</div><p>这是因为，我们在定义的<code>lambda</code>函数中，用到了<code>random</code>库，而在<code>lambda</code>表达式中，我们并没有<code>import random</code>。</p>
+<p>这下麻烦了，很多时候我们的函数都要用到标准库或者第三方库，而在调用这些库函数之前，我们必须得先<code>import</code>。想来想去，这个<code>import</code>的操作都没法塞到<code>lambda</code>表达式中。</p>
+<p>为了解决这个依赖库的问题，我想到两种方式。</p>
+<p>第一种方式，在加载<code>YAML/JSON</code>用例之前，先统一将测试用例依赖的所有库都<code>import</code>一遍。这个想法很快就被否决了，因为这必须要在<code>ApiTestEngine</code>框架里面去添加这部分代码，而且每个项目的依赖库不一样，需要<code>import</code>的库也不一样，总不能为了解决这个问题，在框架初始化部分将所有的库都<code>import</code>吧？而且为了适配不同项目来改动测试框架的代码，也不是通用测试框架应有的做法。</p>
+<p>然后我想到了第二种方式，就是在测试用例里面，通过新增一个<code>requires</code>模块，罗列出当前测试用例所有需要引用的库，然后在加载用例的时候通过代码动态地进行导入依赖库。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-YAML data-lang=YAML>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>create user which does not exist</span><span class=w>
+</span><span class=w>    </span><span class=nt>requires</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- <span class=l>random</span><span class=w>
+</span><span class=w>        </span>- <span class=l>string</span><span class=w>
+</span><span class=w>        </span>- <span class=l>hashlib</span><span class=w>
+</span><span class=w>    </span><span class=nt>function_binds</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span><span class=nt>gen_random_string</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;lambda str_len: &#39;&#39;.join(random.choice(string.ascii_letters + string.digits) for _ in range(str_len))&#34;</span><span class=w>
+</span><span class=w>        </span><span class=nt>gen_md5</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;lambda *str_args: hashlib.md5(&#39;&#39;.join(str_args).encode(&#39;utf-8&#39;))
+</span><span class=s2>    variables:
+</span><span class=s2>        - TOKEN: debugtalk
+</span><span class=s2>        - random: ${gen_random_string(5)}
+</span><span class=s2>        - json: {&#34;</span><span class=l>name&#34;: &#34;user&#34;, &#34;password&#34;: &#34;123456&#34;}</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>authorization</span><span class=p>:</span><span class=w> </span><span class=l>${gen_md5($TOKEN, $json, $random)}</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>动态地导入依赖库？其实也没有多玄乎，<code>Python</code>本身也支持这种特性。如果你看到这里感觉无法理解，那么我再补充点基础知识。</p>
+<p>在<code>Python</code>中执行<code>import</code>时，实际上等价于执行<code>__import__</code>函数。</p>
+<p>例如，<code>import random</code>等价于如下语句：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>random</span> <span class=o>=</span> <span class=nb>__import__</span><span class=p>(</span><span class=s1>&#39;random&#39;</span><span class=p>,</span> <span class=nb>globals</span><span class=p>(),</span> <span class=nb>locals</span><span class=p>(),</span> <span class=p>[],</span> <span class=o>-</span><span class=mi>1</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其中，<code>__import__</code>的函数定义为<code>__import__(name[, globals[, locals[, fromlist[, level]]]])</code>，第一个参数为库的名称，后面的参数暂不用管（可直接查看<a href=https://docs.python.org/3/library/functions.html#__import__>官方文档</a>）。</p>
+<p>由于后面的参数都有默认值，通常情况下我们采用默认值即可，因此我们也可以简化为如下形式：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>random</span> <span class=o>=</span> <span class=nb>__import__</span><span class=p>(</span><span class=s1>&#39;random&#39;</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>执行这个语句的有什么效果呢？</p>
+<p>可能这也是大多数<code>Python</code>初学者都忽略的一个知识点。在<code>Python</code>运行环境中，有一个全局的环境变量，当我们定义一个函数，或者引入一个依赖库时，实际上就是将其对象添加到了全局的环境变量中。</p>
+<p>这个全局的环境变量就是<code>globals()</code>，它是一个字典类型的数据结构。要验证以上知识点，我们可以在<code>Python</code>的交互终端中进行如下实验。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>$ python
+&gt;&gt;&gt;
+&gt;&gt;&gt; globals<span class=o>()</span>
+<span class=o>{</span><span class=s1>&#39;__name__&#39;</span>: <span class=s1>&#39;__main__&#39;</span>, <span class=s1>&#39;__doc__&#39;</span>: None, <span class=s1>&#39;__package__&#39;</span>: None, <span class=s1>&#39;__loader__&#39;</span>: &lt;class <span class=s1>&#39;_frozen_importlib.BuiltinImporter&#39;</span>&gt;, <span class=s1>&#39;__spec__&#39;</span>: None, <span class=s1>&#39;__annotations__&#39;</span>: <span class=o>{}</span>, <span class=s1>&#39;__builtins__&#39;</span>: &lt;module <span class=s1>&#39;builtins&#39;</span> <span class=o>(</span>built-in<span class=o>)</span>&gt;<span class=o>}</span>
+&gt;&gt;&gt;
+&gt;&gt;&gt; import random
+&gt;&gt;&gt;
+&gt;&gt;&gt; globals<span class=o>()</span>
+<span class=o>{</span><span class=s1>&#39;__name__&#39;</span>: <span class=s1>&#39;__main__&#39;</span>, <span class=s1>&#39;__doc__&#39;</span>: None, <span class=s1>&#39;__package__&#39;</span>: None, <span class=s1>&#39;__loader__&#39;</span>: &lt;class <span class=s1>&#39;_frozen_importlib.BuiltinImporter&#39;</span>&gt;, <span class=s1>&#39;__spec__&#39;</span>: None, <span class=s1>&#39;__annotations__&#39;</span>: <span class=o>{}</span>, <span class=s1>&#39;__builtins__&#39;</span>: &lt;module <span class=s1>&#39;builtins&#39;</span> <span class=o>(</span>built-in<span class=o>)</span>&gt;, <span class=s1>&#39;random&#39;</span>: &lt;module <span class=s1>&#39;random&#39;</span> from <span class=s1>&#39;/Users/Leo/.pyenv/versions/3.6.0/lib/python3.6/random.py&#39;</span>&gt;<span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看出，在执行<code>import random</code>命令后，<code>globals()</code>中就新增了<code>random</code>函数的引用。</p>
+<p>因此，导入<code>random</code>依赖库时，我们采用如下的写法也是等价的。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>module_name</span> <span class=o>=</span> <span class=err>”</span><span class=n>random</span><span class=err>“</span>
+<span class=nb>globals</span><span class=p>()[</span><span class=n>module_name</span><span class=p>]</span> <span class=o>=</span> <span class=nb>__import__</span><span class=p>(</span><span class=n>module_name</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>更进一步，<code>__import__</code>作为<code>Python</code>的底层函数，其实是不推荐直接调用的。要实现同样的功能，推荐使用<code>importlib.import_module</code>。替换后就变成了如下形式：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>module_name</span> <span class=o>=</span> <span class=err>”</span><span class=n>random</span><span class=err>“</span>
+<span class=nb>globals</span><span class=p>()[</span><span class=n>module_name</span><span class=p>]</span> <span class=o>=</span> <span class=n>importlib</span><span class=o>.</span><span class=n>import_module</span><span class=p>(</span><span class=n>module_name</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果理解了以上的知识点，那么再给我们一个依赖库名称（字符串形式）的列表时，我们就可以实现动态的导入（<code>import</code>）了。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>import_requires</span><span class=p>(</span><span class=n>modules</span><span class=p>):</span>
+   <span class=s2>&#34;&#34;&#34; import required modules dynamicly
+</span><span class=s2>   &#34;&#34;&#34;</span>
+   <span class=k>for</span> <span class=n>module_name</span> <span class=ow>in</span> <span class=n>modules</span><span class=p>:</span>
+       <span class=nb>globals</span><span class=p>()[</span><span class=n>module_name</span><span class=p>]</span> <span class=o>=</span> <span class=n>importlib</span><span class=o>.</span><span class=n>import_module</span><span class=p>(</span><span class=n>module_name</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在实现了定义<code>lambda</code>函数的<code>function_binds</code>和导入依赖库的<code>requires</code>模块之后，我们就可以在<code>YAML/JSON</code>中灵活地描述测试用例了。</p>
+<p>还是之前的例子，完整的测试用例描述形式就为如下样子。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>create user which does not exist</span><span class=w>
+</span><span class=w>    </span><span class=nt>requires</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- <span class=l>random</span><span class=w>
+</span><span class=w>        </span>- <span class=l>string</span><span class=w>
+</span><span class=w>        </span>- <span class=l>hashlib</span><span class=w>
+</span><span class=w>    </span><span class=nt>function_binds</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span><span class=nt>gen_random_string</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;lambda str_len: &#39;&#39;.join(random.choice(string.ascii_letters + string.digits) for _ in range(str_len))&#34;</span><span class=w>
+</span><span class=w>        </span><span class=nt>gen_md5</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;lambda *str_args: hashlib.md5(&#39;&#39;.join(str_args).encode(&#39;utf-8&#39;)).hexdigest()&#34;</span><span class=w>
+</span><span class=w>    </span><span class=nt>variables</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>TOKEN</span><span class=p>:</span><span class=w> </span><span class=l>debugtalk</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>random</span><span class=p>:</span><span class=w> </span><span class=l>${gen_random_string(5)}</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>data</span><span class=p>:</span><span class=w> </span><span class=s1>&#39;{&#34;name&#34;: &#34;user&#34;, &#34;password&#34;: &#34;123456&#34;}&#39;</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>authorization</span><span class=p>:</span><span class=w> </span><span class=l>${gen_md5($TOKEN, $data, $random)}</span><span class=w>
+</span><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/users/1000</span><span class=w>
+</span><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>POST</span><span class=w>
+</span><span class=w>        </span><span class=nt>headers</span><span class=p>:</span><span class=w>
+</span><span class=w>            </span><span class=nt>Content-Type</span><span class=p>:</span><span class=w> </span><span class=l>application/json</span><span class=w>
+</span><span class=w>            </span><span class=nt>authorization</span><span class=p>:</span><span class=w> </span><span class=l>$authorization</span><span class=w>
+</span><span class=w>            </span><span class=nt>random</span><span class=p>:</span><span class=w> </span><span class=l>$random</span><span class=w>
+</span><span class=w>        </span><span class=nt>data</span><span class=p>:</span><span class=w> </span><span class=l>$data</span><span class=w>
+</span><span class=w>    </span><span class=nt>validators</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expected&#34;: </span><span class=m>201</span>}<span class=w>
+</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;content.success&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expected&#34;: </span><span class=kc>true</span>}<span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>现在我们可以在<code>YAML/JSON</code>文本中⎡灵活⎦地定义函数，实现各种功能了。</p>
+<p>可是，这真的是我们期望的样子么？</p>
+<p>开始的时候，我们想在自动化测试中将<code>测试数据</code>与<code>代码实现</code>进行分离，于是我们引入了<code>YAML/JSON</code>格式的用例形式；为了在<code>YAML/JSON</code>文本格式中实现签名校验等计算功能，我们又引入了<code>function_binds</code>模块，并通过<code>lambda</code>定义函数并与函数名进行绑定；再然后，为了解决定义函数中的依赖库问题，我们又引入了<code>requires</code>模块，动态地加载指定的依赖库。</p>
+<p>而且即使是这样，这种方式也有一定的局限性，当函数较复杂的时候，我们很难将函数内容转换为<code>lambda</code>表达式；虽然理论上所有的函数都能转换为<code>lamda</code>表达式，但是实现的难度会非常高。</p>
+<p>为了不写代码而人为引入了更多更复杂的概念和技术，这已经不再符合我们的初衷了。于是，我开始重新寻找新的实现方式。</p>
+<h2 id=方法二自定义函数模块并进行导入>方法二：自定义函数模块并进行导入</h2>
+<p>让我们再回归基础概念，当我们调用一个函数的时候，究竟发生了什么？</p>
+<p>简单的说，不管是调用一个函数，还是引用一个变量，都会在当前的运行环境上下文（<code>context</code>）中寻找已经定义好的函数或变量。而在<code>Python</code>中，当我们加载一个模块（<code>module</code>）的时候，就会将该模块中的所有函数、变量、类等对象加载进当前的运行环境上下文。</p>
+<p>如果单纯地看这个解释还不清楚，想必大家应该都见过如下案例的形式。假设<code>moduleA</code>模块包含如下定义：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># moduleA</span>
+
+<span class=k>def</span> <span class=nf>hello</span><span class=p>(</span><span class=n>name</span><span class=p>):</span>
+    <span class=k>return</span> <span class=s2>&#34;hello, </span><span class=si>%s</span><span class=s2>&#34;</span> <span class=o>%</span> <span class=n>name</span>
+
+<span class=n>varA</span> <span class=o>=</span> <span class=s2>&#34;I am varA&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么，我们就可以通过如下方式导入<code>moduleA</code>模块中所有内容，并且直接调用。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>moduleA</span> <span class=kn>import</span> <span class=o>*</span>
+
+<span class=nb>print</span><span class=p>(</span><span class=n>hello</span><span class=p>(</span><span class=s2>&#34;debugtalk&#34;</span><span class=p>))</span> <span class=c1># =&gt; hello, debugtalk</span>
+<span class=nb>print</span><span class=p>(</span><span class=n>varA</span><span class=p>)</span> <span class=c1># =&gt; I am varA</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>明确这一点后，既然我们之前都可以动态地导入（<code>import</code>）依赖库，那么我们不妨再进一步，我们同样也可以动态地导入已经定义好的函数啊。</p>
+<p>只要我们先在一个<code>Python</code>模块文件中定义好测试用例所需的函数，然后在运行测试用例的时候设法将模块中的所有函数导入即可。</p>
+<p>于是，问题就转换为，如何在<code>YAML/JSON</code>中实现<code>from moduleA import *</code>机制。</p>
+<p>经过摸索，我发现了<code>Python</code>的<a href=https://docs.python.org/3/library/functions.html#vars><code>vars</code>函数</a>，这也是<code>Python</code>的<code>Built-in Functions</code>之一。</p>
+<p>对于<code>vars</code>，官方的定义如下：</p>
+<blockquote>
+<p>Return the <code>__dict__</code> attribute for a module, class, instance, or any other object with a <code>__dict__</code> attribute.</p>
+</blockquote>
+<p>简言之，就是<code>vars()</code>可以将模块（<code>module</code>）、类（<code>class</code>）、实例（<code>instance</code>）或者任意对象的所有属性（包括但不限于定义的方法和变量），以字典的形式返回。</p>
+<p>还是前面举例的<code>moduelA</code>，相信大家看完下面这个例子就清晰了。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>&gt;&gt;&gt; import moduleA
+&gt;&gt;&gt; vars<span class=o>(</span>moduleA<span class=o>)</span>
+&gt;&gt;&gt; <span class=o>{</span><span class=s1>&#39;hello&#39;</span>: &lt;<span class=k>function</span> hello at 0x1072fcd90&gt;, <span class=s1>&#39;varA&#39;</span>: <span class=s1>&#39;I am varA&#39;</span><span class=o>}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>掌握了这一层理论基础，我们就可以继续改造我们的测试框架了。</p>
+<p>我采取的做法是，在测试用例中新增一个<code>import_module_functions</code>模块，里面可填写多个模块的路径。而测试用例中所有需要使用的函数，都定义在对应路径的模块中。</p>
+<p>我们再回到之前的案例，在测试用例中需要用到<code>gen_random_string</code>和<code>gen_md5</code>这两个函数函数，那么就可以将其定义在一个模块中，假设模块名称为<code>custom_functions.py</code>，相对于项目根目录的路径为<code>tests/data/custom_functions.py</code>。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>import</span> <span class=nn>hashlib</span>
+<span class=kn>import</span> <span class=nn>random</span>
+<span class=kn>import</span> <span class=nn>string</span>
+
+<span class=k>def</span> <span class=nf>gen_random_string</span><span class=p>(</span><span class=n>str_len</span><span class=p>):</span>
+    <span class=k>return</span> <span class=s1>&#39;&#39;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span>
+        <span class=n>random</span><span class=o>.</span><span class=n>choice</span><span class=p>(</span><span class=n>string</span><span class=o>.</span><span class=n>ascii_letters</span> <span class=o>+</span> <span class=n>string</span><span class=o>.</span><span class=n>digits</span><span class=p>)</span> <span class=k>for</span> <span class=n>_</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>str_len</span><span class=p>))</span>
+
+<span class=k>def</span> <span class=nf>gen_md5</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>):</span>
+    <span class=k>return</span> <span class=n>hashlib</span><span class=o>.</span><span class=n>md5</span><span class=p>(</span><span class=s2>&#34;&#34;</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=n>args</span><span class=p>)</span><span class=o>.</span><span class=n>encode</span><span class=p>(</span><span class=s1>&#39;utf-8&#39;</span><span class=p>))</span><span class=o>.</span><span class=n>hexdigest</span><span class=p>()</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，这里的模块文件可以放置在系统的任意路径下，但是一定要保证它可作为<code>Python</code>的模块进行访问，也就是说在该文件的所有父目录中，都包含<code>__init__.py</code>文件。这是<code>Python</code>的语法要求，如不理解可查看官方文档。</p>
+<p>然后，在<code>YAML/JSON</code>测试用例描述的<code>import_module_functions</code>栏目中，我们就可以写为<code>tests.data.custom_functions</code>。</p>
+<p>新的用例描述形式就变成了如下样子。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>create user which does not exist</span><span class=w>
+</span><span class=w>    </span><span class=nt>import_module_functions</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- <span class=l>tests.data.custom_functions</span><span class=w>
+</span><span class=w>    </span><span class=nt>variables</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>TOKEN</span><span class=p>:</span><span class=w> </span><span class=l>debugtalk</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>json</span><span class=p>:</span><span class=w> </span>{<span class=nt>&#34;name&#34;: &#34;user&#34;, &#34;password&#34;: </span><span class=s2>&#34;123456&#34;</span>}<span class=w>
+</span><span class=w>        </span>- <span class=nt>random</span><span class=p>:</span><span class=w> </span><span class=l>${gen_random_string(5)}</span><span class=w>
+</span><span class=w>        </span>- <span class=nt>authorization</span><span class=p>:</span><span class=w> </span><span class=l>${gen_md5($TOKEN, $json, $random)}</span><span class=w>
+</span><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/users/1000</span><span class=w>
+</span><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>POST</span><span class=w>
+</span><span class=w>        </span><span class=nt>headers</span><span class=p>:</span><span class=w>
+</span><span class=w>            </span><span class=nt>Content-Type</span><span class=p>:</span><span class=w> </span><span class=l>application/json</span><span class=w>
+</span><span class=w>            </span><span class=nt>authorization</span><span class=p>:</span><span class=w> </span><span class=l>$authorization</span><span class=w>
+</span><span class=w>            </span><span class=nt>random</span><span class=p>:</span><span class=w> </span><span class=l>$random</span><span class=w>
+</span><span class=w>        </span><span class=nt>json</span><span class=p>:</span><span class=w> </span><span class=l>$json</span><span class=w>
+</span><span class=w>    </span><span class=nt>validators</span><span class=p>:</span><span class=w>
+</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expected&#34;: </span><span class=m>201</span>}<span class=w>
+</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;content.success&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expected&#34;: </span><span class=kc>true</span>}<span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>现在函数已经定义好了，那是怎样实现动态加载的呢？</p>
+<p>首先，还是借助于<code>importlib.import_module</code>，实现模块的导入。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>imported</span> <span class=o>=</span> <span class=n>importlib</span><span class=o>.</span><span class=n>import_module</span><span class=p>(</span><span class=n>module_name</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后，借助于<code>vars</code>函数，可以获取得到模块的所有属性，也就是其中定义的方法、变量等对象。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=nb>vars</span><span class=p>(</span><span class=n>imported</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>不过，由于我们只需要定义的函数，因此我们还可以通过进行过滤，只获取模块中的所有方法对象。当然，这一步不是必须的。</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>imported_functions_dict</span> <span class=o>=</span> <span class=nb>dict</span><span class=p>(</span><span class=nb>filter</span><span class=p>(</span><span class=n>is_function</span><span class=p>,</span> <span class=nb>vars</span><span class=p>(</span><span class=n>imported</span><span class=p>)</span><span class=o>.</span><span class=n>items</span><span class=p>()))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其中，<code>is_function</code>是一个检测指定对象是否为方法的函数，实现形式如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>import</span> <span class=nn>types</span>
+
+<span class=k>def</span> <span class=nf>is_function</span><span class=p>(</span><span class=n>tup</span><span class=p>):</span>
+    <span class=s2>&#34;&#34;&#34; Takes (name, object) tuple, returns True if it is a function.
+</span><span class=s2>    &#34;&#34;&#34;</span>
+    <span class=n>name</span><span class=p>,</span> <span class=n>item</span> <span class=o>=</span> <span class=n>tup</span>
+    <span class=k>return</span> <span class=nb>isinstance</span><span class=p>(</span><span class=n>item</span><span class=p>,</span> <span class=n>types</span><span class=o>.</span><span class=n>FunctionType</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>通过以上代码，就实现了从指定外部模块加载所有方法的功能。完整的代码如下：</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-python data-lang=python>
+<span class=k>def</span> <span class=nf>import_module_functions</span><span class=p>(</span><span class=bp>self</span><span class=p>,</span> <span class=n>modules</span><span class=p>,</span> <span class=n>level</span><span class=o>=</span><span class=s2>&#34;testcase&#34;</span><span class=p>):</span>
+   <span class=s2>&#34;&#34;&#34; import modules and bind all functions within the context
+</span><span class=s2>   &#34;&#34;&#34;</span>
+   <span class=k>for</span> <span class=n>module_name</span> <span class=ow>in</span> <span class=n>modules</span><span class=p>:</span>
+       <span class=n>imported</span> <span class=o>=</span> <span class=n>importlib</span><span class=o>.</span><span class=n>import_module</span><span class=p>(</span><span class=n>module_name</span><span class=p>)</span>
+       <span class=n>imported_functions_dict</span> <span class=o>=</span> <span class=nb>dict</span><span class=p>(</span><span class=nb>filter</span><span class=p>(</span><span class=n>is_function</span><span class=p>,</span> <span class=nb>vars</span><span class=p>(</span><span class=n>imported</span><span class=p>)</span><span class=o>.</span><span class=n>items</span><span class=p>()))</span>
+       <span class=bp>self</span><span class=o>.</span><span class=n>__update_context_config</span><span class=p>(</span><span class=n>level</span><span class=p>,</span> <span class=s2>&#34;functions&#34;</span><span class=p>,</span> <span class=n>imported_functions_dict</span><span class=p>)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>结合到实际项目，我们就可以采取这种协作模式：</p>
+<ul>
+<li>由测试开发或者开发人员将项目中所有依赖的逻辑实现为函数方法，统一放置到一个模块中；</li>
+<li>在<code>YAML/JSON</code>测试用例中，对模块进行引用；（对于测试用例集的模式，只需要引用一次，以后再详细讲解）</li>
+<li>业务测试人员只需要关注接口的业务数据字段，设计测试用例即可。</li>
+</ul>
+<p>可以看出，这也算是软件工程和实际项目中的一种权衡之计，但好处在于能充分发挥各岗位角色人员的职能，有助于接口测试自动化工作的顺利开展。</p>
+<h2 id=总结>总结</h2>
+<p>本文介绍了在<code>YAML/JSON</code>测试用例中实现<code>Python</code>函数定义的两种方法：</p>
+<ul>
+<li>通过<code>lambda</code>实现函数的定义：该种方式适用于函数比较简单的情况，并且函数最好没有依赖库；虽然复杂的函数也能采用这种方式进行定义，但可能会存在一定的局限性，而且看上去也比较累赘。</li>
+<li>自定义函数模块并进行导入：该种方式通用性更强，所有类型的函数都可以通过这种方式进行定义和引用；但由于需要编写额外的<code>Python</code>模块文件，在函数比较简单的情况下反而会显得较为繁琐，此时采用<code>lambda</code>形式会更简洁。</li>
+</ul>
+<p>到现在为止，我们已经清楚了如何在<code>YAML/JSON</code>测试用例中实现函数的定义，但是在<code>YAML/JSON</code>文本中要怎样实现函数的调用和传参呢？</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>variables</span><span class=p>:</span><span class=w>
+</span><span class=w>   </span>- <span class=nt>TOKEN</span><span class=p>:</span><span class=w> </span><span class=l>debugtalk</span><span class=w>
+</span><span class=w>   </span>- <span class=nt>json</span><span class=p>:</span><span class=w> </span>{}<span class=w>
+</span><span class=w>   </span>- <span class=nt>random</span><span class=p>:</span><span class=w> </span><span class=l>${gen_random_string(5)}</span><span class=w>
+</span><span class=w>   </span>- <span class=nt>authorization</span><span class=p>:</span><span class=w> </span><span class=l>${gen_md5($TOKEN, $json, $random)}</span><span class=w>
+</span></code></pre></td></tr></table>
+</div>
+</div><p>例如上面的例子（YAML格式），<code>gen_random_string</code>和<code>gen_md5</code>都是已经定义好的函数，但<code>${gen_random_string(5)}</code>和<code>${gen_md5($TOKEN, $json, $random)}</code>终究只是文本字符串，程序是如何将其解析为真实的函数和参数，并实现调用的呢？</p>
+<p>下篇文章再详细讲解。</p>
+<h2 id=相关文章>相关文章</h2>
+<ul>
+<li><a href=https://debugtalk.com/post/python-functional-programming-getting-started/>《Python的函数式编程&ndash;从入门到⎡放弃⎦》</a></li>
+<li><a href=https://debugtalk.com/post/ApiTestEngine-api-test-best-practice/>《接口自动化测试的最佳工程实践（ApiTestEngine）》</a></li>
+<li><a href=https://debugtalk.com/post/ApiTestEngine-2-best-testcase-description/>《ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式》</a></li>
+<li><a href=https://github.com/debugtalk/ApiTestEngine><code>ApiTestEngine</code> GitHub源码</a></li>
+</ul>
+</div>
+<div class=post-copyright>
+<p class=copyright-item>
+<span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>上次更新</span>
+<span class=item-content>
+2017-07-11
+</span>
+</p>
+<p class=copyright-item>
+<span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
+</p>
+</div>
+<footer class=post-footer>
+<div class=post-tags>
+<a href=https://debugtalk.com/tags/HttpRunner/>HttpRunner</a>
+<a href=https://debugtalk.com/tags/lambda/>lambda</a>
+</div>
+<nav class=post-nav>
+<a class=prev href=/post/ApiTestEngine-4-call-functions-in-yaml-testcases/>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
+</i>
+<span class="prev-text nav-default">ApiTestEngine 演进之路（4）测试用例中实现 Python 函数的调用</span>
+<span class="prev-text nav-mobile">上一篇</span>
+</a>
+<a class=next href=/post/ApiTestEngine-2-best-testcase-description/>
+<span class="next-text nav-default">ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式</span>
+<span class="prev-text nav-mobile">下一篇</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
+</i>
+</a>
+</nav>
+</footer>
+</article>
+<div class="post bg-white">
+<script src=https://utteranc.es/client.js repo=debugtalk/blog issue-term=pathname theme=github-light crossorigin=anonymous async></script>
+</div>
+<div class=disqus-comment>
+<div class=disqus-button id=load_disqus onclick=load_disqus()>
+显示 Disqus 评论
+</div>
+<div id=disqus_thread></div>
+<script type=text/javascript>var disqus_config=function(){this.page.url="https://debugtalk.com/post/ApiTestEngine-3-define-functions-in-yaml-testcases/"};function load_disqus(){var a,b;if(window.location.hostname==='localhost')return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='debugtalk',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a),$('#load_disqus').remove()}</script>
+<noscript>Please enable JavaScript to view the
+<a href=http://disqus.com/?ref_noscript>comments powered by Disqus.</a>
+</noscript>
+</div>
+</div>
+</div>
+</main>
+<footer id=footer class=footer>
+<div class=icon-links>
+<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
+</a>
+<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
+</a>
+<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
+</a>
+</div>
+<div class=copyright>
+<span class=power-by>
+Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
+</span>
+<span class=division>|</span>
+<span class=theme-info>
+Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
+</span>
+<span class=copyright-year>
+&copy;
+2015 -
+2022
+<span class=heart>
+<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
+</i>
+</span><span class=author>
+debugtalk
+</span></span>
+<span id=busuanzi_container>
+访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
+</span>
+</div>
+</footer>
+<div class=back-to-top id=back-to-top>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
+</i>
+</div>
+</div>
+<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
+<script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
+<script type=text/javascript src=/js/load-photoswipe.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
+<script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
+<script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
+<script src=/js/custom.js></script>
+</body>
+</html>
