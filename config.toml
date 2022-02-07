@@ -5,9 +5,9 @@ enableEmoji = true
 theme = "jane"
 
 hasCJKLanguage = true     # has chinese/japanese/korean ? # 自动检测是否包含 中文\日文\韩文
-paginate = 5              # Number of articles displayed on the homepage  # 首页每页显示的文章数
+paginate = 10              # Number of articles displayed on the homepage  # 首页每页显示的文章数
 rssLimit = 10             # Limit Entry Count to Rss file # 限制 Rss 文章输出数量
-disqusShortname = "debugtalk"           # disqus_shortname
+# disqusShortname = "debugtalk"           # disqus_shortname
 googleAnalytics = "UA-81639610-1"       # UA-XXXXXXXX-X
 # copyright = "DebugTalk 2017-2020"            # default: author.name ↓        # 默认为下面配置的author.name ↓
 enableGitInfo = true      # use git commit log to generate lastmod record # 可根据 Git 中的提交生成最近更新记录。
@@ -68,9 +68,9 @@ pygmentsOptions = "linenos=table"
   url = "/index.xml"
 
 [params]
-  since = "2015"            # Site creation time          # 站点建立时间
+  since = "2011"            # Site creation time          # 站点建立时间
   homeFullContent = false    # if false, show post summaries on home page. Othewise show full content.
-  rssFullContent = true     # if false, Rss feed instead of the summary
+  rssFullContent = false     # if false, Rss feed instead of the summary
 
   # site info (optional)                                  # 站点信息（可选，不需要的可以直接注释掉）
   logoTitle = "DebugTalk"        # default: the title value    # 默认值: 上面设置的title值
@@ -81,7 +81,7 @@ pygmentsOptions = "linenos=table"
   dateFormatToUse = "2006-01-02"
 
   # paginate of archives, tags and categories             # 归档、标签、分类每页显示的文章数目
-  archive-paginate = 49
+  archive-paginate = 50
 
   # show word count and read time ?                       # 是否显示字数统计与阅读时间
   moreMeta = true
@@ -110,7 +110,7 @@ pygmentsOptions = "linenos=table"
 
   [params.utteranc]         # utteranc is a comment system based on GitHub issues. see https://utteranc.es
     enable = true
-    repo = "debugtalk/blog"    # The repo to store comments
+    repo = "debugtalk/debugtalk.github.io"    # The repo to store comments
     issueTerm = "pathname"
 
   [params.search.google]    # google custom search, see https://cse.google.com
@@ -119,7 +119,7 @@ pygmentsOptions = "linenos=table"
     title = "Search"
 
   [params.gitInfo]
-    gitRepo = "https://github.com/debugtalk/blog"
+    gitRepo = "https://github.com/debugtalk/debugtalk.github.io"
     showCommitMessage = true
 
   [params.reward]                                         # 文章打赏
