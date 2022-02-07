@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://debugtalk.github.io/sitemap.xml
+Sitemap: https://debugtalk.com/sitemap.xml
