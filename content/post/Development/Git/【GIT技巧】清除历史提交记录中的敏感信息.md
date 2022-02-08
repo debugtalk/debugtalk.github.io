@@ -9,7 +9,7 @@ tags:
   - GitHub
 ---
 
-![](/images/GitHub_hacker.jpg)
+![](/image/GitHub_hacker.jpg)
 
 ## 背景介绍
 

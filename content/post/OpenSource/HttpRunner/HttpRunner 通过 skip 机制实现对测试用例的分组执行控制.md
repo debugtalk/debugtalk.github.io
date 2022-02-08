@@ -187,7 +187,7 @@ def _run_test(self, testcase_dict):
 
 在运行该测试集后，生成的测试报告如下所示。
 
-![](/images/httprunner-skip.jpg)
+![](/image/httprunner-skip.jpg)
 
 
 
