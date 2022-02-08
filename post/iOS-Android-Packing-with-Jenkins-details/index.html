@@ -452,7 +452,7 @@ pod install
 </div><p>可以看出，参数的传递方式很简单，只需要预先定义好了自定义参数，然后就可以通过<code>${Param}</code>的形式来进行调用了。</p>
 <p>不过你也许会问，<code>WORKSPACE</code>和<code>BUILD_NUMBER</code>这两个参数我们并未进行定义，为什么也能进行调用呢？这是因为Jenkins自带部分与项目相关的环境变量，例如<code>BRANCH_NAME</code>、<code>JOB_NAME</code>等，这部分参数可以在shell脚本中直接进行调用。完整的环境变量可在<code>Jenkins_Url/env-vars.html/</code>中查看。</p>
 <p>配置完成后，就可以在<code>Build with Parameters</code>中通过如下形式手动触发构建。</p>
-<p><img src=/images/Jenkins_manul_build.jpg alt="Jenkins manul build"></p>
+<p><img src=/image/Jenkins_manul_build.jpg alt="Jenkins manul build"></p>
 <h3 id=2修改build名称>2、修改build名称</h3>
 <p>在<code>Build History</code>列表中，构建任务的名称默认显示为按照build次数递增的<code>BUILD_NUMBER</code>。有时候我们可能想在build名称中包含更多的信息，例如包含当次构建的<code>SCHEME</code>和<code>CONFIGURATION</code>，这时我们就可以通过修改<code>BuildName</code>实现。</p>
 <p>Jenkins默认不支持<code>BuildName</code>设置，但可通过安装<code>build-name-setter</code>插件进行实现。安装<code>build-name-setter</code>插件后，在配置页面的<code>Build Environment</code>栏目下会出现<code>Set Build Name</code>配置项，然后在<code>Build Name</code>中就可以通过环境变量参数来设置build名称。</p>
@@ -460,10 +460,10 @@ pod install
 <p>除了在<code>Build Name</code>中传递环境变量参数，<code>build-name-setter</code>还可以实现许多更加强大的自定义功能，大家可自行探索。</p>
 <h3 id=3展示二维码图片>3、展示二维码图片</h3>
 <p>然后再说下如何在<code>Build History</code>列表中展示每次构建对应的二维码图片。</p>
-<p><img src=/images/Jenkins_build_history.jpg alt="Jenkins build history"></p>
+<p><img src=/image/Jenkins_build_history.jpg alt="Jenkins build history"></p>
 <p>需要说明的是，在上图中，绿色框对应的内容是<code>BuildName</code>，我们可以通过<code>build-name-setter</code>插件来实现自定义配置；但是红色框已经不在<code>BuildName</code>的范围之内，而是对应的<code>BuildDescription</code>。</p>
 <p>同样地，Jenkins默认不支持在构建过程中自动修改<code>BuildDescription</code>，需要通过安装<code>description setter plugin</code>插件来辅助实现。安装<code>description setter plugin</code>插件后，在配置页面的<code>Build</code>栏目下，<code>Add build step</code>中会出现<code>Set build description</code>配置项，添加该配置项后就会出现如下配置框。</p>
-<p><img src=/images/Jenkins_set_build_description.jpg alt="Jenkins set build description"></p>
+<p><img src=/image/Jenkins_set_build_description.jpg alt="Jenkins set build description"></p>
 <p>该功能的强大之处在于，它可以在构建日志中通过正则表达式来匹配内容，并将匹配到的内容添加到<code>BuildDescription</code>中去。</p>
 <p>例如，我们想要展示的二维码图片是在每次构建过程中生成的，因此我们首先要获取到二维码图片文件。</p>
 <p>我的做法是，在<code>build.py</code>中将蒲公英平台返回的应用下载页面地址和二维码图片地址打印到log中。</p>
@@ -503,7 +503,7 @@ Save QRCode image to file: /Users/Leo/.jenkins/workspace/DebugTalk_Plus_Store_iO
 <p>在上面讲解的展示二维码图片一节中，用到了<code>${BUILD_URL}artifact/build_outputs/QRCode.png</code>一项，这里的URL就是用到了编译成果物收集后保存的路径。</p>
 <p><code>Archives build artifacts</code>是Jenkins默认自带的功能，无需安装插件。该功能在配置页面的<code>Post-build Actions</code>栏目下，在<code>Add post-build action</code>的列表中选择添加<code>Archives build artifacts</code>。</p>
 <p>添加后的配置页面如下图所示：</p>
-<p><img src=/images/Jenkins_archive_the_artifacts.jpg alt="Jenkins archive the artifacts"></p>
+<p><img src=/image/Jenkins_archive_the_artifacts.jpg alt="Jenkins archive the artifacts"></p>
 <p>通常，我们只需要配置<code>Files to archive</code>即可。定位文件时，可以通过正则表达式进行匹配，也可以调用项目的环境变量；多个文件通过逗号进行分隔。</p>
 <p>例如，假如我们想收集<code>QRCode.png</code>、<code>StoreCI_Release.ipa</code>、<code>Info.plist</code>这三个文件，那么我们就可以通过如下表达式来进行指定。</p>
 <div class=highlight><div class=chroma>
@@ -516,7 +516,7 @@ Save QRCode image to file: /Users/Leo/.jenkins/workspace/DebugTalk_Plus_Store_iO
 </div>
 </div><p>当然，目标文件的具体位置是我们在构建脚本（<code>build.py</code>）中预先进行处理的。</p>
 <p>通过这种方式，我们就可以实现在每次完成构建后将需要的文件收集起来进行存档，以便后续在Jenkins的任务页面中进行下载。</p>
-<p><img src=/images/Jenkins_show_artifacts.jpg alt="show artifacts of Jenkins"></p>
+<p><img src=/image/Jenkins_show_artifacts.jpg alt="show artifacts of Jenkins"></p>
 <p>也可以直接通过归档文件的URL进行访问。例如，上图中<code>QRCode.png</code>的URL为<code>Jenkins_Url/job/JenkinsJobName/131/artifact/build_outputs/QRCode.png</code>，而<code>Jenkins_Url/job/JenkinsJobName/131/</code>即是<code>${BUILD_URL}</code>，因此可以直接通过<code>${BUILD_URL}artifact/build_outputs/QRCode.png</code>引用。</p>
 <h2 id=总结>总结</h2>
 <p>至此，<a href=/post/iOS-Android-Packing-with-Jenkins/>《使用Jenkins搭建iOS/Android持续集成打包平台》</a>一文中涉及到的Jenkins配置和构建脚本实现细节均已补充完毕了。相信大家结合这两篇文章，应该会对如何使用Jenkins搭建iOS/Android持续集成打包平台的基础概念和实现细节都有一个比较清晰的认识。</p>

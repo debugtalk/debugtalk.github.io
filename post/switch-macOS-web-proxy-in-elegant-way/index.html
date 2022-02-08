@@ -173,7 +173,7 @@ DebugTalk
 </div>
 <div class=post-content>
 <p>在<code>macOS</code>中配置Web代理时，通常的做法是在控制面板中进行操作，<code>System Preferences</code> -> <code>Network</code> -> <code>Advanced</code> -> <code>Proxies</code>.</p>
-<p><img src=/images/macOS-Web-Proxy-Setting.jpg alt=macOS-Web-Proxy-Setting></p>
+<p><img src=/image/macOS-Web-Proxy-Setting.jpg alt=macOS-Web-Proxy-Setting></p>
 <p>这种配置方式虽然可以实现需求，但缺点在于操作比较繁琐，特别是在需要频繁切换的情况下，效率极其低下。</p>
 <p>基于该痛点，我们希望能避免重复操作，实现快速切换配置。</p>
 <h2 id=terminal中实现网络代理配置>Terminal中实现网络代理配置</h2>
@@ -309,7 +309,7 @@ $ networksetup -setsecurewebproxystate &lt;networkservice&gt; &lt;on off&gt;
 </code></pre></td></tr></table>
 </div>
 </div><p>配置十分简洁清晰，不用解释也能看懂。完成配置后，在<code>macOS</code>顶部菜单栏中就会出现如下效果的快捷方式。</p>
-<p><img src=/images/shuttle-preview.png alt=macOS-Web-Proxy-Setting></p>
+<p><img src=/image/shuttle-preview.png alt=macOS-Web-Proxy-Setting></p>
 <p>后续，我们就可以通过快捷方式实现一键切换HTTP(S)代理配置、一键启动<code>mitmproxy</code>抓包工具了。</p>
 <p>说到<a href=https://github.com/mitmproxy/mitmproxy><code>mitmproxy</code></a>这款开源的抓包工具，只能说相见恨晚，第一次使用它时就被惊艳到了，情不自禁地想给它点个赞！自从使用了<code>mitmproxy</code>，我现在基本上就不再使用<code>Fiddler</code>和<code>Charles</code>了，日常工作中HTTP(S)抓包任务全靠它搞定。</p>
 <p>哦对了，<code>mitmproxy</code>不仅可以实现抓包任务，还可以跟<a href=https://github.com/locustio/locust><code>locust</code></a>性能测试工具紧密结合，直接将抓取的数据包生成<code>locust</code>脚本啊！</p>

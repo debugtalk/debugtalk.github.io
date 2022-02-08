@@ -220,7 +220,7 @@ SIP系统只有两种构件，即用户代理（user agent）和网络服务器�
 网络服务器分为代理服务器（proxy server）和重定向服务器（redirect server）。代理服务器接受来自主叫用户的呼叫请求（实际上是来自用户代理客户端UAC的呼叫请求），并将其转发给被叫用户或下一跳代理服务器；若转发给下一跳代理服务器，则下一跳代理服务器再把呼叫请求转发给被叫用户（实际上是转发给用户代理服务器UAS）。重定向服务器不接受呼叫，它通过响应告诉客户下一跳代理服务器的地址，由客户按此地址向下一跳代理服务器重新发送呼叫请求。
 SIP的会话共有三个阶段：建立会话、通信和终止会话。图1给出了一个简单的SIP会话的例子。其中建立会话阶段和终止会话阶段都是使用SIP协议，而中间的通信阶段是使用如RTP这样的传送实时话音分组的协议。</p>
 <p>{: .center}
-<img src=/images/20140511201122_SIP_Simple_Session.png alt=SIP_Simple_Session>
+<img src=/image/20140511201122_SIP_Simple_Session.png alt=SIP_Simple_Session>
 图1 SIP的简单会话过程</p>
 <p>在图1中，主叫方（Tesla）先向被叫方（Marconi）发出INVITE报文，这个报文中含有双方的地址信息以及一些其它信息（如通话时话音编码方式等）；被叫方收到请求后，会返回180 Ringing的状态码，并处于振铃状态；若被叫方接受呼叫请求，则返回200 OK的状态码；主叫方再发送ACK报文作为确认（类似于TCP建立连接时的三次握手），然后双方便完成连接，可以进行通话了；通话过程中，双方中的任何一方都可以发送BYE报文以终止会话。如上便是SIP会话的全过程。</p>
 <h2 id=sipp工具介绍>SIPp工具介绍</h2>
@@ -265,7 +265,7 @@ SIPp can be used to test various real SIP equipment like SIP proxies, B2BUAs, SI
 </ul>
 <p>图2是对第三种模式的描述。</p>
 <p>{: .center}
-<img src=/images/20140511201122_SIPp_Operating_Principle.jpg alt=SIPp_Operating_Principle>
+<img src=/image/20140511201122_SIPp_Operating_Principle.jpg alt=SIPp_Operating_Principle>
 图2 SIPp工作原理</p>
 <p>在该种模式下，需先运行服务端UAS，然后再运行客户端UAC。接下来，UAC便参照uac.xml场景文件的描述，发起呼叫；而UAS则参照uas.xml场景文件的描述，对呼叫进行响应；整个通讯过程遵循SIP协议，在本文的1.4节已经进行了介绍。</p>
 <h2 id=sipp的使用>SIPp的使用</h2>
@@ -503,7 +503,7 @@ Fred;sipphone94
 </div>
 </div><p>XML调用CSV的具体方式如图3所示。</p>
 <p>{: .center}
-<img src=/images/20140511201122_XML_Invoke_CSV.jpg alt=XML_Invoke_CSV>
+<img src=/image/20140511201122_XML_Invoke_CSV.jpg alt=XML_Invoke_CSV>
 图3 XML调用CSV的原理</p>
 <h3 id=uacbat>uac.bat</h3>
 <div class=highlight><div class=chroma>
@@ -540,7 +540,7 @@ Fred;sipphone94
 网络环境：湖北省公安信息网。</p>
 <p>测试环境的网络拓扑图如图4所示。</p>
 <p>{: .center}
-<img src=/images/20140511201122_Network_Topology_Map.gif alt=Network_Topology_Map>
+<img src=/image/20140511201122_Network_Topology_Map.gif alt=Network_Topology_Map>
 图4 被测系统的网络拓扑图</p>
 <h3 id=测试方法>测试方法</h3>
 <p>利用SIPp测试工具模拟电话终端，向物理电话机终端发起呼叫，保持呼叫16秒后，SIPp终止呼叫。

@@ -176,10 +176,10 @@ DebugTalk
 <h2 id=获取http请求>获取HTTP请求</h2>
 <p>在<code>天气预报WebService服务</code>的各个接口介绍页面中，均包含一个测试工具，可对接口进行调用测试。</p>
 <p>例如，接口getWeatherbyCityName的测试工具如下图所示。在theCityName参数框内输入城市的名称，点击【调用】按钮，即可实现对getWeatherbyCityName接口的调用，并获得返回结果。</p>
-<p><img src=/images/150213_01.png alt></p>
+<p><img src=/image/150213_01.png alt></p>
 <p>在WebService的调用过程中，我们无需关注它具体是采用什么样的通讯协议，因为不管是何种通讯协议，具体传输实现还是会依赖于HTTP。因此，我们可以通过HTTP抓包工具对WebService调用过程中的通讯交互数据包进行捕捉。</p>
 <p>在这里我们采用Fiddler Web Debugger进行演示。在浏览器中调用接口getWeatherbyCityName的测试工具时，在Fiddler中抓取到对应的HTTP请求，如下图所示。</p>
-<p><img src=/images/150213_02.png alt></p>
+<p><img src=/image/150213_02.png alt></p>
 <p>从该HTTP请求可以获得如下关键信息：</p>
 <ul>
 <li>HTTP请求类型为POST，HTTP版本为1.1</li>
@@ -189,14 +189,14 @@ DebugTalk
 <p>使用获取到的HTTP信息，可构造HTTP请求，从HTTP协议层面对WebService进行调用。</p>
 <h2 id=在fiddler中构造http请求>在Fiddler中构造HTTP请求</h2>
 <p>在Fiddler中，可使用Composer对HTTP请求进行构造，如下图所示。</p>
-<p><img src=/images/150213_03.png alt></p>
+<p><img src=/image/150213_03.png alt></p>
 <p>在Request Body中，修改请求参数theCityName为不同的城市（例如，重庆），Execute请求，查看返回结果。</p>
-<p><img src=/images/150213_04.png alt></p>
+<p><img src=/image/150213_04.png alt></p>
 <h2 id=在loadrunner中构造http请求>在LoadRunner中构造HTTP请求</h2>
 <p>若要进行性能测试，则需在性能测试工具中构造HTTP请求，再通过多进程或多线程机制实现并发压力测试。</p>
 <p>在LoadRunner中，可在Web(HTTP/HTML)虚拟用户协议中，采用web_custom_request函数来构造HTTP请求。</p>
 <p>具体的代码实现及回放结果如下图所示。</p>
-<p><img src=/images/150213_05.png alt></p>
+<p><img src=/image/150213_05.png alt></p>
 <p>虽然在LoadRunner中返回的中文显示为乱码，但是从城市编码（57516）可以看出，脚本执行后返回了正确的结果。</p>
 <h2 id=写在后面>写在后面</h2>
 <p>通过这篇文章可以看出，在通讯协议层面上对应用服务进行测试时，可以采用更底层的协议。当然，由于HTTP协议是基于Socket的，在测试WebService时也可以从Socket协议层面进行测试，但估计没人会那么去做。</p>

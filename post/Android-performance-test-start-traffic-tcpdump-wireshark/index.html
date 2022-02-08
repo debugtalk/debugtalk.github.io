@@ -212,19 +212,19 @@ tcpdump: listening on any, link-type LINUX_SLL <span class=o>(</span>Linux cooke
 <p>至于为什么有了<code>tcpdump</code>还要用<code>wireshark</code>来解析，这主要还是因为<code>wireshark</code>是图形界面，操作和使用上更友好一些。</p>
 <p>在<code>wireshark</code>中分析pcap文件十分简单，只需要直接打开文件，就可以看到抓包过程中捕获的所有网络通讯数据。不过，由于我们抓包获得的数据是系统层面的，除了我们关注的与美国服务器的通讯交互外，还包含了非常多的其它通讯信息。</p>
 <p>好在<code>wireshark</code>有非常强大的筛选功能。对于本案例，我们可以先确定出美国服务器的host或IP，例如host为<code>ucus.ucweb.com</code>，那么我们就可以在筛选器中通过<code>http.host == "ucus.ucweb.com"</code>语句，即可筛选出所有本地与美国服务器的通讯交互数据。</p>
-<p><img src=/images/wireshark_host_filter.png alt="wireshark host filter"></p>
+<p><img src=/image/wireshark_host_filter.png alt="wireshark host filter"></p>
 <p>对于更丰富的筛选功能，大家可以根据实际需求查询<code>wireshark</code>的帮助文档，在此就不再进行展开。</p>
 <p>从上图的筛选结果中可以看到，美国服务器的地址为<code>168.235.199.134</code>。那接下来如何查看通讯的流量大小呢？</p>
 <p>首先，找出该次请求的<code>TCP Stream</code>。</p>
-<p><img src=/images/wireshark_tcp_stream_menu.png alt="wireshark tcp stream menu"></p>
+<p><img src=/image/wireshark_tcp_stream_menu.png alt="wireshark tcp stream menu"></p>
 <p>在筛选出的<code>TCP Stream</code>中，将各条记录的Length进行求和，即可得到总的大小。</p>
-<p><img src=/images/wireshark_tcp_stream_data.png alt="wireshark tcp stream data"></p>
+<p><img src=/image/wireshark_tcp_stream_data.png alt="wireshark tcp stream data"></p>
 <p>例如，发送流量的总和，即<code>100.84.126.160</code>-><code>168.235.199.134</code>的总和，加和总值为3722bytes；接收流量的总和，即<code>168.235.199.134</code>-><code>100.84.126.160</code>的总和，加和总值为6300bytes。</p>
 <p>当然，这里只是为了讲解计算流量的原理，实际上，我们并不需要去进行这个计算，可以直接读取得到总值。</p>
 <p>【Statistics】->【Endpoints】</p>
-<p><img src=/images/wireshark_endpoints_menu.png alt="wireshark endpoints menu"></p>
+<p><img src=/image/wireshark_endpoints_menu.png alt="wireshark endpoints menu"></p>
 <p>在Endpoints界面中，选择<code>TCP</code> tab，勾选“Limit to display filter”，即可看到通讯流量汇总数据。</p>
-<p><img src=/images/wireshark_tcp_stream_data.png alt="wireshark tcp stream data"></p>
+<p><img src=/image/wireshark_tcp_stream_data.png alt="wireshark tcp stream data"></p>
 <p>可以看出，这个的汇总数值与前面计算得到的数值完全相同。</p>
 <h2 id=自动化测试脚本>自动化测试脚本</h2>
 <p>通过前面的人工分析，我们已经掌握了分析特定流量的一般性方法。然而，要想将此种场景的流量测试加入持续集成自动化测试系统，采用以上方法显然是不行的。</p>

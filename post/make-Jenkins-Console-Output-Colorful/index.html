@@ -178,12 +178,12 @@ DebugTalk
 <h2 id=安装--配置>安装 && 配置</h2>
 <p>安装的方式很简单，【Manage Jenkins】->【Manage Plugins】，搜索<code>AnsiColor</code>进行安装即可。</p>
 <p>安装完成后，在Jenkins Project的<code>Configure</code>页面中，<code>Build Environment</code>栏目下会多出<code>Color ANSI Console Output</code>配置项，勾选后即可开启颜色输出配置。</p>
-<p><img src=/images/Jenkins_Color_ANSI_Console_Output.jpg alt="Jenkins Color ANSI Console Output"></p>
+<p><img src=/image/Jenkins_Color_ANSI_Console_Output.jpg alt="Jenkins Color ANSI Console Output"></p>
 <p>在<code>ANSI color map</code>的列表选择框中，存在多个选项，默认情况下，选择<code>xterm</code>即可。</p>
 <p>保存配置后，再次执行构建时，就可以在<code>Console</code>中看到颜色输出了。</p>
 <h2 id=效果图>效果图</h2>
 <p>使用<code>xctool</code>命令编译iOS应用时，在Jenkins的<code>Console output</code>中会看到和<code>Terminal</code>中一样的颜色效果。</p>
-<p><img src=/images/Jenkins_Console_Output_Colored.jpg alt="Jenkins Console Output Colored"></p>
+<p><img src=/image/Jenkins_Console_Output_Colored.jpg alt="Jenkins Console Output Colored"></p>
 <h2 id=补充说明>补充说明</h2>
 <p>需要说明的是，在输出日志中显示颜色，依赖于输出的日志本身。也就是说，如果输出日志时并没有<code>ANSI escape sequences</code>，那么安装该插件后也没有任何作用，并不会凭空给日志加上颜色。</p>
 <p>例如，如果采用<code>xcodebuild</code>命令编译iOS应用，那么输出日志就不会显示颜色。</p>
@@ -284,7 +284,7 @@ DebugTalk
 </code></pre></td></tr></table>
 </div>
 </div><p>展示效果如下图所示。</p>
-<p><img src=/images/Terminal_Output_Colored.jpg alt="Terminal Output Colored"></p>
+<p><img src=/image/Terminal_Output_Colored.jpg alt="Terminal Output Colored"></p>
 <p>是不是好看多了？</p>
 </div>
 <div class=post-copyright>

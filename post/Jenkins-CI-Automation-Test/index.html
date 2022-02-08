@@ -228,11 +228,11 @@ $ ruby run.rb -p <span class=s2>&#34;</span><span class=si>${</span><span class=
 <p>关于Jenkins的相关基础概念、实施流程和配置细节，我在<a href=/tags/Jenkins/>之前的文章</a>中已经讲解得非常详细了。在此我就只进行一点补充。</p>
 <p>要实现在构建完成后再运行一些额外的脚本，例如我们的构建检查命令，需要使用到Jenkins的一个插件，<code>Post-Build Script Plug-in</code>。</p>
 <p>安装完该插件后，在Jenkins配置界面的<code>Post-build Actions</code>栏目中，<code>Add post-build action</code>选项列表中就会多出<code>Execute a set of scripts</code>选项。选择该项后，会出现如下配置界面。</p>
-<p><img src=/images/Jenkins_Post_build_Actions_Execute_shell_menu.jpg alt="Jenkins Post_build_Actions Execute_shell menu"></p>
+<p><img src=/image/Jenkins_Post_build_Actions_Execute_shell_menu.jpg alt="Jenkins Post_build_Actions Execute_shell menu"></p>
 <p>选择<code>Execute shell</code>后，会出现一个文本框，然后我们就可以将构建检查的命令填写到里面。</p>
-<p><img src=/images/Jenkins_Post_build_Actions_Execute_shell.jpg alt="Jenkins Post_build_Actions Execute_shell"></p>
+<p><img src=/image/Jenkins_Post_build_Actions_Execute_shell.jpg alt="Jenkins Post_build_Actions Execute_shell"></p>
 <p>在这里我们用到了<code>${AppiumBooster_Folder}</code>参数，该参数也需要通过<code>String Parameter</code>来进行定义，用于指定<code>AppiumBooster</code>项目的路径。</p>
-<p><img src=/images/Jenkins_String_Parameter.jpg alt="Jenkins String Parameter"></p>
+<p><img src=/image/Jenkins_String_Parameter.jpg alt="Jenkins String Parameter"></p>
 <p>最后，为了便于将执行自动化测试用例的日志和执行构建的日志分开，我们将执行自动化测试用例的日志写入到了<code>test_result.log</code>文件中。然后，在<code>Archives build artifacts</code>中就可以通过<code>${AppiumBooster_Folder}/test_result.log</code>将执行构建检查的日志收集起来，并展示到每次构建的页面中。</p>
 <p>延续一贯的<code>开箱即用</code>原则，我将使用Jenkins实现持续集成构建检查涉及到的Jenkins配置也做成了一套模板，并更新到【<a href=https://github.com/debugtalk/JenkinsTemplateForApp>debugtalk/JenkinsTemplateForApp</a>】中了，供大家参考。</p>
 <h2 id=写在最后>写在最后</h2>

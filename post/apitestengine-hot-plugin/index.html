@@ -236,7 +236,7 @@ DebugTalk
 <li>将<code>debugtalk.py</code>函数模块中的变量和函数导入到当前框架运行的内存空间。</li>
 </ul>
 <p>将这两点与测试用例引擎的实现机制结合起来，<code>ApiTestEngine</code>在运行过程中的热加载机制应该就如下图所示。</p>
-<p><img src=/images/ate-hot-plugin.png alt></p>
+<p><img src=/image/ate-hot-plugin.png alt></p>
 <p>这个流程图对热加载机制描述得已经足够清晰了，我再针对其中的几个点进行说明：</p>
 <p>1、在初始化测试用例集（testset）的时候，除了将<code>config</code>中<code>variables</code>和<code>import_module_items</code>指定的变量和函数导入外，还会默认导入<code>ate/built_in.py</code>模块。之所以这么做，是因为对于大多数系统可能都会用到一些通用的函数，例如获取当前时间戳（<code>get_timestamp</code>）、生成随机字符串（<code>gen_random_string</code>）等。与其在每个项目中都单独去实现这些函数，不如就将其添加到框架中作为默认支持的函数（相当于框架层面的<code>debugtalk.py</code>），这样大家在项目中就不需要再重复做这些基础性工作了。</p>
 <p>2、在<code>ApiTestEngine</code>框架中，存在测试用例（<code>testcase</code>）和测试用例集（<code>testset</code>）两个层面的作用域，两者的界限十分明确。这样设计的目的在于，我们既可以实现用例集层面的变量和函数的定义和导入，也可以保障各个用例之间的独立性，不至于出现作用域相互污染的情况。具体地，作用域在用例集初始化时定义或导入的变量和函数，会存储在用例集层面的作用域；而在运行每条测试用例时，会先继承（<code>deepcopy</code>）用例集层面的作用域，如果存在同名的变量或函数定义，则会对用例集层面的变量和函数进行覆盖，同时用例集层面的变量和函数也并不会被修改。</p>

@@ -273,7 +273,7 @@ https://leolee:340d247cxxxxxxxxf39556e38fe2b0baxxxxxxxx@github.com
 <p>这时基本上是毫无思路了，只能靠各种胡乱猜测，甚至尝试采用Wireshark分别在两台Mac上对<code>git clone</code>的过程进行抓包，对比通讯数据的差异，但都没有找到答案。</p>
 <p>最后，无意中想到了Mac的<code>Keychain</code>机制。在Mac OSX的<code>Keychain</code>中，可以保存用户的账号密码等<code>credentials</code>，那git账号会不会也保存到<code>Keychain</code>中了呢？</p>
 <p>在Macbook Air中打开<code>Keychain Access</code>应用软件，搜索<code>github</code>，果然发现存在记录。</p>
-<p><img src=/images/Mac_Keychain_GitHub.jpg alt="Mac Keychain of GitHub"></p>
+<p><img src=/image/Mac_Keychain_GitHub.jpg alt="Mac Keychain of GitHub"></p>
 <p>而且，<code>github.com</code>这一项还存在两条记录。一条是我的个人账号<code>debugtalk</code>，另一条是公司的工作账号<code>leolee</code>。</p>
 <p><strong>至此，真相大白！！！</strong></p>
 <p>在我的Macbook Air中，<code>Keychain Access</code>中保存了我的GitHub个人账号（<code>debugtalk</code>），该账号是没有权限访问公司私有仓库的。但是在Terminal中执行<code>git clone</code>命令时，系统优先读取了我的个人账号，并用该账号向GitHub发起校验请求，从而造成读取公司私有仓库时权限校验失败。然而，在<code>HTTPS</code>协议的URL地址中加上GitHub工作账号（<code>leolee</code>）时，由于此时指定了账号名称，因此在<code>Keychain</code>中读取账号信息时就可以找到对应账号（包含密码），并且在无需输入密码的情况下就能成功通过GitHub的权限校验，进而成功<code>clone</code>得到代码。</p>

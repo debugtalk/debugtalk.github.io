@@ -200,7 +200,7 @@ DebugTalk
 <p>要造一个轮子，最好是先看下现有知名轮子的实现机制。之前有用过一段时间的 LoadRunner，对其参数化机制印象蛮深的，虽然它是性能测试工具，但在脚本参数化方面是通用的。</p>
 <p>我们先看下在 LoadRunner 中是如何实现参数化的。</p>
 <p>在 LoadRunner 中，可以在脚本中创建一个参数，然后参数会保存到一个<code>.dat</code>的文件中，例如下图中的<code>psd.dat</code>。</p>
-<p><img src=/images/loadrunner-parameterize.jpg alt></p>
+<p><img src=/image/loadrunner-parameterize.jpg alt></p>
 <p>在<code>.dat</code>文件中，是采用表格的形式来存储参数值，结构与<code>CSV</code>基本一致。</p>
 <p>对于单个独立参数，可以将参数列表保存在一个单独的<code>.dat</code>文件中，第一行为参数名称，后续每一行为一个参数值。例如本文背景介绍中的第一类场景，数据存储形式如下所示：</p>
 <div class=highlight><div class=chroma>
@@ -514,7 +514,7 @@ x &amp; y:
 <h3 id=参数化数据驱动>参数化数据驱动</h3>
 <p>现在，我们已经实现了在<code>YAML/JSON</code>测试用例文件中对参数进行配置，从<code>.csv</code>数据源文件中解析出参数列表，并且生成所有可能的组合情况。最后还差一步，就是如何使用参数值来驱动测试用例的执行。</p>
 <p>听上去很高大上，但实际却异常简单，直接对照着<a href=https://github.com/HttpRunner/HttpRunner/commit/f8569aad914d4fe47ec24ac2e2e472b7b93c310d#diff-fe4aef5754006b3e9100eb41eb3ca28cR57>代码</a>来说吧。</p>
-<p><img src=/images/httprunner-parameterize.jpg alt></p>
+<p><img src=/image/httprunner-parameterize.jpg alt></p>
 <p>对于每一组参数组合情况来说，我们完全可以将其视为当前用例集运行时定义的变量值。而在 HttpRunner 中每一次运行测试用例集的时候都需要对<code>runner.Runner</code>做一次初始化，里面会用到定义的变量（即<code>config_dict["variables"]</code>），那么，我们完全可以在每次初始化的时候将组合好的参数作为变量传进去，假如存在同名的变量，就进行覆盖。</p>
 <p>这样一来，我们就可以使用所有的参数组合情况来依次驱动测试用例的执行，并且每次执行时都采用了不同的参数，从而也就实现了参数化数据驱动的目的。</p>
 <h2 id=效果展示>效果展示</h2>

@@ -174,12 +174,12 @@ DebugTalk
 <p>这里就有一个案例。</p>
 <p>某美发网上商城（以下简称S商城）在微信平台上举办了一场在线投票活动，微信用户可通过活动链接访问到投票页面，对喜欢的发型师作品进行投票；每个微信帐号每天只能给单个作品投1张选票。</p>
 <p>投票活动页面如下图所示：</p>
-<p><img src=/images/voteRobot_01.png alt="vote activity overview"></p>
+<p><img src=/image/voteRobot_01.png alt="vote activity overview"></p>
 <h2 id=漏洞分析>漏洞分析</h2>
 <p>表面上看，S商城已经对投票活动进行了反作弊处理，因为限制了每个微信用户每天只能投一张票。如果用户都是正常地通过微信访问这个投票服务进行投票的话，的确是能起到预期效果的。</p>
 <p>然而，如果查看投票页面的原始地址，即按住页面向下拖动，会发现屏幕顶端显示为"本网页由XXX提供"，需要注意的是，这里的"XXX"并不是"mp.weixin.qq.com"，而是S商城的域名。也就是说，这个投票活动的程序是运行在S商城的服务器上面的。</p>
 <p>基于以上分析，可以推断出用户投票操作的网络拓扑结构示意图应该是这样的：</p>
-<p><img src=/images/voteRobot_02.png alt="vote system network structure"></p>
+<p><img src=/image/voteRobot_02.png alt="vote system network structure"></p>
 <p>微信用户访问投票页面时，微信服务器只是进行了请求转发，具体的投票计数与校验都是在S商城的服务器上的。</p>
 <p>那么，S商城是怎么来区分投票用户的呢？</p>
 <p>这里就涉及到微信公众平台<code>OpenID</code>的概念了。官方对<code>OpenID</code>的解释是：加密后的微信号，每个用户对每个公众号的OpenID是唯一的。</p>

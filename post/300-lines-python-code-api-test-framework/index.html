@@ -170,7 +170,7 @@ DebugTalk
 <p>当然，我没好意思跟他说的是，我不会Java啊。不过最主要的原因嘛，还是因为Python的语法简洁，可以采用很少的代码量实现丰富的功能。</p>
 <p>有多简洁呢？</p>
 <p>刚在<code>coveralls</code>上看了下<a href=https://github.com/debugtalk/ApiTestEngine><code>ApiTestEngine</code></a>框架的<a href="https://coveralls.io/github/debugtalk/ApiTestEngine?branch=master">代码统计行数</a>，总行数只有268行，还不足300行。</p>
-<p><img src=/images/ApiTestEngine-stat-ate.jpg alt></p>
+<p><img src=/image/ApiTestEngine-stat-ate.jpg alt></p>
 <p>当然，这个行数指的是框架本身的<code>Python</code>代码行数，不包括示例注释的行数。从上图可以看出来，<code>LINES</code>列是文件总行数，<code>RELEVANT</code>列是实际的<code>Python</code>代码行数。例如<code>ate/runner.py</code>文件，注释的行数是远多于实际代码行数的。</p>
 <p>最极端的一个例子是，<code>ate/testcase.py</code>文件中的<a href=https://github.com/debugtalk/ApiTestEngine/blob/master/ate/testcase.py><code>parse</code>函数</a>，示例注释行数35行，<code>Python</code>代码只有2行。</p>
 <div class=highlight><div class=chroma>
@@ -254,7 +254,7 @@ DebugTalk
 </code></pre></td></tr></table>
 </div>
 </div><p>另外，如果算上单元测试用例的行数（731行），总的<code>Python</code>代码行数能达到1000行的样子。嗯，代码可以精简，但是单元测试覆盖率还是要保证的，不达到90%以上的单元测试覆盖率，真不好意思说自己做了开源项目啊。</p>
-<p><img src=/images/ApiTestEngine-stat-all.jpg alt></p>
+<p><img src=/image/ApiTestEngine-stat-all.jpg alt></p>
 <p>那这不足300行的Python代码，实际实现了哪些功能呢？</p>
 <p>对比下<a href=https://debugtalk.com/post/ApiTestEngine-api-test-best-practice/>《接口自动化测试的最佳工程实践（ApiTestEngine）》</a>中规划的特性，已经实现了大半（前六项），至少已经算是一个有模有样的接口测试框架了。</p>
 <ul>

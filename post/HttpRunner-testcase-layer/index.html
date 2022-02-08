@@ -262,13 +262,13 @@ DebugTalk
 <li>场景C：注销登录（<code>API_7/8</code>）、查看登录状态（<code>API_6</code>）、注册新账号（<code>API_1/2</code>）。</li>
 </ul>
 <p>按照常规的接口测试用例编写方式，我们需要创建3个场景文件，然后在各个文件中分别描述三个测试场景相关的接口信息。示意图如下所示。</p>
-<p><img src=/images/httprunner-testcase-layer-1.jpeg alt></p>
+<p><img src=/image/httprunner-testcase-layer-1.jpeg alt></p>
 <p>在本例中，接口（<code>API_1/2/6</code>）在场景A和场景C中都进行了定义；接口（<code>API_3/4/5</code>）在场景A和场景B中都进行了定义；接口（<code>API_7/8</code>）在场景B和场景C中都进行了定义。可以预见，当测试场景增多以后，接口定义描述的维护就会变得非常困难和繁琐。</p>
 <h2 id=接口的分层定义描述>接口的分层定义描述</h2>
 <p>那要如何进行优化呢？</p>
 <p>其实也很简单，在编程语言中，如果出现重复代码块，我们通常会将其封装为类或方法，然后在需要时进行调用，以此来消除重复。同样地，我们也可以将项目的API进行统一定义，里面包含API的请求和预期响应描述，然后在测试场景中进行引用即可。</p>
 <p>示意图如下所示。</p>
-<p><img src=/images/httprunner-testcase-layer-2.jpeg alt></p>
+<p><img src=/image/httprunner-testcase-layer-2.jpeg alt></p>
 <p>具体地，我们可以约定将项目的所有API接口定义放置在 <code>api</code> 目录下，并在 <code>api</code> 目录中按照项目的系统模块来组织接口的定义；同时，将测试场景放置到 <code>testcases</code> 目录中。</p>
 <p>此时测试用例文件的目录结构如下所示：</p>
 <div class=highlight><div class=chroma>
@@ -406,12 +406,12 @@ tests
 </div>
 </div><p>不难看出，对API接口进行分层定义后，我们在测试用例场景中引用接口定义时，与编程语言里面调用函数的形式基本完全一样，只需要指定接口的名称，以及所需传递的参数值；同样的，即使没有参数，也需要带上括号。</p>
 <p>实现接口的分层定义描述后，我们就可以避免接口的重复定义。但是，我们回过头来看之前的案例，发现仍然会存在一定的重复。</p>
-<p><img src=/images/httprunner-testcase-layer-3.jpeg alt></p>
+<p><img src=/image/httprunner-testcase-layer-3.jpeg alt></p>
 <p>如上图所示，场景A和场景C都包含了注册新账号（<code>API_1/2</code>）和查看登录状态（<code>API_6</code>），场景A和场景B都包含了登录已有账号（<code>API_3/4/5</code>），场景B和场景C都包含了注销登录（<code>API_7/8</code>）。</p>
 <p>虽然我们已经将接口的定义描述抽离出来，避免了重复的定义；但是在实际业务场景中，某些功能（例如登录、注销）会在多个场景中重复出现，而该功能又涉及到多个接口的组合调用，这同样也会出现大量的重复。</p>
 <h2 id=接口的模块化封装>接口的模块化封装</h2>
 <p>玩过积木的同学可能就会想到，我们也可以将系统的常用功能封装为模块（suite），只需要在模块中定义一次，然后就可以在测试场景中重复进行引用，从而避免了模块功能的重复描述。</p>
-<p><img src=/images/httprunner-testcase-layer-4.jpeg alt></p>
+<p><img src=/image/httprunner-testcase-layer-4.jpeg alt></p>
 <p>具体地，我们可以约定将项目的所有模块定义放置在 <code>suite</code> 目录下，并在 <code>suite</code> 目录中按照项目的功能来组织模块的定义。</p>
 <p>后续，我们在 <code>testcases</code> 目录中描述测试场景时，就可同时引用接口定义和模块定义了；模块和接口的混合调用，必将为我们编写测试场景带来极大的灵活性。</p>
 <p>此时测试用例文件的目录结构如下所示：</p>
