@@ -137,202 +137,283 @@ DebugTalk
 <article class="post bg-white">
 <header class=post-header>
 <h1 class=post-title>
-<a class=post-link href=/post/apitestengine-quickstart/>ApiTestEngine QuickStart</a>
+<a class=post-link href=/post/iOS-Android-Packing-with-Jenkins/>使用 Jenkins 搭建 iOS/Android 持续集成打包平台</a>
 </h1>
 <div class=post-meta>
-<time datetime=2017-08-20 class=post-time>
-2017-08-20
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
-</div>
-<span class=more-meta> 约 1569 字 </span>
-<span class=more-meta> 预计阅读 8 分钟 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-Introduction to Sample Interface Service Along with this project, I devised a sample interface service, and you can use it to familiarize how to play with ApiTestEngine.
-This sample service mainly has two parts:
-Authorization, each request of other APIs should sign with some header fields and get token first. RESTful APIs for user management, you can do CRUD manipulation on users. As you see, it is very similar to the mainstream production systems.
-</div>
-<div class=read-more>
-<a href=/post/apitestengine-quickstart/ class=read-more-link>阅读全文</a>
-</div>
-</div>
-</article>
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>
-<a class=post-link href=/post/How-to-install-a-package-from-Github-that-has-other-github-dependencies/>How to install a package from Github that has other github dependencies ?</a>
-</h1>
-<div class=post-meta>
-<time datetime=2017-08-05 class=post-time>
-2017-08-05
+<time datetime=2016-06-28 class=post-time>
+2016-06-28
 </time>
 <div class=post-category>
 <a href=https://debugtalk.com/categories/Development/> Development </a>
 </div>
-<span class=more-meta> 约 3000 字 </span>
-<span class=more-meta> 预计阅读 6 分钟 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-最近在开发ApiTestEngine时遇到一个安装包依赖的问题，耗费了不少时间寻找解决方案，考虑到还算比较有普遍性，因此总结形成这篇文章。 从
-</div>
-<div class=read-more>
-<a href=/post/How-to-install-a-package-from-Github-that-has-other-github-dependencies/ class=read-more-link>阅读全文</a>
-</div>
-</div>
-</article>
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>
-<a class=post-link href=/post/solve-Jenkins-can-not-show-html-css/>解决 Jenkins 中无法展示 HTML 样式的问题</a>
-</h1>
-<div class=post-meta>
-<time datetime=2017-07-24 class=post-time>
-2017-07-24
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/Development/> Development </a>
-</div>
-<span class=more-meta> 约 2060 字 </span>
-<span class=more-meta> 预计阅读 5 分钟 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-问题描述 对于测试报告来说，除了内容的简洁精炼，样式的美观也很重要。常用的做法是，采用HTML格式的文档，并搭配CSS和JS，实现自定义的样式
-</div>
-<div class=read-more>
-<a href=/post/solve-Jenkins-can-not-show-html-css/ class=read-more-link>阅读全文</a>
-</div>
-</div>
-</article>
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>
-<a class=post-link href=/post/ApiTestEngine-4-call-functions-in-yaml-testcases/>ApiTestEngine 演进之路（4）测试用例中实现 Python 函数的调用</a>
-</h1>
-<div class=post-meta>
-<time datetime=2017-07-17 class=post-time>
-2017-07-17
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
-</div>
-<span class=more-meta> 约 3258 字 </span>
-<span class=more-meta> 预计阅读 7 分钟 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-在《测试用例中实现Python函数的定义》中，介绍了在YAML/JSON测试用例中实现Python函数定义的两种方法，以及它们各自适用的场景
-</div>
-<div class=read-more>
-<a href=/post/ApiTestEngine-4-call-functions-in-yaml-testcases/ class=read-more-link>阅读全文</a>
-</div>
-</div>
-</article>
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>
-<a class=post-link href=/post/ApiTestEngine-3-define-functions-in-yaml-testcases/>ApiTestEngine 演进之路（3）测试用例中实现 Python 函数的定义</a>
-</h1>
-<div class=post-meta>
-<time datetime=2017-07-11 class=post-time>
-2017-07-11
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
-</div>
-<span class=more-meta> 约 5873 字 </span>
+<span class=more-meta> 约 5663 字 </span>
 <span class=more-meta> 预计阅读 12 分钟 </span>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-在《ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式》中，我们臆想了一种简洁优雅的用例描述方式，接下来，我们就从技术实现的
+背景描述 根据项目需求，现要在团队内部搭建一个统一的打包平台，实现对iOS和Android项目的打包。而且为了方便团队内部的测试包分发，希望在
 </div>
 <div class=read-more>
-<a href=/post/ApiTestEngine-3-define-functions-in-yaml-testcases/ class=read-more-link>阅读全文</a>
+<a href=/post/iOS-Android-Packing-with-Jenkins/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/head-first-git-authority-verification/>深入浅出 Git 权限校验</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-06-15 class=post-time>
+2016-06-15
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
+</div>
+<span class=more-meta> 约 5323 字 </span>
+<span class=more-meta> 预计阅读 11 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信
+</div>
+<div class=read-more>
+<a href=/post/head-first-git-authority-verification/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/trap-in-GitHub-authority-verification/>GitHub 权限校验失败给我的启发</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-06-14 class=post-time>
+2016-06-14
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
+</div>
+<span class=more-meta> 约 2635 字 </span>
+<span class=more-meta> 预计阅读 6 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+背景描述 众所周知，在GitHub中，每个仓库都有两个地址，分别基于HTTPS协议和SSH协议，两个协议对应的URL地址（repository
+</div>
+<div class=read-more>
+<a href=/post/trap-in-GitHub-authority-verification/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/promotion-page-test/>关于促销活动页面测试的那些事儿</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-06-09 class=post-time>
+2016-06-09
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
+</div>
+<span class=more-meta> 约 2134 字 </span>
+<span class=more-meta> 预计阅读 5 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+这篇文章来说说促销活动页面测试的那些事儿。 什么是促销活动页面？ 通常电商平台在节假日会做一些促销活动，而活动的宣传方式，主要会采用H5静态页面
+</div>
+<div class=read-more>
+<a href=/post/promotion-page-test/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/confluence-simple-tutorial/>敏捷团队协作：Confluence简易教程</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-06-07 class=post-time>
+2016-06-07
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
+</div>
+<span class=more-meta> 约 2558 字 </span>
+<span class=more-meta> 预计阅读 6 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+0、Confluence简介 Confluence是一个企业级的Wiki软件，可用于在企业、部门、团队内部进行信息共享和协同编辑。 1、基础概念
+</div>
+<div class=read-more>
+<a href=/post/confluence-simple-tutorial/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/build-app-automated-test-platform-from-0-to-1-write-iOS-testcase-scripts/>从0到1搭建移动App功能自动化测试平台（3）：编写iOS自动化测试脚本</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-05-30 class=post-time>
+2016-05-30
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+</div>
+<span class=more-meta> 约 3509 字 </span>
+<span class=more-meta> 预计阅读 8 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+通过前面三篇文章，我们已经将iOS自动化功能测试的开发环境全部准备就绪，也学习了iOS UI控件交互操作的一般性方法，接下来，就可以开始编写自
+</div>
+<div class=read-more>
+<a href=/post/build-app-automated-test-platform-from-0-to-1-write-iOS-testcase-scripts/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/build-app-automated-test-platform-from-0-to-1-Appium-interrogate-iOS-UI/>从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-05-29 class=post-time>
+2016-05-29
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+</div>
+<span class=more-meta> 约 5288 字 </span>
+<span class=more-meta> 预计阅读 11 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+写在前面 前两天微信突然发来一条系统消息，提示DebugTalk可以开通原创标识了（同时也有了评论功能），虽然一直在期待，但没想到来得这么快，
+</div>
+<div class=read-more>
+<a href=/post/build-app-automated-test-platform-from-0-to-1-Appium-interrogate-iOS-UI/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/archives/%E4%BB%8E0%E5%88%B01%E6%90%AD%E5%BB%BA%E7%A7%BB%E5%8A%A8App%E5%8A%9F%E8%83%BD%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B01%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%AD%E8%BF%90%E8%A1%8CiOS%E5%BA%94%E7%94%A8/>从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-05-21 class=post-time>
+2016-05-21
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+</div>
+<span class=more-meta> 约 3623 字 </span>
+<span class=more-meta> 预计阅读 8 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基
+</div>
+<div class=read-more>
+<a href=/archives/%E4%BB%8E0%E5%88%B01%E6%90%AD%E5%BB%BA%E7%A7%BB%E5%8A%A8App%E5%8A%9F%E8%83%BD%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B01%E6%A8%A1%E6%8B%9F%E5%99%A8%E4%B8%AD%E8%BF%90%E8%A1%8CiOS%E5%BA%94%E7%94%A8/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/build-app-automated-test-platform-from-0-to-1-backgroud-introduction/>从0到1搭建移动App功能自动化测试平台（0）：背景介绍和平台规划</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-05-20 class=post-time>
+2016-05-20
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+</div>
+<span class=more-meta> 约 2801 字 </span>
+<span class=more-meta> 预计阅读 6 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+背景 最近新加入某项目组（以下均已M指代），需要从零开始搭建功能自动化测试平台。 简单地说，M是一个典型的移动互联网产品，客户端包括iOS和An
+</div>
+<div class=read-more>
+<a href=/post/build-app-automated-test-platform-from-0-to-1-backgroud-introduction/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/Android-performance-test-start-traffic-uid-stat/>Android App持续集成性能测试：启动流量（1）</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-05-03 class=post-time>
+2016-05-03
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
+</div>
+<span class=more-meta> 约 1591 字 </span>
+<span class=more-meta> 预计阅读 4 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+本文对Android App的启动流量测试进行介绍。这里的启动流量指的是网络流量，即App在启动时发起网络请求和接收网络响应时传输的网络数据量
+</div>
+<div class=read-more>
+<a href=/post/Android-performance-test-start-traffic-uid-stat/ class=read-more-link>阅读全文</a>
 </div>
 </div>
 </article>
 </section>
 <nav class=pagination>
 <ul>
-<li><a href=/>««</a></li>
-<li><a href=/page/5/>«</a></li>
 <li>
-<a href=/>
-1
-</a>
+<a href=/>1</a>
 </li>
 <li>
-<a href=/page/2/>
-2
-</a>
+<a href=/page/2/>2</a>
 </li>
 <li>
-<a href=/page/3/>
-3
-</a>
+<a href=/page/3/>3</a>
 </li>
 <li>
-<a href=/page/4/>
-4
-</a>
+<a href=/page/4/>4</a>
 </li>
 <li>
-<a href=/page/5/>
-5
-</a>
+<a href=/page/5/>5</a>
 </li>
 <li class=active>
-<a href=/page/6/>
-6
-</a>
+<a href=/page/6/>6</a>
 </li>
 <li>
-<a href=/page/7/>
-7
-</a>
+<a href=/page/7/>7</a>
 </li>
 <li>
-<a href=/page/8/>
-8
-</a>
+<a href=/page/8/>8</a>
 </li>
 <li>
-<a href=/page/9/>
-9
-</a>
+<a href=/page/9/>9</a>
 </li>
-<li>
-<a href=/page/10/>
-10
-</a>
-</li>
-<li>
-<a href=/page/11/>
-11
-</a>
-</li>
-<li>
-<a href=/page/12/>
-12
-</a>
-</li>
-<li>
-<a href=/page/13/>
-13
-</a>
-</li>
-<li><a href=/page/7/>»</a></li>
-<li><a href=/page/18/>»»</a></li>
 </ul>
 </nav>
 </div>
@@ -357,7 +438,7 @@ Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane
 </span>
 <span class=copyright-year>
 &copy;
-2015 -
+2011 -
 2022
 <span class=heart>
 <i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>

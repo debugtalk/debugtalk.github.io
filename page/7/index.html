@@ -137,200 +137,285 @@ DebugTalk
 <article class="post bg-white">
 <header class=post-header>
 <h1 class=post-title>
-<a class=post-link href=/post/ApiTestEngine-2-best-testcase-description/>ApiTestEngine 演进之路（2）探索优雅的测试用例描述方式</a>
+<a class=post-link href=/post/Android-performance-test-start-traffic-tcpdump-wireshark/>Android App持续集成性能测试：启动流量（2）</a>
 </h1>
 <div class=post-meta>
-<time datetime=2017-07-07 class=post-time>
-2017-07-07
+<time datetime=2016-05-03 class=post-time>
+2016-05-03
 </time>
 <div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
 </div>
-<span class=more-meta> 约 3301 字 </span>
-<span class=more-meta> 预计阅读 7 分钟 </span>
+<span class=more-meta> 约 2476 字 </span>
+<span class=more-meta> 预计阅读 5 分钟 </span>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-在《ApiTestEngine 演进之路（1）搭建基础框架》一文中，我们完成了ApiTestEngine基础框架的搭建，并实现了简单接口的测试
+在上一篇文章中，介绍了一种测试Android App启动流量的方法。当时也提到了，通过读取/proc/uid_stat/&lt;UID>
 </div>
 <div class=read-more>
-<a href=/post/ApiTestEngine-2-best-testcase-description/ class=read-more-link>阅读全文</a>
+<a href=/post/Android-performance-test-start-traffic-tcpdump-wireshark/ class=read-more-link>阅读全文</a>
 </div>
 </div>
 </article>
 <article class="post bg-white">
 <header class=post-header>
 <h1 class=post-title>
-<a class=post-link href=/post/300-lines-python-code-api-test-framework/>300 行 Python 代码打造实用接口测试框架</a>
+<a class=post-link href=/post/manage-Jenkins-via-remote-api/>通过 API 远程管理 Jenkins</a>
 </h1>
 <div class=post-meta>
-<time datetime=2017-06-28 class=post-time>
-2017-06-28
+<time datetime=2016-05-02 class=post-time>
+2016-05-02
 </time>
 <div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
 </div>
-<span class=more-meta> 约 1382 字 </span>
-<span class=more-meta> 预计阅读 3 分钟 </span>
-</div>
-</header>
-<div class=post-content>
-<div class=post-summary>
-在刚开始实现ApiTestEngine的时候，卡斯（kasi）提议做一个Java版的。对于这样的建议，我当然是拒绝的，瞬即回复了他，“人生苦
-</div>
-<div class=read-more>
-<a href=/post/300-lines-python-code-api-test-framework/ class=read-more-link>阅读全文</a>
-</div>
-</div>
-</article>
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>
-<a class=post-link href=/post/ApiTestEngine-1-setup-basic-framework/>ApiTestEngine 演进之路（1）搭建基础框架</a>
-</h1>
-<div class=post-meta>
-<time datetime=2017-06-22 class=post-time>
-2017-06-22
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
-</div>
-<span class=more-meta> 约 2953 字 </span>
+<span class=more-meta> 约 2990 字 </span>
 <span class=more-meta> 预计阅读 6 分钟 </span>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-在《ApiTestEngine 演进之路（0）开发未动，测试先行》一文中，我对ApiTestEngine项目正式开始前的准备工作进行了介绍，包
+背景介绍 最近接到一个需求，需要对公司内部的Android性能测试平台的分支管理模块进行改造。 为了更好地说明问题，在下图中展示了一个精简的持续
 </div>
 <div class=read-more>
-<a href=/post/ApiTestEngine-1-setup-basic-framework/ class=read-more-link>阅读全文</a>
+<a href=/post/manage-Jenkins-via-remote-api/ class=read-more-link>阅读全文</a>
 </div>
 </div>
 </article>
 <article class="post bg-white">
 <header class=post-header>
 <h1 class=post-title>
-<a class=post-link href=/post/ApiTestEngine-0-setup-CI-test/>ApiTestEngine 演进之路（0）开发未动，测试先行</a>
+<a class=post-link href=/post/traps-in-sql-null/>SQL语句中关于NULL的那些坑</a>
 </h1>
 <div class=post-meta>
-<time datetime=2017-06-20 class=post-time>
-2017-06-20
+<time datetime=2016-04-25 class=post-time>
+2016-04-25
 </time>
 <div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
 </div>
-<span class=more-meta> 约 4984 字 </span>
+<span class=more-meta> 约 1005 字 </span>
+<span class=more-meta> 预计阅读 3 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+问题描述 今天在跟进公司内部测试平台线上问题的时候，发现一个忽略已久的问题。 为了简化问题描述，将其进行了抽象。 有一张数据表qms_branch
+</div>
+<div class=read-more>
+<a href=/post/traps-in-sql-null/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/Android-CPU-lock-frequency/>对 Android 设备 CPU 进行锁频</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-04-18 class=post-time>
+2016-04-18
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
+</div>
+<span class=more-meta> 约 3695 字 </span>
+<span class=more-meta> 预计阅读 8 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+本文对Android设备CPU的状态查看方法和锁频（lock frequency）方法进行详细介绍。这有什么用？作为测试工程师，你值得了解。 C
+</div>
+<div class=read-more>
+<a href=/post/Android-CPU-lock-frequency/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/Android-performance-test-UI-Automation-with-Python/>Android App持续集成性能测试：使用Python实现UI自动化</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-04-17 class=post-time>
+2016-04-17
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
+</div>
+<span class=more-meta> 约 3983 字 </span>
+<span class=more-meta> 预计阅读 8 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+在进行Android App持续集成性能测试的时候，需要自动化实现UI层面的一些操作，常见的几种场景包括： 测试帧率时，需要模拟滑屏、拖拽操作；
+</div>
+<div class=read-more>
+<a href=/post/Android-performance-test-UI-Automation-with-Python/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/python-functional-programming-getting-started/>Python 的函数式编程 -- 从入门到⎡放弃⎦</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-04-08 class=post-time>
+2016-04-08
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
+<a href=https://debugtalk.com/categories/Python/> Python </a>
+</div>
+<span class=more-meta> 约 4913 字 </span>
 <span class=more-meta> 预计阅读 10 分钟 </span>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-在《接口自动化测试的最佳工程实践（ApiTestEngine）》一文中，我详细介绍了ApiTestEngine诞生的背景，并对其核心特性进行
+很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么
 </div>
 <div class=read-more>
-<a href=/post/ApiTestEngine-0-setup-CI-test/ class=read-more-link>阅读全文</a>
+<a href=/post/python-functional-programming-getting-started/ class=read-more-link>阅读全文</a>
 </div>
 </div>
 </article>
 <article class="post bg-white">
 <header class=post-header>
 <h1 class=post-title>
-<a class=post-link href=/post/ApiTestEngine-api-test-best-practice/>接口自动化测试的最佳工程实践（ApiTestEngine）</a>
+<a class=post-link href=/post/cheat-in-wechat-moments-voting-activity/>微信朋友圈投票活动的刷票案例分析</a>
 </h1>
 <div class=post-meta>
-<time datetime=2017-06-18 class=post-time>
-2017-06-18
+<time datetime=2016-04-04 class=post-time>
+2016-04-04
 </time>
 <div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
+<a href=https://debugtalk.com/categories/Testing/> Testing </a>
 </div>
-<span class=more-meta> 约 6322 字 </span>
-<span class=more-meta> 预计阅读 13 分钟 </span>
+<span class=more-meta> 约 1783 字 </span>
+<span class=more-meta> 预计阅读 4 分钟 </span>
 </div>
 </header>
 <div class=post-content>
 <div class=post-summary>
-背景 当前市面上存在的接口测试工具已经非常多，常见的如Postman、JMeter、RobotFramework等，相信大多数测试人员都有使用
+现阶段，在微信朋友圈举办的投票活动层出不穷，相信已经有不少同学对此不胜其烦，因为总会时不时地冒出个人（亲戚、朋友、or whatever）来请
 </div>
 <div class=read-more>
-<a href=/post/ApiTestEngine-api-test-best-practice/ class=read-more-link>阅读全文</a>
+<a href=/post/cheat-in-wechat-moments-voting-activity/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/render-multi-level-table-in-webpage/>测试结果报表展现：Web页面绘制多层级表格</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-03-20 class=post-time>
+2016-03-20
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
+</div>
+<span class=more-meta> 约 2281 字 </span>
+<span class=more-meta> 预计阅读 5 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+背景描述 在Android性能测试中，每一个测试任务都对应了1个测试用例、1台测试设备、一个测试包，并且在测试结果中包含了多个指标项。通常，我
+</div>
+<div class=read-more>
+<a href=/post/render-multi-level-table-in-webpage/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/developing-idea-production-data-picker/>【灵感】线上数据采摘工具（ProductionDataPicker）</a>
+</h1>
+<div class=post-meta>
+<time datetime=2016-03-08 class=post-time>
+2016-03-08
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
+</div>
+<span class=more-meta> 约 946 字 </span>
+<span class=more-meta> 预计阅读 2 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+背景 不管是是研发同学还是测试同学，日常跟进线上问题时对如下两个场景应该都很熟悉： 生产环境上出现了一个bug，想在测试环境或者本地开发环境复现
+</div>
+<div class=read-more>
+<a href=/post/developing-idea-production-data-picker/ class=read-more-link>阅读全文</a>
+</div>
+</div>
+</article>
+<article class="post bg-white">
+<header class=post-header>
+<h1 class=post-title>
+<a class=post-link href=/post/remote-debugging-with-pycharm/>利用 PyCharm 进行 Python 远程调试</a>
+</h1>
+<div class=post-meta>
+<time datetime=2015-07-13 class=post-time>
+2015-07-13
+</time>
+<div class=post-category>
+<a href=https://debugtalk.com/categories/Development/> Development </a>
+<a href=https://debugtalk.com/categories/Python/> Python </a>
+</div>
+<span class=more-meta> 约 1757 字 </span>
+<span class=more-meta> 预计阅读 4 分钟 </span>
+</div>
+</header>
+<div class=post-content>
+<div class=post-summary>
+背景描述 有时候Python应用的代码在本地开发环境运行十分正常，但是放到线上以后却出现了莫名其妙的异常，经过再三排查以后还是找不到问题原因，
+</div>
+<div class=read-more>
+<a href=/post/remote-debugging-with-pycharm/ class=read-more-link>阅读全文</a>
 </div>
 </div>
 </article>
 </section>
 <nav class=pagination>
 <ul>
-<li><a href=/>««</a></li>
-<li><a href=/page/6/>«</a></li>
 <li>
-<a href=/>
-1
-</a>
+<a href=/>1</a>
 </li>
 <li>
-<a href=/page/2/>
-2
-</a>
+<a href=/page/2/>2</a>
 </li>
 <li>
-<a href=/page/3/>
-3
-</a>
+<a href=/page/3/>3</a>
 </li>
 <li>
-<a href=/page/4/>
-4
-</a>
+<a href=/page/4/>4</a>
 </li>
 <li>
-<a href=/page/5/>
-5
-</a>
+<a href=/page/5/>5</a>
 </li>
 <li>
-<a href=/page/6/>
-6
-</a>
+<a href=/page/6/>6</a>
 </li>
 <li class=active>
-<a href=/page/7/>
-7
-</a>
+<a href=/page/7/>7</a>
 </li>
 <li>
-<a href=/page/8/>
-8
-</a>
+<a href=/page/8/>8</a>
 </li>
 <li>
-<a href=/page/9/>
-9
-</a>
+<a href=/page/9/>9</a>
 </li>
-<li>
-<a href=/page/10/>
-10
-</a>
-</li>
-<li>
-<a href=/page/11/>
-11
-</a>
-</li>
-<li>
-<a href=/page/12/>
-12
-</a>
-</li>
-<li>
-<a href=/page/13/>
-13
-</a>
-</li>
-<li><a href=/page/8/>»</a></li>
-<li><a href=/page/18/>»»</a></li>
 </ul>
 </nav>
 </div>
@@ -355,7 +440,7 @@ Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane
 </span>
 <span class=copyright-year>
 &copy;
-2015 -
+2011 -
 2022
 <span class=heart>
 <i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
