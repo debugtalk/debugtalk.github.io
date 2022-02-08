@@ -4,7 +4,6 @@ url: /post/python-functional-programming-getting-started
 date: 2016-04-08
 categories:
   - Development
-  - Python
 tags:
   - Python
   - 函数式编程

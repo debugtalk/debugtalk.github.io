@@ -1,7 +1,6 @@
 ---
 title: 从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用
-permalink: >-
-  post/build-app-automated-test-platform-from-0-to-1-Appium-inspector-iOS-simulator
+url: /post/build-app-automated-test-platform-from-0-to-1-Appium-inspector-iOS-simulator
 date: 2016-05-21
 categories:
   - OpenSource

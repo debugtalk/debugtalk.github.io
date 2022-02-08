@@ -4,7 +4,6 @@ url: /post/remote-debugging-with-pycharm
 date: 2015-07-13
 categories:
   - Development
-  - Python
 tags:
   - Python
   - pycharm

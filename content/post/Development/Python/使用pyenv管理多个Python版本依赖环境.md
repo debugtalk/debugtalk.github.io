@@ -4,7 +4,6 @@ url: /post/use-pyenv-manage-multiple-python-virtualenvs
 date: 2017-03-25
 categories:
   - Development
-  - Python
 tags:
   - Python
   - pyenv
