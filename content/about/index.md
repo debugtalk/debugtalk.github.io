@@ -25,7 +25,8 @@ url: /about/
 
 近期兴趣方向：
 
-- 接口、性能测试工具（HttpRunner+）
+- ToB 商业化探索
+- 接口、性能测试工具（[HttpRunner+]）
 - 数字体验监测（DEM）
 - 体验评测
 
@@ -35,7 +36,7 @@ url: /about/
 - 服务器端性能测试
 - 接口自动化测试
 - UI 自动化测试（Web & iOS & Android）
-- Android 客户端性能测试
+- Android 客户端性能专项测试
 
 
 ## 成长轨迹
@@ -52,21 +53,25 @@ url: /about/
 
 演讲经历：
 
-- 2019.06 MTSC 2019 [TTF 开源专场][3]
-- 2018.10 PyCon China 2018 北京 [千人峰会主会场][4]
-- 2018.07 MTSC 2018 服务端专场
-- 2018.09 PyCon China 2018 深圳
+- 2019.06 MTSC 2019，[TTF 开源专场][3]明星讲师（[1/10][MTSC2019-rank]）
+- 2018.07 MTSC 2018，服务端专场明星讲师（[1/11][MTSC2018-rank]）
+- 2018.10 PyCon China 2018 北京[千人峰会主会场][4]；深圳分场
 - 2018.09 第41届·MPD 深圳站
+- 2017.08 TesterHome 深圳沙龙[第三期][TesterHome-salon-sz-3]
 
 
 ## Contact
 
 - 微信公众号: `DebugTalk`
 - Email: `mail#debugtalk.com`
-- 个人微信号: `leolee023`（添加时请注明来意）
+- 个人微信号: `leolee023`（添加时请加点自我介绍）
 
 
 [1]: /post/SDET-Value-Measurement
 [2]: /post/dji-graduated
 [3]: /post/MTSC-2019
 [4]: /post/pycon-china-2018
+[HttpRunner+]: https://github.com/httprunner/hrp
+[TesterHome-salon-sz-3]: https://testerhome.com/topics/9755
+[MTSC2019-rank]: https://testerhome.com/topics/20059
+[MTSC2018-rank]: https://testerhome.com/topics/15163
