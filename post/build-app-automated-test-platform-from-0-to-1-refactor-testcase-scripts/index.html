@@ -1,187 +1,13 @@
-<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<title>从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦ - DebugTalk</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
-<meta name=MobileOptimized content="width">
-<meta name=HandheldFriendly content="true">
-<meta name=applicable-device content="pc,mobile">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=mobile-web-app-capable content="yes">
-<meta name=author content="debugtalk">
-<meta name=description content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍">
-<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
-<meta name=generator content="Hugo 0.92.1">
-<link rel=canonical href=https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-refactor-testcase-scripts/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
-<link rel=stylesheet href=/css/custom.css>
-<meta property="og:title" content="从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦">
-<meta property="og:description" content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-refactor-testcase-scripts/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2016-07-28T00:00:00+00:00">
-<meta property="article:modified_time" content="2016-07-28T00:00:00+00:00">
-<meta itemprop=name content="从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦">
-<meta itemprop=description content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍"><meta itemprop=datePublished content="2016-07-28T00:00:00+00:00">
-<meta itemprop=dateModified content="2016-07-28T00:00:00+00:00">
-<meta itemprop=wordCount content="2315">
-<meta itemprop=keywords content="Appium,iOS,Ruby,AppiumBooster,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦">
-<meta name=twitter:description content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>DebugTalk</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦ - DebugTalk</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes"><meta name=MobileOptimized content="width"><meta name=HandheldFriendly content="true"><meta name=applicable-device content="pc,mobile"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=mobile-web-app-capable content="yes"><meta name=author content="debugtalk"><meta name=description content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍"><meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试"><meta name=generator content="Hugo 0.94.2"><link rel=canonical href=https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-refactor-testcase-scripts/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous><link rel=stylesheet href=/css/custom.css><meta property="og:title" content="从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦"><meta property="og:description" content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍"><meta property="og:type" content="article"><meta property="og:url" content="https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-refactor-testcase-scripts/"><meta property="article:section" content="post"><meta property="article:published_time" content="2016-07-28T00:00:00+00:00"><meta property="article:modified_time" content="2016-07-28T00:00:00+00:00"><meta itemprop=name content="从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦"><meta itemprop=description content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍"><meta itemprop=datePublished content="2016-07-28T00:00:00+00:00"><meta itemprop=dateModified content="2016-07-28T00:00:00+00:00"><meta itemprop=wordCount content="2315"><meta itemprop=keywords content="Appium,iOS,Ruby,AppiumBooster,"><meta name=twitter:card content="summary"><meta name=twitter:title content="从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦"><meta name=twitter:description content="在本系列的上一篇文章中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。 在本文中，我将重点介绍"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-81639610-1","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>DebugTalk</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
-<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav><link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css><link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header id=header class="header container">
-<div class=logo-wrapper>
-<a href=/ class=logo>
-DebugTalk
-</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-</header>
-<div id=mobile-panel>
-<main id=main class="main bg-llight">
-<div class=content-wrapper>
-<div id=content class="content container">
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦</h1>
-<div class=post-meta>
-<time datetime=2016-07-28 class=post-time>
-2016-07-28
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
-</div>
-<span class=more-meta> 约 2315 字 </span>
-<span class=more-meta> 预计阅读 5 分钟 </span>
-<span id=busuanzi_container_page_pv>
-| 阅读 <span id=busuanzi_value_page_pv></span>
-</span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class=post-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#测试脚本工程化>测试脚本⎡工程化⎦</a></li>
-<li><a href=#引入minitestrspec>引入Minitest/RSpec</a></li>
-<li><a href=#添加第二条测试用例>添加第二条测试用例</a></li>
-<li><a href=#重构测试用例与控件映射分离>重构：测试用例与控件映射分离</a></li>
-<li><a href=#to-be-continued->To be continued &mldr;</a></li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<p>在本系列的<a href=https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-write-iOS-testcase-scripts/>上一篇文章</a>中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。</p>
-<p>在本文中，我将重点介绍如何对自动化测试脚本实现⎡工程化⎦的组织和管理。</p>
-<h2 id=测试脚本工程化>测试脚本⎡工程化⎦</h2>
-<p>首先说下什么是测试脚本的工程化。</p>
-<p>通过之前的工作，我们已经可以让单个自动化测试用例正常运行起来了。然而，这还只算是一个<a href=https://github.com/debugtalk/AppiumBooster/tree/0.RawScript/><code>demo</code></a>，一切才刚刚开始。</p>
-<p>试想，一个项目的自动化测试用例少则数百，多则成千上万。如何将这些自动化测试用例组织起来？如何实现更好的可重用机制？如何实现更好的可拓展机制？这些都还是我们当前的demo所不具备的，也是我们需要通过“工程化”手段进行改造的原因。</p>
-<h2 id=引入minitestrspec>引入Minitest/RSpec</h2>
-<p>在Ruby中，说到测试首先就会想到Minitest或RSpec，这是Ruby中用的最多的两个测试框架。通过这些框架，我们可以很好地实现对Ruby测试用例的管理。</p>
-<p>同样地，由于我们的自动化测试脚本是采用Ruby编写的，因此我们也可以使用Minitest/RSpec来管理我们的自动化测试用例。</p>
-<p>基于该想法，我们采用RSpec对之前的系统登录测试用例进行工程结构初始化。对于熟悉Ruby编程，或者有一定代码基础的同学而言，很自然地，可以将测试用例框架初始化为如下结构。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header id=header class="header container"><div class=logo-wrapper><a href=/ class=logo>DebugTalk</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav></header><div id=mobile-panel><main id=main class="main bg-llight"><div class=content-wrapper><div id=content class="content container"><article class="post bg-white"><header class=post-header><h1 class=post-title>从0到1搭建移动App功能自动化测试平台 (4)：自动化测试代码⎡工程化⎦</h1><div class=post-meta><time datetime=2016-07-28 class=post-time>2016-07-28</time><div class=post-category><a href=https://debugtalk.com/categories/OpenSource/>OpenSource</a></div><span class=more-meta>约 2315 字</span>
+<span class=more-meta>预计阅读 5 分钟</span>
+<span id=busuanzi_container_page_pv>| 阅读 <span id=busuanzi_value_page_pv></span></span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#测试脚本工程化>测试脚本⎡工程化⎦</a></li><li><a href=#引入minitestrspec>引入Minitest/RSpec</a></li><li><a href=#添加第二条测试用例>添加第二条测试用例</a></li><li><a href=#重构测试用例与控件映射分离>重构：测试用例与控件映射分离</a></li><li><a href=#to-be-continued->To be continued &mldr;</a></li></ul></nav></div></div><div class=post-content><p>在本系列的<a href=https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-write-iOS-testcase-scripts/>上一篇文章</a>中，我通过系统登录这一典型功能点，演示了编写自动化测试脚本的整个流程，并对测试脚本进行了初步优化。</p><p>在本文中，我将重点介绍如何对自动化测试脚本实现⎡工程化⎦的组织和管理。</p><h2 id=测试脚本工程化>测试脚本⎡工程化⎦</h2><p>首先说下什么是测试脚本的工程化。</p><p>通过之前的工作，我们已经可以让单个自动化测试用例正常运行起来了。然而，这还只算是一个<a href=https://github.com/debugtalk/AppiumBooster/tree/0.RawScript/><code>demo</code></a>，一切才刚刚开始。</p><p>试想，一个项目的自动化测试用例少则数百，多则成千上万。如何将这些自动化测试用例组织起来？如何实现更好的可重用机制？如何实现更好的可拓展机制？这些都还是我们当前的demo所不具备的，也是我们需要通过“工程化”手段进行改造的原因。</p><h2 id=引入minitestrspec>引入Minitest/RSpec</h2><p>在Ruby中，说到测试首先就会想到Minitest或RSpec，这是Ruby中用的最多的两个测试框架。通过这些框架，我们可以很好地实现对Ruby测试用例的管理。</p><p>同样地，由于我们的自动化测试脚本是采用Ruby编写的，因此我们也可以使用Minitest/RSpec来管理我们的自动化测试用例。</p><p>基于该想法，我们采用RSpec对之前的系统登录测试用例进行工程结构初始化。对于熟悉Ruby编程，或者有一定代码基础的同学而言，很自然地，可以将测试用例框架初始化为如下结构。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -191,43 +17,29 @@ DebugTalk
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>├── Gemfile
-├── android
-│   └── appium.txt
-├── common
-│   ├── requires.rb
-│   └── spec_helper.rb
-└── ios
-    ├── appium.txt
-    └── spec
-        └── login_spec.rb
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>Gemfile</code>中，指定了项目依赖的库。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>├── Gemfile
+</span></span><span class=line><span class=cl>├── android
+</span></span><span class=line><span class=cl>│   └── appium.txt
+</span></span><span class=line><span class=cl>├── common
+</span></span><span class=line><span class=cl>│   ├── requires.rb
+</span></span><span class=line><span class=cl>│   └── spec_helper.rb
+</span></span><span class=line><span class=cl>└── ios
+</span></span><span class=line><span class=cl>    ├── appium.txt
+</span></span><span class=line><span class=cl>    └── spec
+</span></span><span class=line><span class=cl>        └── login_spec.rb
+</span></span></code></pre></td></tr></table></div></div><p>在<code>Gemfile</code>中，指定了项目依赖的库。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=c1># filename: Gemfile</span>
-<span class=n>source</span> <span class=s1>&#39;https://gems.ruby-china.org&#39;</span>
-
-<span class=n>gem</span> <span class=s1>&#39;rspec&#39;</span>
-<span class=n>gem</span> <span class=s1>&#39;appium_lib&#39;</span>
-<span class=n>gem</span> <span class=s1>&#39;appium_console&#39;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>common/spec_helper.rb</code>中，定义了模拟器和RSpec初始化相关的代码。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># filename: Gemfile</span>
+</span></span><span class=line><span class=cl><span class=n>source</span> <span class=s1>&#39;https://gems.ruby-china.org&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>gem</span> <span class=s1>&#39;rspec&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>gem</span> <span class=s1>&#39;appium_lib&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>gem</span> <span class=s1>&#39;appium_console&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><p>在<code>common/spec_helper.rb</code>中，定义了模拟器和RSpec初始化相关的代码。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -255,42 +67,35 @@ DebugTalk
 </span><span class=lnt>26
 </span><span class=lnt>27
 </span><span class=lnt>28
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=c1># filename: common/spec_helper.rb</span>
-
-<span class=k>def</span> <span class=nf>setup_driver</span>
-  <span class=k>return</span> <span class=k>if</span> <span class=vg>$driver</span>
-  <span class=n>appium_txt</span> <span class=o>=</span> <span class=no>File</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=no>Dir</span><span class=o>.</span><span class=n>pwd</span><span class=p>,</span> <span class=s1>&#39;ios&#39;</span><span class=p>,</span> <span class=s1>&#39;appium.txt&#39;</span><span class=p>)</span>
-  <span class=n>caps</span> <span class=o>=</span> <span class=no>Appium</span><span class=o>.</span><span class=n>load_appium_txt</span> <span class=ss>file</span><span class=p>:</span> <span class=n>appium_txt</span>
-  <span class=no>Appium</span><span class=o>::</span><span class=no>Driver</span><span class=o>.</span><span class=n>new</span> <span class=n>caps</span>
-<span class=k>end</span>
-
-<span class=k>def</span> <span class=nf>promote_methods</span>
-  <span class=no>Appium</span><span class=o>.</span><span class=n>promote_appium_methods</span> <span class=no>RSpec</span><span class=o>::</span><span class=no>Core</span><span class=o>::</span><span class=no>ExampleGroup</span>
-<span class=k>end</span>
-
-<span class=n>setup_driver</span>
-<span class=n>promote_methods</span>
-
-<span class=no>RSpec</span><span class=o>.</span><span class=n>configure</span> <span class=k>do</span> <span class=o>|</span><span class=n>config</span><span class=o>|</span>
-
-  <span class=n>config</span><span class=o>.</span><span class=n>before</span><span class=p>(</span><span class=ss>:each</span><span class=p>)</span> <span class=k>do</span>
-    <span class=vg>$driver</span><span class=o>.</span><span class=n>start_driver</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=n>alert_accept</span> <span class=p>}</span>
-  <span class=k>end</span>
-
-  <span class=n>config</span><span class=o>.</span><span class=n>after</span><span class=p>(</span><span class=ss>:each</span><span class=p>)</span> <span class=k>do</span>
-    <span class=n>driver_quit</span>
-  <span class=k>end</span>
-
-<span class=k>end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>common/requires.rb</code>中，实现了对相关库文件的引用。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># filename: common/spec_helper.rb</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>setup_driver</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=k>if</span> <span class=vg>$driver</span>
+</span></span><span class=line><span class=cl>  <span class=n>appium_txt</span> <span class=o>=</span> <span class=no>File</span><span class=o>.</span><span class=n>join</span><span class=p>(</span><span class=no>Dir</span><span class=o>.</span><span class=n>pwd</span><span class=p>,</span> <span class=s1>&#39;ios&#39;</span><span class=p>,</span> <span class=s1>&#39;appium.txt&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=n>caps</span> <span class=o>=</span> <span class=no>Appium</span><span class=o>.</span><span class=n>load_appium_txt</span> <span class=ss>file</span><span class=p>:</span> <span class=n>appium_txt</span>
+</span></span><span class=line><span class=cl>  <span class=no>Appium</span><span class=o>::</span><span class=no>Driver</span><span class=o>.</span><span class=n>new</span> <span class=n>caps</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>promote_methods</span>
+</span></span><span class=line><span class=cl>  <span class=no>Appium</span><span class=o>.</span><span class=n>promote_appium_methods</span> <span class=no>RSpec</span><span class=o>::</span><span class=no>Core</span><span class=o>::</span><span class=no>ExampleGroup</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>setup_driver</span>
+</span></span><span class=line><span class=cl><span class=n>promote_methods</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=no>RSpec</span><span class=o>.</span><span class=n>configure</span> <span class=k>do</span> <span class=o>|</span><span class=n>config</span><span class=o>|</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>config</span><span class=o>.</span><span class=n>before</span><span class=p>(</span><span class=ss>:each</span><span class=p>)</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>    <span class=vg>$driver</span><span class=o>.</span><span class=n>start_driver</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=n>alert_accept</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>config</span><span class=o>.</span><span class=n>after</span><span class=p>(</span><span class=ss>:each</span><span class=p>)</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>    <span class=n>driver_quit</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>在<code>common/requires.rb</code>中，实现了对相关库文件的引用。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -298,39 +103,25 @@ DebugTalk
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=c1># filename: common/requires.rb</span>
-
-<span class=c1># load lib</span>
-<span class=nb>require</span> <span class=s1>&#39;rspec&#39;</span>
-<span class=nb>require</span> <span class=s1>&#39;appium_lib&#39;</span>
-
-<span class=c1># setup rspec</span>
-<span class=n>require_relative</span> <span class=s1>&#39;spec_helper&#39;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>ios/appium.txt</code>中，对iOS模拟器信息和测试包路径进行了配置。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># filename: common/requires.rb</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># load lib</span>
+</span></span><span class=line><span class=cl><span class=nb>require</span> <span class=s1>&#39;rspec&#39;</span>
+</span></span><span class=line><span class=cl><span class=nb>require</span> <span class=s1>&#39;appium_lib&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># setup rspec</span>
+</span></span><span class=line><span class=cl><span class=n>require_relative</span> <span class=s1>&#39;spec_helper&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><p>在<code>ios/appium.txt</code>中，对iOS模拟器信息和测试包路径进行了配置。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=o>[</span><span class=n>caps</span><span class=o>]</span>
-<span class=n>platformName</span> <span class=o>=</span> <span class=s2>&#34;ios&#34;</span>
-<span class=n>deviceName</span> <span class=o>=</span> <span class=s2>&#34;iPhone 6s&#34;</span>
-<span class=n>platformVersion</span> <span class=o>=</span> <span class=s2>&#34;9.3&#34;</span>
-<span class=n>app</span> <span class=o>=</span> <span class=s2>&#34;/Users/Leo/MyProjects/AppiumBooster/ios/app/test.app&#34;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>ios/spec/</code>目录中，则是测试用例的内容。例如，<code>ios/spec/login_spec.rb</code>对应的就是系统登录的测试用例。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=o>[</span><span class=n>caps</span><span class=o>]</span>
+</span></span><span class=line><span class=cl><span class=n>platformName</span> <span class=o>=</span> <span class=s2>&#34;ios&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>deviceName</span> <span class=o>=</span> <span class=s2>&#34;iPhone 6s&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>platformVersion</span> <span class=o>=</span> <span class=s2>&#34;9.3&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>app</span> <span class=o>=</span> <span class=s2>&#34;/Users/Leo/MyProjects/AppiumBooster/ios/app/test.app&#34;</span>
+</span></span></code></pre></td></tr></table></div></div><p>在<code>ios/spec/</code>目录中，则是测试用例的内容。例如，<code>ios/spec/login_spec.rb</code>对应的就是系统登录的测试用例。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -349,53 +140,36 @@ DebugTalk
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=c1># filename: ios/spec/login_spec.rb</span>
-<span class=n>require_relative</span> <span class=s1>&#39;../../common/requires&#39;</span>
-
-<span class=n>describe</span> <span class=s1>&#39;Login&#39;</span> <span class=k>do</span>
-
-  <span class=n>it</span> <span class=s1>&#39;with valid account&#39;</span> <span class=k>do</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnMenuMyAccount&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewMyAccount&#39;</span> <span class=p>}</span>
-
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;tablecellMyAccountLogin&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewLogIn&#39;</span> <span class=p>}</span>
-
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;txtfieldEmailAddress&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;leo.lee@debugtalk.com&#39;</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;sectxtfieldPassword&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;123321&#39;</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnLogin&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;tablecellMyMessage&#39;</span> <span class=p>}</span>
-  <span class=k>end</span>
-
-<span class=k>end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>通过以上代码结构初始化，我们的测试用例框架的雏形就形成了。接下来，在Terminal中切换到项目根目录，然后通过<code>rspec ios</code>命令就可以执行ios目录中的测试用例了。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># filename: ios/spec/login_spec.rb</span>
+</span></span><span class=line><span class=cl><span class=n>require_relative</span> <span class=s1>&#39;../../common/requires&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>describe</span> <span class=s1>&#39;Login&#39;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>it</span> <span class=s1>&#39;with valid account&#39;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnMenuMyAccount&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewMyAccount&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;tablecellMyAccountLogin&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewLogIn&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;txtfieldEmailAddress&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;leo.lee@debugtalk.com&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;sectxtfieldPassword&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;123321&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnLogin&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;tablecellMyMessage&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过以上代码结构初始化，我们的测试用例框架的雏形就形成了。接下来，在Terminal中切换到项目根目录，然后通过<code>rspec ios</code>命令就可以执行ios目录中的测试用例了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ rspec ios
-.
-
-Finished in <span class=m>2</span> minutes 7.2 seconds <span class=o>(</span>files took 1.76 seconds to load<span class=o>)</span>
-<span class=m>1</span> example, <span class=m>0</span> failures
-</code></pre></td></tr></table>
-</div>
-</div><p>完整的代码请参考<code>debugtalk/AppiumBooster</code>的<a href=https://github.com/debugtalk/AppiumBooster/tree/1.FirstTest><code>1.FirstTest</code>分支</a>。</p>
-<h2 id=添加第二条测试用例>添加第二条测试用例</h2>
-<p>现在，我们尝试往当前的测试框架中添加第二条测试用例。</p>
-<p>例如，第二条测试用例要实现启动后从当前地区切换至中国。那么，就可以新增<code>ios/spec/change_country_spec.rb</code>。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ rspec ios
+</span></span><span class=line><span class=cl>.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Finished in <span class=m>2</span> minutes 7.2 seconds <span class=o>(</span>files took 1.76 seconds to load<span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=m>1</span> example, <span class=m>0</span> failures
+</span></span></code></pre></td></tr></table></div></div><p>完整的代码请参考<code>debugtalk/AppiumBooster</code>的<a href=https://github.com/debugtalk/AppiumBooster/tree/1.FirstTest><code>1.FirstTest</code>分支</a>。</p><h2 id=添加第二条测试用例>添加第二条测试用例</h2><p>现在，我们尝试往当前的测试框架中添加第二条测试用例。</p><p>例如，第二条测试用例要实现启动后从当前地区切换至中国。那么，就可以新增<code>ios/spec/change_country_spec.rb</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -417,42 +191,29 @@ Finished in <span class=m>2</span> minutes 7.2 seconds <span class=o>(</span>fil
 </span><span class=lnt>20
 </span><span class=lnt>21
 </span><span class=lnt>22
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=c1># filename: ios/spec/change_country_spec.rb</span>
-<span class=n>require_relative</span> <span class=s1>&#39;../../common/requires&#39;</span>
-
-<span class=n>describe</span> <span class=s1>&#39;Change country&#39;</span> <span class=k>do</span>
-
-  <span class=n>it</span> <span class=s1>&#39;from Hong Kong to China&#39;</span> <span class=k>do</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnMenuMyAccount&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewMyAccount&#39;</span> <span class=p>}</span>
-
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;tablecellMyAccountSystemSettings&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;txtCountryDistrict&#39;</span> <span class=p>}</span>
-
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;txtCountryDistrict&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewSelectCountry&#39;</span> <span class=p>}</span>
-
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;tablecellSelectCN&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnArrowLeft&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewMyAccount&#39;</span> <span class=p>}</span>
-  <span class=k>end</span>
-
-<span class=k>end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>完整的代码请参考<code>debugtalk/AppiumBooster</code>的<a href=https://github.com/debugtalk/AppiumBooster/tree/2.SecondTest><code>2.SecondTest</code>分支</a>。</p>
-<p>现在我们凝视已经添加的<a href=https://github.com/debugtalk/AppiumBooster/tree/2.SecondTest/ios/spec>两个测试用例</a>，有发现什么问题么？</p>
-<p>是的，重复代码太多。在每一步操作中，都要用<code>id</code>来定位控件，还要用<code>wait</code>来实现等待机制。</p>
-<p>除此之外，当前代码最大的问题就是测试用例与控件映射杂糅在一起。造成的后果就是，不管是控件映射发生变动，还是测试用例需要修改，都要来修改这一份代码，维护难度较大。</p>
-<h2 id=重构测试用例与控件映射分离>重构：测试用例与控件映射分离</h2>
-<p>基于以上问题，我们首要的改造任务就是将测试用例与控件映射进行分离。</p>
-<p>考虑到常用的控件操作方法就只有几个（<code>click</code>，<code>type</code>），因此我们可以将控件操作方法单独封装为一个模块，作为公共模块。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=c1># filename: ios/spec/change_country_spec.rb</span>
+</span></span><span class=line><span class=cl><span class=n>require_relative</span> <span class=s1>&#39;../../common/requires&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>describe</span> <span class=s1>&#39;Change country&#39;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>it</span> <span class=s1>&#39;from Hong Kong to China&#39;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnMenuMyAccount&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewMyAccount&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;tablecellMyAccountSystemSettings&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;txtCountryDistrict&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;txtCountryDistrict&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewSelectCountry&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;tablecellSelectCN&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span><span class=p>(</span><span class=s1>&#39;btnArrowLeft&#39;</span><span class=p>)</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;uiviewMyAccount&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>完整的代码请参考<code>debugtalk/AppiumBooster</code>的<a href=https://github.com/debugtalk/AppiumBooster/tree/2.SecondTest><code>2.SecondTest</code>分支</a>。</p><p>现在我们凝视已经添加的<a href=https://github.com/debugtalk/AppiumBooster/tree/2.SecondTest/ios/spec>两个测试用例</a>，有发现什么问题么？</p><p>是的，重复代码太多。在每一步操作中，都要用<code>id</code>来定位控件，还要用<code>wait</code>来实现等待机制。</p><p>除此之外，当前代码最大的问题就是测试用例与控件映射杂糅在一起。造成的后果就是，不管是控件映射发生变动，还是测试用例需要修改，都要来修改这一份代码，维护难度较大。</p><h2 id=重构测试用例与控件映射分离>重构：测试用例与控件映射分离</h2><p>基于以上问题，我们首要的改造任务就是将测试用例与控件映射进行分离。</p><p>考虑到常用的控件操作方法就只有几个（<code>click</code>，<code>type</code>），因此我们可以将控件操作方法单独封装为一个模块，作为公共模块。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -463,26 +224,18 @@ Finished in <span class=m>2</span> minutes 7.2 seconds <span class=o>(</span>fil
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=k>module</span> <span class=nn>Actions</span>
-
-  <span class=k>def</span> <span class=nf>click</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=vi>@found_cell</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
-  <span class=k>end</span>
-
-  <span class=k>def</span> <span class=nf>type</span><span class=p>(</span><span class=n>text</span><span class=p>)</span>
-    <span class=n>wait</span> <span class=p>{</span> <span class=vi>@found_cell</span><span class=o>.</span><span class=n>type</span> <span class=n>text</span> <span class=p>}</span>
-  <span class=k>end</span>
-
-<span class=k>end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>然后，将APP中每一个页面封装为一个模块（<code>module</code>），将页面中的控件映射为模块的静态方法（<code>method</code>），并通过<code>include</code>机制引入方法模块。</p>
-<p>例如，登录页面就可以封装为如下代码。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=k>module</span> <span class=nn>Actions</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=k>def</span> <span class=nf>click</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=vi>@found_cell</span><span class=o>.</span><span class=n>click</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=k>def</span> <span class=nf>type</span><span class=p>(</span><span class=n>text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>wait</span> <span class=p>{</span> <span class=vi>@found_cell</span><span class=o>.</span><span class=n>type</span> <span class=n>text</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后，将APP中每一个页面封装为一个模块（<code>module</code>），将页面中的控件映射为模块的静态方法（<code>method</code>），并通过<code>include</code>机制引入方法模块。</p><p>例如，登录页面就可以封装为如下代码。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -512,45 +265,37 @@ Finished in <span class=m>2</span> minutes 7.2 seconds <span class=o>(</span>fil
 </span><span class=lnt>28
 </span><span class=lnt>29
 </span><span class=lnt>30
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=k>module</span> <span class=nn>Pages</span>
-  <span class=k>module</span> <span class=nn>Login</span>
-    <span class=k>class</span> <span class=o>&lt;&lt;</span> <span class=nb>self</span>
-
-      <span class=kp>include</span> <span class=no>Actions</span>
-
-      <span class=k>def</span> <span class=nf>field_Email_Address</span>
-        <span class=vi>@found_cell</span> <span class=o>=</span> <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;txtfieldEmailAddress&#39;</span> <span class=p>}</span>
-        <span class=nb>self</span>
-      <span class=k>end</span>
-
-      <span class=k>def</span> <span class=nf>field_Password</span>
-        <span class=vi>@found_cell</span> <span class=o>=</span> <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;sectxtfieldPassword&#39;</span> <span class=p>}</span>
-        <span class=nb>self</span>
-      <span class=k>end</span>
-
-      <span class=k>def</span> <span class=nf>button_Login</span>
-        <span class=vi>@found_cell</span> <span class=o>=</span> <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;btnLogin&#39;</span> <span class=p>}</span>
-        <span class=nb>self</span>
-      <span class=k>end</span>
-
-    <span class=k>end</span>
-  <span class=k>end</span>
-<span class=k>end</span>
-
-<span class=k>module</span> <span class=nn>Kernel</span>
-  <span class=k>def</span> <span class=nf>login</span>
-    <span class=no>Pages</span><span class=o>::</span><span class=no>Login</span>
-  <span class=k>end</span>
-<span class=k>end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这里还用到了一点Ruby元编程技巧，就是将页面模块封装为一个方法，并加入到<code>Kernel</code>模块下。这样做的好处就是，我们可以在项目的任意地方直接通过<code>login.button_Login.click</code>这样的形式来对控件进行操作了。</p>
-<p>完成以上改造后，系统登录测试用例就可以采用如下形式进行编写了。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=k>module</span> <span class=nn>Pages</span>
+</span></span><span class=line><span class=cl>  <span class=k>module</span> <span class=nn>Login</span>
+</span></span><span class=line><span class=cl>    <span class=k>class</span> <span class=o>&lt;&lt;</span> <span class=nb>self</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      <span class=kp>include</span> <span class=no>Actions</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      <span class=k>def</span> <span class=nf>field_Email_Address</span>
+</span></span><span class=line><span class=cl>        <span class=vi>@found_cell</span> <span class=o>=</span> <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;txtfieldEmailAddress&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=nb>self</span>
+</span></span><span class=line><span class=cl>      <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      <span class=k>def</span> <span class=nf>field_Password</span>
+</span></span><span class=line><span class=cl>        <span class=vi>@found_cell</span> <span class=o>=</span> <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;sectxtfieldPassword&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=nb>self</span>
+</span></span><span class=line><span class=cl>      <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      <span class=k>def</span> <span class=nf>button_Login</span>
+</span></span><span class=line><span class=cl>        <span class=vi>@found_cell</span> <span class=o>=</span> <span class=n>wait</span> <span class=p>{</span> <span class=nb>id</span> <span class=s1>&#39;btnLogin&#39;</span> <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=nb>self</span>
+</span></span><span class=line><span class=cl>      <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>end</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>module</span> <span class=nn>Kernel</span>
+</span></span><span class=line><span class=cl>  <span class=k>def</span> <span class=nf>login</span>
+</span></span><span class=line><span class=cl>    <span class=no>Pages</span><span class=o>::</span><span class=no>Login</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里还用到了一点Ruby元编程技巧，就是将页面模块封装为一个方法，并加入到<code>Kernel</code>模块下。这样做的好处就是，我们可以在项目的任意地方直接通过<code>login.button_Login.click</code>这样的形式来对控件进行操作了。</p><p>完成以上改造后，系统登录测试用例就可以采用如下形式进行编写了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -569,127 +314,47 @@ Finished in <span class=m>2</span> minutes 7.2 seconds <span class=o>(</span>fil
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=n>describe</span> <span class=s1>&#39;Login&#39;</span> <span class=k>do</span>
-
-  <span class=n>it</span> <span class=s1>&#39;with valid account&#39;</span> <span class=k>do</span>
-    <span class=c1># switch to My Account page</span>
-    <span class=n>my_account</span><span class=o>.</span><span class=n>button_My_Account</span><span class=o>.</span><span class=n>click</span>
-    <span class=n>inner_screen</span><span class=o>.</span><span class=n>has_control</span> <span class=s1>&#39;uiviewMyAccount&#39;</span>
-
-    <span class=c1># enter login page</span>
-    <span class=n>my_account</span><span class=o>.</span><span class=n>button_Login</span><span class=o>.</span><span class=n>click</span>
-    <span class=n>inner_screen</span><span class=o>.</span><span class=n>has_control</span> <span class=s1>&#39;uiviewLogIn&#39;</span>
-
-    <span class=c1># login</span>
-    <span class=n>login</span><span class=o>.</span><span class=n>field_Email_Address</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;leo.lee@debugtalk.com&#39;</span>
-    <span class=n>login</span><span class=o>.</span><span class=n>field_Password</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;123321&#39;</span>
-    <span class=n>login</span><span class=o>.</span><span class=n>button_Login</span><span class=o>.</span><span class=n>click</span>
-    <span class=n>inner_screen</span><span class=o>.</span><span class=n>has_control</span> <span class=s1>&#39;tablecellMyMessage&#39;</span>
-  <span class=k>end</span>
-
-<span class=k>end</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>完整的代码请参考<code>debugtalk/AppiumBooster</code>的<a href=https://github.com/debugtalk/AppiumBooster/tree/3.RefactorV1><code>3.RefactorV1</code>分支</a>。</p>
-<h2 id=to-be-continued->To be continued &mldr;</h2>
-<p>经过这一轮重构，我们的测试用例与控件映射已经实现了分离，测试用例的可重用性与可扩展性也得到了极大的提升。</p>
-<p>然而，在当前模式下，所有的测试用例仍然是以代码形式存在的，新增和修改测试用例时都需要到工程目录下编辑Ruby文件。</p>
-<p>那有没有一种可能，我们只需要在表格中维护自动化测试用例（如下图），然后由代码来读取表格内容就可以自动执行测试呢？</p>
-<p><img src=/image/testcase_login_and_logout.png alt="AppiumBooster overview testcase examples"></p>
-<p>是的，这就是我们对测试框架进行⎡工程化⎦改造的下一个形态，也就是<a href=https://github.com/debugtalk/AppiumBooster><code>AppiumBooster</code></a>现在的样子。</p>
-<p>在下一篇文章中，我们再进行详细探讨。</p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>文章作者</span>
-<span class=item-content>debugtalk</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>上次更新</span>
-<span class=item-content>
-2016-07-28
-</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>许可协议</span>
-<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
-</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://debugtalk.com/tags/Appium/>Appium</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-ruby data-lang=ruby><span class=line><span class=cl><span class=n>describe</span> <span class=s1>&#39;Login&#39;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>it</span> <span class=s1>&#39;with valid account&#39;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>    <span class=c1># switch to My Account page</span>
+</span></span><span class=line><span class=cl>    <span class=n>my_account</span><span class=o>.</span><span class=n>button_My_Account</span><span class=o>.</span><span class=n>click</span>
+</span></span><span class=line><span class=cl>    <span class=n>inner_screen</span><span class=o>.</span><span class=n>has_control</span> <span class=s1>&#39;uiviewMyAccount&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># enter login page</span>
+</span></span><span class=line><span class=cl>    <span class=n>my_account</span><span class=o>.</span><span class=n>button_Login</span><span class=o>.</span><span class=n>click</span>
+</span></span><span class=line><span class=cl>    <span class=n>inner_screen</span><span class=o>.</span><span class=n>has_control</span> <span class=s1>&#39;uiviewLogIn&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1># login</span>
+</span></span><span class=line><span class=cl>    <span class=n>login</span><span class=o>.</span><span class=n>field_Email_Address</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;leo.lee@debugtalk.com&#39;</span>
+</span></span><span class=line><span class=cl>    <span class=n>login</span><span class=o>.</span><span class=n>field_Password</span><span class=o>.</span><span class=n>type</span> <span class=s1>&#39;123321&#39;</span>
+</span></span><span class=line><span class=cl>    <span class=n>login</span><span class=o>.</span><span class=n>button_Login</span><span class=o>.</span><span class=n>click</span>
+</span></span><span class=line><span class=cl>    <span class=n>inner_screen</span><span class=o>.</span><span class=n>has_control</span> <span class=s1>&#39;tablecellMyMessage&#39;</span>
+</span></span><span class=line><span class=cl>  <span class=k>end</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>end</span>
+</span></span></code></pre></td></tr></table></div></div><p>完整的代码请参考<code>debugtalk/AppiumBooster</code>的<a href=https://github.com/debugtalk/AppiumBooster/tree/3.RefactorV1><code>3.RefactorV1</code>分支</a>。</p><h2 id=to-be-continued->To be continued &mldr;</h2><p>经过这一轮重构，我们的测试用例与控件映射已经实现了分离，测试用例的可重用性与可扩展性也得到了极大的提升。</p><p>然而，在当前模式下，所有的测试用例仍然是以代码形式存在的，新增和修改测试用例时都需要到工程目录下编辑Ruby文件。</p><p>那有没有一种可能，我们只需要在表格中维护自动化测试用例（如下图），然后由代码来读取表格内容就可以自动执行测试呢？</p><p><img src=/image/testcase_login_and_logout.png alt="AppiumBooster overview testcase examples"></p><p>是的，这就是我们对测试框架进行⎡工程化⎦改造的下一个形态，也就是<a href=https://github.com/debugtalk/AppiumBooster><code>AppiumBooster</code></a>现在的样子。</p><p>在下一篇文章中，我们再进行详细探讨。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2016-07-28</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span></p></div><footer class=post-footer><div class=post-tags><a href=https://debugtalk.com/tags/Appium/>Appium</a>
 <a href=https://debugtalk.com/tags/iOS/>iOS</a>
 <a href=https://debugtalk.com/tags/Ruby/>Ruby</a>
-<a href=https://debugtalk.com/tags/AppiumBooster/>AppiumBooster</a>
-</div>
-<nav class=post-nav>
-<a class=prev href=/post/Jenkins-CI-Automation-Test/>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
-</i>
-<span class="prev-text nav-default">使用 Jenkins 实现持续集成构建检查</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/post/iOS-Android-Packing-with-Jenkins-details/>
-<span class="next-text nav-default">关于持续集成打包平台的 Jenkins 配置和构建脚本实现细节</span>
+<a href=https://debugtalk.com/tags/AppiumBooster/>AppiumBooster</a></div><nav class=post-nav><a class=prev href=/post/Jenkins-CI-Automation-Test/><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg></i><span class="prev-text nav-default">使用 Jenkins 实现持续集成构建检查</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/post/iOS-Android-Packing-with-Jenkins-details/><span class="next-text nav-default">关于持续集成打包平台的 Jenkins 配置和构建脚本实现细节</span>
 <span class="prev-text nav-mobile">下一篇</span>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
-</i>
-</a>
-</nav>
-</footer>
-</article>
-<div class="post bg-white">
-<script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=icon-links>
-<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
-</a>
-<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
-</a>
-<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
-</a>
-</div>
-<div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg></i></a></nav></footer></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div></div></main><footer id=footer class=footer><div class=icon-links><a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg></a><a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg></a><a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a></span>
+<span class=copyright-year>&copy;
 2011 -
 2022
-<span class=heart>
-<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
-</i>
-</span><span class=author>
-debugtalk
-</span></span>
-<span id=busuanzi_container>
-访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
-</i>
-</div>
-</div>
-<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<span class=heart><i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg></i></span><span class=author>debugtalk</span></span>
+<span id=busuanzi_container>访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span></span></div></footer><div class=back-to-top id=back-to-top><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg></i></div></div><script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
 <script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
 <script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/load-photoswipe.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<script src=/js/custom.js></script>
-</body>
-</html>
+<script src=/js/custom.js></script></body></html>

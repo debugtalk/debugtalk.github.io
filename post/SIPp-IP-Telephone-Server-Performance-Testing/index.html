@@ -1,290 +1,27 @@
-<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<title>使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试 - DebugTalk</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
-<meta name=MobileOptimized content="width">
-<meta name=HandheldFriendly content="true">
-<meta name=applicable-device content="pc,mobile">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=mobile-web-app-capable content="yes">
-<meta name=author content="debugtalk">
-<meta name=description content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi">
-<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
-<meta name=generator content="Hugo 0.92.1">
-<link rel=canonical href=https://debugtalk.com/post/SIPp-IP-Telephone-Server-Performance-Testing/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
-<link rel=stylesheet href=/css/custom.css>
-<meta property="og:title" content="使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试">
-<meta property="og:description" content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://debugtalk.com/post/SIPp-IP-Telephone-Server-Performance-Testing/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2014-05-11T00:00:00+00:00">
-<meta property="article:modified_time" content="2014-05-11T00:00:00+00:00">
-<meta itemprop=name content="使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试">
-<meta itemprop=description content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi"><meta itemprop=datePublished content="2014-05-11T00:00:00+00:00">
-<meta itemprop=dateModified content="2014-05-11T00:00:00+00:00">
-<meta itemprop=wordCount content="5564">
-<meta itemprop=keywords content="性能测试,SIP,IP 电话,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试">
-<meta name=twitter:description content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>DebugTalk</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试 - DebugTalk</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes"><meta name=MobileOptimized content="width"><meta name=HandheldFriendly content="true"><meta name=applicable-device content="pc,mobile"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=mobile-web-app-capable content="yes"><meta name=author content="debugtalk"><meta name=description content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi"><meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试"><meta name=generator content="Hugo 0.94.2"><link rel=canonical href=https://debugtalk.com/post/SIPp-IP-Telephone-Server-Performance-Testing/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous><link rel=stylesheet href=/css/custom.css><meta property="og:title" content="使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试"><meta property="og:description" content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi"><meta property="og:type" content="article"><meta property="og:url" content="https://debugtalk.com/post/SIPp-IP-Telephone-Server-Performance-Testing/"><meta property="article:section" content="post"><meta property="article:published_time" content="2014-05-11T00:00:00+00:00"><meta property="article:modified_time" content="2014-05-11T00:00:00+00:00"><meta itemprop=name content="使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试"><meta itemprop=description content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi"><meta itemprop=datePublished content="2014-05-11T00:00:00+00:00"><meta itemprop=dateModified content="2014-05-11T00:00:00+00:00"><meta itemprop=wordCount content="5564"><meta itemprop=keywords content="性能测试,SIP,IP 电话,"><meta name=twitter:card content="summary"><meta name=twitter:title content="使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试"><meta name=twitter:description content="背景知识介绍 IP电话 IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。 常见的IP电话有VoIP（Voi"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-81639610-1","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>DebugTalk</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
-<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav><link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css><link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header id=header class="header container">
-<div class=logo-wrapper>
-<a href=/ class=logo>
-DebugTalk
-</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-</header>
-<div id=mobile-panel>
-<main id=main class="main bg-llight">
-<div class=content-wrapper>
-<div id=content class="content container">
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试</h1>
-<div class=post-meta>
-<time datetime=2014-05-11 class=post-time>
-2014-05-11
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/Testing/> Testing </a>
-</div>
-<span class=more-meta> 约 5564 字 </span>
-<span class=more-meta> 预计阅读 12 分钟 </span>
-<span id=busuanzi_container_page_pv>
-| 阅读 <span id=busuanzi_value_page_pv></span>
-</span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class=post-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#背景知识介绍>背景知识介绍</a>
-<ul>
-<li><a href=#ip电话>IP电话</a></li>
-<li><a href=#ip电话网关>IP电话网关</a></li>
-<li><a href=#ip电话所需要的几种应用协议>IP电话所需要的几种应用协议</a></li>
-<li><a href=#sip协议>SIP协议</a></li>
-</ul>
-</li>
-<li><a href=#sipp工具介绍>SIPp工具介绍</a>
-<ul>
-<li><a href=#sipp软件简介>SIPp软件简介</a></li>
-<li><a href=#sipp的安装windows>SIPp的安装（Windows）</a></li>
-<li><a href=#sipp的工作原理>SIPp的工作原理</a></li>
-<li><a href=#sipp的常用工作模式>SIPp的常用工作模式</a></li>
-</ul>
-</li>
-<li><a href=#sipp的使用>SIPp的使用</a>
-<ul>
-<li><a href=#sipp的配置文件>SIPp的配置文件</a></li>
-<li><a href=#uacxml>uac.xml</a></li>
-<li><a href=#datacsv>data.csv</a></li>
-<li><a href=#uacbat>uac.bat</a></li>
-</ul>
-</li>
-<li><a href=#使用sipp对基于sip协议的网络电话进行性能测试>使用SIPp对基于SIP协议的网络电话进行性能测试</a>
-<ul>
-<li><a href=#测试内容>测试内容</a></li>
-<li><a href=#测试场景分析>测试场景分析</a></li>
-<li><a href=#测试方法>测试方法</a></li>
-<li><a href=#测试步骤>测试步骤</a></li>
-</ul>
-</li>
-<li><a href=#参考资料>参考资料</a></li>
-<li><a href=#附录>附录</a></li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<h2 id=背景知识介绍>背景知识介绍</h2>
-<h3 id=ip电话>IP电话</h3>
-<p>IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。
-常见的IP电话有VoIP（Voice over IP），Internet Telephony 和 VON（Voice over Net）。</p>
-<h3 id=ip电话网关>IP电话网关</h3>
-<p>IP电话网关（IP Telepathy Gateway），是公用电话网（即公用电路交换电话网，又称传统电话网或电信网）与IP网络的接口设备，其作用包含两个方面：</p>
-<ul>
-<li>在电话呼叫阶段和呼叫释放阶段进行电话信令的转换</li>
-<li>在通话期间进行话音编码的转换</li>
-</ul>
-<p>IP电话网关的出现，实现了PC机用户之间的IP电话通话（无需经过IP电话网关），PC机用户与固定电话用户的IP电话通话（仅需经过IP电话网关1次），以及固定电话用户之间的IP电话通话（需要经过IP电话网关2次）。</p>
-<h3 id=ip电话所需要的几种应用协议>IP电话所需要的几种应用协议</h3>
-<p>在IP电话的通信中，至少需要两种应用协议，即信令协议和传送协议。
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header id=header class="header container"><div class=logo-wrapper><a href=/ class=logo>DebugTalk</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav></header><div id=mobile-panel><main id=main class="main bg-llight"><div class=content-wrapper><div id=content class="content container"><article class="post bg-white"><header class=post-header><h1 class=post-title>使用 SIPp 对基于 SIP 协议的 IP 电话通信服务器进行性能测试</h1><div class=post-meta><time datetime=2014-05-11 class=post-time>2014-05-11</time><div class=post-category><a href=https://debugtalk.com/categories/Testing/>Testing</a></div><span class=more-meta>约 5564 字</span>
+<span class=more-meta>预计阅读 12 分钟</span>
+<span id=busuanzi_container_page_pv>| 阅读 <span id=busuanzi_value_page_pv></span></span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#背景知识介绍>背景知识介绍</a><ul><li><a href=#ip电话>IP电话</a></li><li><a href=#ip电话网关>IP电话网关</a></li><li><a href=#ip电话所需要的几种应用协议>IP电话所需要的几种应用协议</a></li><li><a href=#sip协议>SIP协议</a></li></ul></li><li><a href=#sipp工具介绍>SIPp工具介绍</a><ul><li><a href=#sipp软件简介>SIPp软件简介</a></li><li><a href=#sipp的安装windows>SIPp的安装（Windows）</a></li><li><a href=#sipp的工作原理>SIPp的工作原理</a></li><li><a href=#sipp的常用工作模式>SIPp的常用工作模式</a></li></ul></li><li><a href=#sipp的使用>SIPp的使用</a><ul><li><a href=#sipp的配置文件>SIPp的配置文件</a></li><li><a href=#uacxml>uac.xml</a></li><li><a href=#datacsv>data.csv</a></li><li><a href=#uacbat>uac.bat</a></li></ul></li><li><a href=#使用sipp对基于sip协议的网络电话进行性能测试>使用SIPp对基于SIP协议的网络电话进行性能测试</a><ul><li><a href=#测试内容>测试内容</a></li><li><a href=#测试场景分析>测试场景分析</a></li><li><a href=#测试方法>测试方法</a></li><li><a href=#测试步骤>测试步骤</a></li></ul></li><li><a href=#参考资料>参考资料</a></li><li><a href=#附录>附录</a></li></ul></nav></div></div><div class=post-content><h2 id=背景知识介绍>背景知识介绍</h2><h3 id=ip电话>IP电话</h3><p>IP电话是指在IP网络上打电话。所谓“IP网络”就是“使用IP协议的分组交换网”的简称。
+常见的IP电话有VoIP（Voice over IP），Internet Telephony 和 VON（Voice over Net）。</p><h3 id=ip电话网关>IP电话网关</h3><p>IP电话网关（IP Telepathy Gateway），是公用电话网（即公用电路交换电话网，又称传统电话网或电信网）与IP网络的接口设备，其作用包含两个方面：</p><ul><li>在电话呼叫阶段和呼叫释放阶段进行电话信令的转换</li><li>在通话期间进行话音编码的转换</li></ul><p>IP电话网关的出现，实现了PC机用户之间的IP电话通话（无需经过IP电话网关），PC机用户与固定电话用户的IP电话通话（仅需经过IP电话网关1次），以及固定电话用户之间的IP电话通话（需要经过IP电话网关2次）。</p><h3 id=ip电话所需要的几种应用协议>IP电话所需要的几种应用协议</h3><p>在IP电话的通信中，至少需要两种应用协议，即信令协议和传送协议。
 其中，<strong>信令协议</strong>的作用是帮助主叫者在因特网上找到被叫用户。在公用电话网中，电话交换机根据用户所拨打的号码就能够通过合适的路由找到被叫用户，并在主叫和被叫之间建立一条电路连接。这些都是依靠电话信令（Signaling）实现的。我们听到的振铃音、忙音或一些录音提示，以及打完电话挂机释放连接，都是由电话信令来处理的。现在电话网使用的信令是7号信令SS7。利用IP网络打电话同样也需要IP网络能够识别某种信令。但由于IP电话往往要经过已有的公用电话网，因此IP电话的信令必须在功能上与原有的7号信令相兼容，这样才能使IP网络和公用电话网上的两种信令能够互相转换，从而做到互操作。现有的与信令有关的协议为H.323和SIP，本文只介绍SIP协议。
-话音分组的<strong>传送协议</strong>，其作用是使用来进行电话通信的话音数据能够以时延敏感属性在因特网中传送。常见的传送协议为RTP。</p>
-<h3 id=sip协议>SIP协议</h3>
-<p>SIP协议，即会话发起协议（Session Initiation Protocol），是使用文本方式的客户服务器协议。
+话音分组的<strong>传送协议</strong>，其作用是使用来进行电话通信的话音数据能够以时延敏感属性在因特网中传送。常见的传送协议为RTP。</p><h3 id=sip协议>SIP协议</h3><p>SIP协议，即会话发起协议（Session Initiation Protocol），是使用文本方式的客户服务器协议。
 SIP系统只有两种构件，即用户代理（user agent）和网络服务器（network server）。
 用户代理包含两个程序，即用户代理客户端UAC（User Agent Client）和用户代理服务器UAS（User Agent Server）；前者用来发起呼叫，后者用来接受呼叫。
 网络服务器分为代理服务器（proxy server）和重定向服务器（redirect server）。代理服务器接受来自主叫用户的呼叫请求（实际上是来自用户代理客户端UAC的呼叫请求），并将其转发给被叫用户或下一跳代理服务器；若转发给下一跳代理服务器，则下一跳代理服务器再把呼叫请求转发给被叫用户（实际上是转发给用户代理服务器UAS）。重定向服务器不接受呼叫，它通过响应告诉客户下一跳代理服务器的地址，由客户按此地址向下一跳代理服务器重新发送呼叫请求。
-SIP的会话共有三个阶段：建立会话、通信和终止会话。图1给出了一个简单的SIP会话的例子。其中建立会话阶段和终止会话阶段都是使用SIP协议，而中间的通信阶段是使用如RTP这样的传送实时话音分组的协议。</p>
-<p>{: .center}
+SIP的会话共有三个阶段：建立会话、通信和终止会话。图1给出了一个简单的SIP会话的例子。其中建立会话阶段和终止会话阶段都是使用SIP协议，而中间的通信阶段是使用如RTP这样的传送实时话音分组的协议。</p><p>{: .center}
 <img src=/image/20140511201122_SIP_Simple_Session.png alt=SIP_Simple_Session>
-图1 SIP的简单会话过程</p>
-<p>在图1中，主叫方（Tesla）先向被叫方（Marconi）发出INVITE报文，这个报文中含有双方的地址信息以及一些其它信息（如通话时话音编码方式等）；被叫方收到请求后，会返回180 Ringing的状态码，并处于振铃状态；若被叫方接受呼叫请求，则返回200 OK的状态码；主叫方再发送ACK报文作为确认（类似于TCP建立连接时的三次握手），然后双方便完成连接，可以进行通话了；通话过程中，双方中的任何一方都可以发送BYE报文以终止会话。如上便是SIP会话的全过程。</p>
-<h2 id=sipp工具介绍>SIPp工具介绍</h2>
-<h3 id=sipp软件简介>SIPp软件简介</h3>
-<p>如下是SIPp官方网站上关于SIPp的介绍。</p>
-<blockquote>
-<p>SIPp is a free Open Source test tool / traffic generator for the SIP protocol. It includes a few basic SipStone user agent scenarios (UAC and UAS) and establishes and releases multiple calls with the INVITE and BYE methods. It can also reads custom XML scenario files describing from very simple to complex call flows. It features the dynamic display of statistics about running tests (call rate, round trip delay, and message statistics), periodic CSV statistics dumps, TCP and UDP over multiple sockets or multiplexed with retransmission management and dynamically adjustable call rates.
-SIPp can be used to test various real SIP equipment like SIP proxies, B2BUAs, SIP media servers, SIP/x gateways, SIP PBX, &mldr; It is also very useful to emulate thousands of user agents calling your SIP system.</p>
-</blockquote>
-<h3 id=sipp的安装windows>SIPp的安装（Windows）</h3>
-<p>SIPp几乎可以运行在所有UNIX平台上，HPUX、Tru64、Linux (RedHat, Debian, FreeBSD)和Solaris/SunOS。并且，SIPp已被移植到Windows平台。</p>
-<ul>
-<li>在Linux/Unix平台上，SIPp采用源代码的形式进行提供，需要通过编译源代码的方式进行安装。</li>
-<li>在Windows平台上，SIPp提供了预编译的可执行文件，可以直接进行安装；也可以通过在Windows系统中安装CYGWIN模拟Linux环境，然后通过编译源代码的方式进行安装。</li>
-</ul>
-<p>通常情况下，在Windows平台中通过预编译可执行文件可以快速完成安装，操作简单且成功率高，但该种方式存在局限性，主要有如下几点：</p>
-<ul>
-<li>Windows预编译版本的功能存在删减，不支持PCAP（语音）和密码验证功能；</li>
-<li>Windows的预编译版本较为滞后，例如当前SIPp的最新版本为3.4，而Windows的最新预编译版本为3.2；</li>
-<li>相比于Linux/Unix平台，SIPp在Windows平台上运行不够稳定，特别是并发量较大时可能会出现问题，因此不适宜进行压力测试。</li>
-</ul>
-<h3 id=sipp的工作原理>SIPp的工作原理</h3>
-<p>对于电话而言，每台电话机既是客户端（可拨打电话）也是服务端（可接听电话）。同理，SIPp模拟用户代理，也有两种工作模式：UAC和UAS。</p>
-<p>SIPp中具有场景（scenario）的概念，它是一个XML格式的文件，其作用是用来描述SIP协议通讯过程。具体地，UAC和UAS分别对应一个场景文件：uac.xml用于描述客户端的呼叫，uas.xml用于描述服务端的响应。在SIPp工具中，已经内置了许多场景文件，可直接使用；测试人员也可参照场景文件的格式要求，自定义编写场景文件。</p>
-<p>另外，SIPp采用了数据与场景分离的设计，从而使工具的使用更加灵活。其中，数据包括IP地址、端口号、电话号码、用户名等内容。通常，测试数据保存在CSV文件中，如data.csv。</p>
-<p>SIPp是通过命令行的方式操作调用的。例如，在利用SIPp模拟UAC发起呼叫时，可在cmd窗口中运行如下命令：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>sipp -sn uac 172.31.89.4:5060 -r <span class=m>1</span> -rp <span class=m>3000</span> -inf data.csv -p <span class=m>7098</span> -i 172.31.89.242 -s <span class=m>8001</span> -sf uac_onecall.xml –m <span class=m>1000</span> –l <span class=m>900</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>可以看出，如果每次都在命令行中输入命令进行运行，效率将十分低下；因此，可以将配置好的命令保存在bat批处理文件中，方便测试时直接调用。</p>
-<h3 id=sipp的常用工作模式>SIPp的常用工作模式</h3>
-<p>SIPp具有三种常用工作模式：</p>
-<ul>
-<li>当SIPp作为UAC时，可向已有电话终端（电话机或运行在电脑上的虚拟终端）发起呼叫；</li>
-<li>当SIPp作为UAS时，可接收到现有电话终端（电话机或运行在电脑上的虚拟终端）发起的呼叫；</li>
-<li>SIPp还可同时作为UAC和UAS，并使用UAC向UAS发起呼叫，以此来对代理服务器进行测试。</li>
-</ul>
-<p>图2是对第三种模式的描述。</p>
-<p>{: .center}
+图1 SIP的简单会话过程</p><p>在图1中，主叫方（Tesla）先向被叫方（Marconi）发出INVITE报文，这个报文中含有双方的地址信息以及一些其它信息（如通话时话音编码方式等）；被叫方收到请求后，会返回180 Ringing的状态码，并处于振铃状态；若被叫方接受呼叫请求，则返回200 OK的状态码；主叫方再发送ACK报文作为确认（类似于TCP建立连接时的三次握手），然后双方便完成连接，可以进行通话了；通话过程中，双方中的任何一方都可以发送BYE报文以终止会话。如上便是SIP会话的全过程。</p><h2 id=sipp工具介绍>SIPp工具介绍</h2><h3 id=sipp软件简介>SIPp软件简介</h3><p>如下是SIPp官方网站上关于SIPp的介绍。</p><blockquote><p>SIPp is a free Open Source test tool / traffic generator for the SIP protocol. It includes a few basic SipStone user agent scenarios (UAC and UAS) and establishes and releases multiple calls with the INVITE and BYE methods. It can also reads custom XML scenario files describing from very simple to complex call flows. It features the dynamic display of statistics about running tests (call rate, round trip delay, and message statistics), periodic CSV statistics dumps, TCP and UDP over multiple sockets or multiplexed with retransmission management and dynamically adjustable call rates.
+SIPp can be used to test various real SIP equipment like SIP proxies, B2BUAs, SIP media servers, SIP/x gateways, SIP PBX, &mldr; It is also very useful to emulate thousands of user agents calling your SIP system.</p></blockquote><h3 id=sipp的安装windows>SIPp的安装（Windows）</h3><p>SIPp几乎可以运行在所有UNIX平台上，HPUX、Tru64、Linux (RedHat, Debian, FreeBSD)和Solaris/SunOS。并且，SIPp已被移植到Windows平台。</p><ul><li>在Linux/Unix平台上，SIPp采用源代码的形式进行提供，需要通过编译源代码的方式进行安装。</li><li>在Windows平台上，SIPp提供了预编译的可执行文件，可以直接进行安装；也可以通过在Windows系统中安装CYGWIN模拟Linux环境，然后通过编译源代码的方式进行安装。</li></ul><p>通常情况下，在Windows平台中通过预编译可执行文件可以快速完成安装，操作简单且成功率高，但该种方式存在局限性，主要有如下几点：</p><ul><li>Windows预编译版本的功能存在删减，不支持PCAP（语音）和密码验证功能；</li><li>Windows的预编译版本较为滞后，例如当前SIPp的最新版本为3.4，而Windows的最新预编译版本为3.2；</li><li>相比于Linux/Unix平台，SIPp在Windows平台上运行不够稳定，特别是并发量较大时可能会出现问题，因此不适宜进行压力测试。</li></ul><h3 id=sipp的工作原理>SIPp的工作原理</h3><p>对于电话而言，每台电话机既是客户端（可拨打电话）也是服务端（可接听电话）。同理，SIPp模拟用户代理，也有两种工作模式：UAC和UAS。</p><p>SIPp中具有场景（scenario）的概念，它是一个XML格式的文件，其作用是用来描述SIP协议通讯过程。具体地，UAC和UAS分别对应一个场景文件：uac.xml用于描述客户端的呼叫，uas.xml用于描述服务端的响应。在SIPp工具中，已经内置了许多场景文件，可直接使用；测试人员也可参照场景文件的格式要求，自定义编写场景文件。</p><p>另外，SIPp采用了数据与场景分离的设计，从而使工具的使用更加灵活。其中，数据包括IP地址、端口号、电话号码、用户名等内容。通常，测试数据保存在CSV文件中，如data.csv。</p><p>SIPp是通过命令行的方式操作调用的。例如，在利用SIPp模拟UAC发起呼叫时，可在cmd窗口中运行如下命令：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sipp -sn uac 172.31.89.4:5060 -r <span class=m>1</span> -rp <span class=m>3000</span> -inf data.csv -p <span class=m>7098</span> -i 172.31.89.242 -s <span class=m>8001</span> -sf uac_onecall.xml –m <span class=m>1000</span> –l <span class=m>900</span>
+</span></span></code></pre></td></tr></table></div></div><p>可以看出，如果每次都在命令行中输入命令进行运行，效率将十分低下；因此，可以将配置好的命令保存在bat批处理文件中，方便测试时直接调用。</p><h3 id=sipp的常用工作模式>SIPp的常用工作模式</h3><p>SIPp具有三种常用工作模式：</p><ul><li>当SIPp作为UAC时，可向已有电话终端（电话机或运行在电脑上的虚拟终端）发起呼叫；</li><li>当SIPp作为UAS时，可接收到现有电话终端（电话机或运行在电脑上的虚拟终端）发起的呼叫；</li><li>SIPp还可同时作为UAC和UAS，并使用UAC向UAS发起呼叫，以此来对代理服务器进行测试。</li></ul><p>图2是对第三种模式的描述。</p><p>{: .center}
 <img src=/image/20140511201122_SIPp_Operating_Principle.jpg alt=SIPp_Operating_Principle>
-图2 SIPp工作原理</p>
-<p>在该种模式下，需先运行服务端UAS，然后再运行客户端UAC。接下来，UAC便参照uac.xml场景文件的描述，发起呼叫；而UAS则参照uas.xml场景文件的描述，对呼叫进行响应；整个通讯过程遵循SIP协议，在本文的1.4节已经进行了介绍。</p>
-<h2 id=sipp的使用>SIPp的使用</h2>
-<h3 id=sipp的配置文件>SIPp的配置文件</h3>
-<p>通过本文2.3节的介绍可知，使用SIPp时会涉及到5个文件：uac.xml, uas.xml, data.csv, uac.bat, uas.bat。</p>
-<p>其用途简要说明如下：</p>
-<ul>
-<li>uac.xml：用于描述客户端UAC的SIP信号流程；</li>
-<li>uas.xml：用于描述服务端UAS的SIP信号流程；</li>
-<li>data.csv：存储数据的文件，方便在uac.xml和uas.xml中引入的相应数据；</li>
-<li>uac.bat：存储SIPp命令及参数，便于执行时直接调用，模拟UAC的呼叫；</li>
-<li>uas.bat：存储SIPp命令及参数，便于执行时直接调用，模拟UAS的响应。</li>
-</ul>
-<p>由于uac.xml和uas.xml类似，uac.bat和uas.bat类似，本文只对uac.xml、uac.bat和data.csv三个文件进行讲解。</p>
-<h3 id=uacxml>uac.xml</h3>
-<p>SIPp默认自带的uac.xml内容如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+图2 SIPp工作原理</p><p>在该种模式下，需先运行服务端UAS，然后再运行客户端UAC。接下来，UAC便参照uac.xml场景文件的描述，发起呼叫；而UAS则参照uas.xml场景文件的描述，对呼叫进行响应；整个通讯过程遵循SIP协议，在本文的1.4节已经进行了介绍。</p><h2 id=sipp的使用>SIPp的使用</h2><h3 id=sipp的配置文件>SIPp的配置文件</h3><p>通过本文2.3节的介绍可知，使用SIPp时会涉及到5个文件：uac.xml, uas.xml, data.csv, uac.bat, uas.bat。</p><p>其用途简要说明如下：</p><ul><li>uac.xml：用于描述客户端UAC的SIP信号流程；</li><li>uas.xml：用于描述服务端UAS的SIP信号流程；</li><li>data.csv：存储数据的文件，方便在uac.xml和uas.xml中引入的相应数据；</li><li>uac.bat：存储SIPp命令及参数，便于执行时直接调用，模拟UAC的呼叫；</li><li>uas.bat：存储SIPp命令及参数，便于执行时直接调用，模拟UAS的响应。</li></ul><p>由于uac.xml和uas.xml类似，uac.bat和uas.bat类似，本文只对uac.xml、uac.bat和data.csv三个文件进行讲解。</p><h3 id=uacxml>uac.xml</h3><p>SIPp默认自带的uac.xml内容如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -379,196 +116,129 @@ SIPp can be used to test various real SIP equipment like SIP proxies, B2BUAs, SI
 </span><span class=lnt>93
 </span><span class=lnt>94
 </span><span class=lnt>95
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=cp>&lt;?xml version=&#34;1.0&#34; encoding=&#34;ISO-8859-1&#34; ?&gt;</span>
-<span class=cp>&lt;!DOCTYPE scenario SYSTEM &#34;sipp.dtd&#34;&gt;</span>
-
-<span class=nt>&lt;scenario</span> <span class=na>name=</span><span class=s>&#34;Basic Sipstone UAC&#34;</span><span class=nt>&gt;</span>
-  <span class=c>&lt;!-- In client mode (sipp placing calls), the Call-ID MUST be         --&gt;</span>
-  <span class=c>&lt;!-- generated by sipp. To do so, use [call_id] keyword.              --&gt;</span>
-  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
-    <span class=cp>&lt;![CDATA[
-</span><span class=cp>
-</span><span class=cp>      INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
-</span><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-</span><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
-</span><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;
-</span><span class=cp>      Call-ID: [call_id]
-</span><span class=cp>      CSeq: 1 INVITE
-</span><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
-</span><span class=cp>      Max-Forwards: 70
-</span><span class=cp>      Subject: Performance Test
-</span><span class=cp>      Content-Type: application/sdp
-</span><span class=cp>      Content-Length: [len]
-</span><span class=cp>
-</span><span class=cp>      v=0
-</span><span class=cp>      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
-</span><span class=cp>      s=-
-</span><span class=cp>      c=IN IP[media_ip_type] [media_ip]
-</span><span class=cp>      t=0 0
-</span><span class=cp>      m=audio [media_port] RTP/AVP 0
-</span><span class=cp>      a=rtpmap:0 PCMU/8000
-</span><span class=cp>
-</span><span class=cp>    ]]&gt;</span>
-  <span class=nt>&lt;/send&gt;</span>
-
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;100&#34;</span> <span class=na>optional=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;/recv&gt;</span>
-
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;180&#34;</span> <span class=na>optional=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;/recv&gt;</span>
-
-  <span class=c>&lt;!-- By adding rrs=&#34;true&#34; (Record Route Sets), the route sets         --&gt;</span>
-  <span class=c>&lt;!-- are saved and used for following messages sent. Useful to test   --&gt;</span>
-  <span class=c>&lt;!-- against stateful SIP proxies/B2BUAs.                             --&gt;</span>
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>rtd=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;/recv&gt;</span>
-
-  <span class=c>&lt;!-- Packet lost can be simulated in any send/recv message by         --&gt;</span>
-  <span class=c>&lt;!-- by adding the &#39;lost = &#34;10&#34;&#39;. Value can be [1-100] percent.       --&gt;</span>
-  <span class=nt>&lt;send&gt;</span>
-    <span class=cp>&lt;![CDATA[
-</span><span class=cp>
-</span><span class=cp>      ACK sip:[service]@[remote_ip]:[remote_port] SIP/2.0
-</span><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-</span><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
-</span><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
-</span><span class=cp>      Call-ID: [call_id]
-</span><span class=cp>      CSeq: 1 ACK
-</span><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
-</span><span class=cp>      Max-Forwards: 70
-</span><span class=cp>      Subject: Performance Test
-</span><span class=cp>      Content-Length: 0
-</span><span class=cp>
-</span><span class=cp>    ]]&gt;</span>
-  <span class=nt>&lt;/send&gt;</span>
-
-  <span class=c>&lt;!-- This delay can be customized by the -d command-line option       --&gt;</span>
-  <span class=c>&lt;!-- or by adding a &#39;milliseconds = &#34;value&#34;&#39; option here.             --&gt;</span>
-  <span class=nt>&lt;pause/&gt;</span>
-
-  <span class=c>&lt;!-- The &#39;crlf&#39; option inserts a blank line in the statistics report. --&gt;</span>
-  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
-    <span class=cp>&lt;![CDATA[
-</span><span class=cp>
-</span><span class=cp>      BYE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
-</span><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-</span><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
-</span><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
-</span><span class=cp>      Call-ID: [call_id]
-</span><span class=cp>      CSeq: 2 BYE
-</span><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
-</span><span class=cp>      Max-Forwards: 70
-</span><span class=cp>      Subject: Performance Test
-</span><span class=cp>      Content-Length: 0
-</span><span class=cp>
-</span><span class=cp>    ]]&gt;</span>
-  <span class=nt>&lt;/send&gt;</span>
-
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>crlf=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;/recv&gt;</span>
-
-  <span class=c>&lt;!-- definition of the response time repartition table (unit is ms)   --&gt;</span>
-  <span class=nt>&lt;ResponseTimeRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 20, 30, 40, 50, 100, 150, 200&#34;</span><span class=nt>/&gt;</span>
-
-  <span class=c>&lt;!-- definition of the call length repartition table (unit is ms)     --&gt;</span>
-  <span class=nt>&lt;CallLengthRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 50, 100, 500, 1000, 5000, 10000&#34;</span><span class=nt>/&gt;</span>
-
-<span class=nt>&lt;/scenario&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>如该文件所示，UAC首先发送INVITE请求，按照预期，UAC将依次接收100、180和200状态码，然后UAC再次发送ACK进行确认，从而完成通信连接的建立；最后，UAC发送BYE请求，结束通话，从而断开通信连接。</p>
-<h3 id=datacsv>data.csv</h3>
-<p>在data.csv文件中，第一行描述数据的读取方式，如顺序读取（SEQUENTIAL）、随机读取（RANDOM），或者自定义方式（USER）。
-从第二行开始，每行描述一次呼叫时使用的数据；如果每次呼叫时调用的参数有多个，那么就可用分号（";"）进行分离，并可在XML文件中进行调用，每行的数据从左到右依次为[field0], [field1], &mldr;。</p>
-<p>csv文件的编写示例如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=cp>&lt;?xml version=&#34;1.0&#34; encoding=&#34;ISO-8859-1&#34; ?&gt;</span>
+</span></span><span class=line><span class=cl><span class=cp>&lt;!DOCTYPE scenario SYSTEM &#34;sipp.dtd&#34;&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nt>&lt;scenario</span> <span class=na>name=</span><span class=s>&#34;Basic Sipstone UAC&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- In client mode (sipp placing calls), the Call-ID MUST be         --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- generated by sipp. To do so, use [call_id] keyword.              --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=cp>&lt;![CDATA[
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+</span></span></span><span class=line><span class=cl><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+</span></span></span><span class=line><span class=cl><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
+</span></span></span><span class=line><span class=cl><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;
+</span></span></span><span class=line><span class=cl><span class=cp>      Call-ID: [call_id]
+</span></span></span><span class=line><span class=cl><span class=cp>      CSeq: 1 INVITE
+</span></span></span><span class=line><span class=cl><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
+</span></span></span><span class=line><span class=cl><span class=cp>      Max-Forwards: 70
+</span></span></span><span class=line><span class=cl><span class=cp>      Subject: Performance Test
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Type: application/sdp
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Length: [len]
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      v=0
+</span></span></span><span class=line><span class=cl><span class=cp>      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+</span></span></span><span class=line><span class=cl><span class=cp>      s=-
+</span></span></span><span class=line><span class=cl><span class=cp>      c=IN IP[media_ip_type] [media_ip]
+</span></span></span><span class=line><span class=cl><span class=cp>      t=0 0
+</span></span></span><span class=line><span class=cl><span class=cp>      m=audio [media_port] RTP/AVP 0
+</span></span></span><span class=line><span class=cl><span class=cp>      a=rtpmap:0 PCMU/8000
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>    ]]&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/send&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;100&#34;</span> <span class=na>optional=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;180&#34;</span> <span class=na>optional=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- By adding rrs=&#34;true&#34; (Record Route Sets), the route sets         --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- are saved and used for following messages sent. Useful to test   --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- against stateful SIP proxies/B2BUAs.                             --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>rtd=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- Packet lost can be simulated in any send/recv message by         --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- by adding the &#39;lost = &#34;10&#34;&#39;. Value can be [1-100] percent.       --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;send&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=cp>&lt;![CDATA[
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      ACK sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+</span></span></span><span class=line><span class=cl><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+</span></span></span><span class=line><span class=cl><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
+</span></span></span><span class=line><span class=cl><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
+</span></span></span><span class=line><span class=cl><span class=cp>      Call-ID: [call_id]
+</span></span></span><span class=line><span class=cl><span class=cp>      CSeq: 1 ACK
+</span></span></span><span class=line><span class=cl><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
+</span></span></span><span class=line><span class=cl><span class=cp>      Max-Forwards: 70
+</span></span></span><span class=line><span class=cl><span class=cp>      Subject: Performance Test
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Length: 0
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>    ]]&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/send&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- This delay can be customized by the -d command-line option       --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- or by adding a &#39;milliseconds = &#34;value&#34;&#39; option here.             --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;pause/&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- The &#39;crlf&#39; option inserts a blank line in the statistics report. --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=cp>&lt;![CDATA[
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      BYE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+</span></span></span><span class=line><span class=cl><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+</span></span></span><span class=line><span class=cl><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
+</span></span></span><span class=line><span class=cl><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
+</span></span></span><span class=line><span class=cl><span class=cp>      Call-ID: [call_id]
+</span></span></span><span class=line><span class=cl><span class=cp>      CSeq: 2 BYE
+</span></span></span><span class=line><span class=cl><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
+</span></span></span><span class=line><span class=cl><span class=cp>      Max-Forwards: 70
+</span></span></span><span class=line><span class=cl><span class=cp>      Subject: Performance Test
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Length: 0
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>    ]]&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/send&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>crlf=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- definition of the response time repartition table (unit is ms)   --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;ResponseTimeRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 20, 30, 40, 50, 100, 150, 200&#34;</span><span class=nt>/&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- definition of the call length repartition table (unit is ms)     --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;CallLengthRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 50, 100, 500, 1000, 5000, 10000&#34;</span><span class=nt>/&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/scenario&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>如该文件所示，UAC首先发送INVITE请求，按照预期，UAC将依次接收100、180和200状态码，然后UAC再次发送ACK进行确认，从而完成通信连接的建立；最后，UAC发送BYE请求，结束通话，从而断开通信连接。</p><h3 id=datacsv>data.csv</h3><p>在data.csv文件中，第一行描述数据的读取方式，如顺序读取（SEQUENTIAL）、随机读取（RANDOM），或者自定义方式（USER）。
+从第二行开始，每行描述一次呼叫时使用的数据；如果每次呼叫时调用的参数有多个，那么就可用分号（";"）进行分离，并可在XML文件中进行调用，每行的数据从左到右依次为[field0], [field1], &mldr;。</p><p>csv文件的编写示例如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>SEQUENTIAL
-#注释将被忽略
-Sarah;sipphone32
-Bob;sipphone12
-#This line too
-Fred;sipphone94
-</code></pre></td></tr></table>
-</div>
-</div><p>XML调用CSV的具体方式如图3所示。</p>
-<p>{: .center}
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>SEQUENTIAL
+</span></span><span class=line><span class=cl>#注释将被忽略
+</span></span><span class=line><span class=cl>Sarah;sipphone32
+</span></span><span class=line><span class=cl>Bob;sipphone12
+</span></span><span class=line><span class=cl>#This line too
+</span></span><span class=line><span class=cl>Fred;sipphone94
+</span></span></code></pre></td></tr></table></div></div><p>XML调用CSV的具体方式如图3所示。</p><p>{: .center}
 <img src=/image/20140511201122_XML_Invoke_CSV.jpg alt=XML_Invoke_CSV>
-图3 XML调用CSV的原理</p>
-<h3 id=uacbat>uac.bat</h3>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>sipp -sn uac 172.31.89.4:5060 -r <span class=m>1</span> -rp <span class=m>3000</span> -inf data.csv -p <span class=m>7098</span> -i 172.31.89.242 -s <span class=m>8001</span> -sf uac_onecall.xml –m <span class=m>1000</span> –l <span class=m>900</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>各个参数说明：</p>
-<ul>
-<li>172.31.89.4:5060：远端地址和端口（在xml脚本中用[remote_ip]，[remote_port]引用）</li>
-<li>-r 1 -rp 3000：每三秒钟（3000毫秒）发起一个呼叫</li>
-<li>-inf data.csv：引入数据配置文件</li>
-<li>-p 7098：本地端口（在xml脚本中用[local_port]引用）</li>
-<li>-i 172.31.89.242：本地地址（在xml脚本中用[local_ip]引用）</li>
-<li>-s 8001：被叫号码（在xml脚本中用[service]引用）</li>
-<li>-sf uac_onecall.xml：引用xml脚本文件，根据需要模拟的呼叫流程编写</li>
-<li>-sn uac :执行默认的uac流程，如需执行自己编写的流程文件，命令中应不含此参数</li>
-<li>-m 1000:发送1000次呼叫后停止并退出。</li>
-<li>-l 900 :最大同时保持呼叫量，默认值为3*caps值呼叫时长，当因种种原因导致现存呼叫总数达到此值时，SIPp将停止产生新的呼叫，等待现存呼叫总数低于此值时才继续产生呼叫。</li>
-<li>-trace_err跟踪所有错误消息，并把错误消息保存到文件场景文件描述的 {fileName}_{pid}_errors.log 文件中</li>
-<li>-trace_screen 当程序结束时候打印统计信息并弹出屏幕（如果在后台运行的话）</li>
-</ul>
-<h2 id=使用sipp对基于sip协议的网络电话进行性能测试>使用SIPp对基于SIP协议的网络电话进行性能测试</h2>
-<h3 id=测试内容>测试内容</h3>
-<ul>
-<li>测试某通信服务器在400组并发呼叫过程中的CPU负载峰值和内存占用率。</li>
-</ul>
-<h3 id=测试场景分析>测试场景分析</h3>
-<p>呼叫发起端：湖北省公安厅的两台测试机，每台测试机模拟出等量的电话终端，向十堰市公安局的物理电话机发起呼叫。
+图3 XML调用CSV的原理</p><h3 id=uacbat>uac.bat</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sipp -sn uac 172.31.89.4:5060 -r <span class=m>1</span> -rp <span class=m>3000</span> -inf data.csv -p <span class=m>7098</span> -i 172.31.89.242 -s <span class=m>8001</span> -sf uac_onecall.xml –m <span class=m>1000</span> –l <span class=m>900</span>
+</span></span></code></pre></td></tr></table></div></div><p>各个参数说明：</p><ul><li>172.31.89.4:5060：远端地址和端口（在xml脚本中用[remote_ip]，[remote_port]引用）</li><li>-r 1 -rp 3000：每三秒钟（3000毫秒）发起一个呼叫</li><li>-inf data.csv：引入数据配置文件</li><li>-p 7098：本地端口（在xml脚本中用[local_port]引用）</li><li>-i 172.31.89.242：本地地址（在xml脚本中用[local_ip]引用）</li><li>-s 8001：被叫号码（在xml脚本中用[service]引用）</li><li>-sf uac_onecall.xml：引用xml脚本文件，根据需要模拟的呼叫流程编写</li><li>-sn uac :执行默认的uac流程，如需执行自己编写的流程文件，命令中应不含此参数</li><li>-m 1000:发送1000次呼叫后停止并退出。</li><li>-l 900 :最大同时保持呼叫量，默认值为3*caps值呼叫时长，当因种种原因导致现存呼叫总数达到此值时，SIPp将停止产生新的呼叫，等待现存呼叫总数低于此值时才继续产生呼叫。</li><li>-trace_err跟踪所有错误消息，并把错误消息保存到文件场景文件描述的 {fileName}_{pid}_errors.log 文件中</li><li>-trace_screen 当程序结束时候打印统计信息并弹出屏幕（如果在后台运行的话）</li></ul><h2 id=使用sipp对基于sip协议的网络电话进行性能测试>使用SIPp对基于SIP协议的网络电话进行性能测试</h2><h3 id=测试内容>测试内容</h3><ul><li>测试某通信服务器在400组并发呼叫过程中的CPU负载峰值和内存占用率。</li></ul><h3 id=测试场景分析>测试场景分析</h3><p>呼叫发起端：湖北省公安厅的两台测试机，每台测试机模拟出等量的电话终端，向十堰市公安局的物理电话机发起呼叫。
 电话接收端：十堰市公安局的400台物理电话机。
-网络环境：湖北省公安信息网。</p>
-<p>测试环境的网络拓扑图如图4所示。</p>
-<p>{: .center}
+网络环境：湖北省公安信息网。</p><p>测试环境的网络拓扑图如图4所示。</p><p>{: .center}
 <img src=/image/20140511201122_Network_Topology_Map.gif alt=Network_Topology_Map>
-图4 被测系统的网络拓扑图</p>
-<h3 id=测试方法>测试方法</h3>
-<p>利用SIPp测试工具模拟电话终端，向物理电话机终端发起呼叫，保持呼叫16秒后，SIPp终止呼叫。
-在测试过程中，通过命令的方式监控并记录通信服务器的CPU负载峰值和内存占用率。</p>
-<h3 id=测试步骤>测试步骤</h3>
-<p>（1）配置SIPp测试工具：在湖北省公安厅的两台测试机上分别配置SIPp的场景文件（uacTest.xml，详见附录），数据文件（CallNumber.csv，详见附录）和测试控制文件（test.bat，详见附录）。
+图4 被测系统的网络拓扑图</p><h3 id=测试方法>测试方法</h3><p>利用SIPp测试工具模拟电话终端，向物理电话机终端发起呼叫，保持呼叫16秒后，SIPp终止呼叫。
+在测试过程中，通过命令的方式监控并记录通信服务器的CPU负载峰值和内存占用率。</p><h3 id=测试步骤>测试步骤</h3><p>（1）配置SIPp测试工具：在湖北省公安厅的两台测试机上分别配置SIPp的场景文件（uacTest.xml，详见附录），数据文件（CallNumber.csv，详见附录）和测试控制文件（test.bat，详见附录）。
 （2）开启通信服务器的资源监控：远程登录至十堰市公安局网络电话通信服务器，执行资源监控命令，开启对通信服务器CPU负载和内存的监控。
 （3）执行测试：在湖北省公安厅的两台测试机上同时执行SIPp控制文件（bat文件）。
-（4）获取测试结果：测试完毕后，导出被测通信服务器的资源监控结果，提取出并发测试期间中的资源监控结果。</p>
-<h2 id=参考资料>参考资料</h2>
-<ul>
-<li>电子工业出版社 计算机网络（第5版）谢希仁 编著。</li>
-<li><a href=http://sipp.sourceforge.net/>http://sipp.sourceforge.net/</a></li>
-</ul>
-<h2 id=附录>附录</h2>
-<p>test.bat</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>sipp -sf uac.xml -inf CallNumber.csv -i 10.XX.XX.151 -p <span class=m>5061</span> -s <span class=m>96018702</span> -m <span class=m>1</span> -r <span class=m>1</span> 10.XX.XX.114:5060 -trace_err
-</code></pre></td></tr></table>
-</div>
-</div><p>uacTest.xml</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>  1
+（4）获取测试结果：测试完毕后，导出被测通信服务器的资源监控结果，提取出并发测试期间中的资源监控结果。</p><h2 id=参考资料>参考资料</h2><ul><li>电子工业出版社 计算机网络（第5版）谢希仁 编著。</li><li><a href=http://sipp.sourceforge.net/>http://sipp.sourceforge.net/</a></li></ul><h2 id=附录>附录</h2><p>test.bat</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sipp -sf uac.xml -inf CallNumber.csv -i 10.XX.XX.151 -p <span class=m>5061</span> -s <span class=m>96018702</span> -m <span class=m>1</span> -r <span class=m>1</span> 10.XX.XX.114:5060 -trace_err
+</span></span></code></pre></td></tr></table></div></div><p>uacTest.xml</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
 </span><span class=lnt>  2
 </span><span class=lnt>  3
 </span><span class=lnt>  4
@@ -679,227 +349,147 @@ Fred;sipphone94
 </span><span class=lnt>109
 </span><span class=lnt>110
 </span><span class=lnt>111
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=cp>&lt;?xml version=&#34;1.0&#34; encoding=&#34;ISO-8859-1&#34; ?&gt;</span>
-<span class=cp>&lt;!DOCTYPE scenario SYSTEM &#34;sipp.dtd&#34;&gt;</span>
-
-<span class=nt>&lt;scenario</span> <span class=na>name=</span><span class=s>&#34;Basic Sipstone UAC&#34;</span><span class=nt>&gt;</span>
-  <span class=c>&lt;!-- In client mode (sipp placing calls), the Call-ID MUST be         --&gt;</span>
-  <span class=c>&lt;!-- generated by sipp. To do so, use [call_id] keyword.              --&gt;</span>
-  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
-    <span class=cp>&lt;![CDATA[
-</span><span class=cp>
-</span><span class=cp>      INVITE sip:[field0]@[remote_ip]:[remote_port] SIP/2.0
-</span><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-</span><span class=cp>      From: &#34;[service]&#34; &lt;sip:[service]@[remote_ip]&gt;;tag=[call_number]
-</span><span class=cp>      To: &#34;[field0]&#34; &lt;sip:[field0]@[remote_ip]&gt;
-</span><span class=cp>      Call-ID: [call_id]
-</span><span class=cp>      CSeq: 1 INVITE
-</span><span class=cp>      Contact: sip:[service]@[local_ip]:[local_port]
-</span><span class=cp>      Max-Forwards: 70
-</span><span class=cp>      Subject: Performance Test
-</span><span class=cp>      Content-Type: application/sdp
-</span><span class=cp>      Content-Length: [len]
-</span><span class=cp>
-</span><span class=cp>      v=0
-</span><span class=cp>      o=- 1 2 IN IP[local_ip_type] [local_ip]
-</span><span class=cp>      s=-
-</span><span class=cp>      c=IN IP[media_ip_type] [media_ip]
-</span><span class=cp>      t=0 0
-</span><span class=cp>      m=audio [media_port] RTP/AVP 0 8 18 101
-</span><span class=cp>      a=rtpmap:18 G729/8000
-</span><span class=cp>
-</span><span class=cp>    ]]&gt;</span>
-  <span class=nt>&lt;/send&gt;</span>
-
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;100&#34;</span> <span class=na>optional=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;/recv&gt;</span>
-
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;180&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;/recv&gt;</span>
-
-  <span class=c>&lt;!-- Set Ring Time   --&gt;</span>
-  <span class=nt>&lt;pause</span> <span class=na>milliseconds=</span><span class=s>&#34;8000&#34;</span><span class=nt>/&gt;</span>
-
-  <span class=c>&lt;!-- Abort Call   --&gt;</span>
-  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
-    <span class=cp>&lt;![CDATA[
-</span><span class=cp>
-</span><span class=cp>      CANCEL sip:[field0]@[remote_ip]:[remote_port] SIP/2.0
-</span><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-</span><span class=cp>      From: &#34;[service]&#34; &lt;sip:[service]@[remote_ip]&gt;;tag=[call_number]
-</span><span class=cp>      To: &#34;[field0]&#34; &lt;sip:[field0]@[remote_ip]&gt;
-</span><span class=cp>      Call-ID: [call_id]
-</span><span class=cp>      CSeq: 1 CANCEL
-</span><span class=cp>
-</span><span class=cp>    ]]&gt;</span>
-  <span class=nt>&lt;/send&gt;</span>
-
-  <span class=c>&lt;!-- By adding rrs=&#34;true&#34; (Record Route Sets), the route sets         --&gt;</span>
-  <span class=c>&lt;!-- are saved and used for following messages sent. Useful to test   --&gt;</span>
-  <span class=c>&lt;!-- against stateful SIP proxies/B2BUAs.                             --&gt;</span>
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>rtd=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;&lt;/recv&gt;</span>
-
-  <span class=c>&lt;!-- Packet lost can be simulated in any send/recv message by         --&gt;</span>
-  <span class=c>&lt;!-- by adding the &#39;lost = &#34;10&#34;&#39;. Value can be [1-100] percent.       --&gt;</span>
-  <span class=nt>&lt;send&gt;</span>
-    <span class=cp>&lt;![CDATA[
-</span><span class=cp>
-</span><span class=cp>      ACK sip:[service]@[remote_ip]:[remote_port] SIP/2.0
-</span><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-</span><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
-</span><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
-</span><span class=cp>      Call-ID: [call_id]
-</span><span class=cp>      CSeq: 1 ACK
-</span><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
-</span><span class=cp>      Max-Forwards: 70
-</span><span class=cp>      Subject: Performance Test
-</span><span class=cp>      Content-Length: 0
-</span><span class=cp>
-</span><span class=cp>    ]]&gt;</span>
-  <span class=nt>&lt;/send&gt;</span>
-
-  <span class=c>&lt;!-- This delay can be customized by the -d command-line option       --&gt;</span>
-  <span class=c>&lt;!-- or by adding a &#39;milliseconds = &#34;value&#34;&#39; option here.             --&gt;</span>
-  <span class=nt>&lt;pause</span> <span class=na>milliseconds=</span><span class=s>&#34;8000&#34;</span><span class=nt>/&gt;</span>
-
-  <span class=c>&lt;!-- The &#39;crlf&#39; option inserts a blank line in the statistics report. --&gt;</span>
-  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
-    <span class=cp>&lt;![CDATA[
-</span><span class=cp>
-</span><span class=cp>      BYE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
-</span><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-</span><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
-</span><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
-</span><span class=cp>      Call-ID: [call_id]
-</span><span class=cp>      CSeq: 2 BYE
-</span><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
-</span><span class=cp>      Max-Forwards: 70
-</span><span class=cp>      Subject: Performance Test
-</span><span class=cp>      Content-Length: 0
-</span><span class=cp>
-</span><span class=cp>    ]]&gt;</span>
-  <span class=nt>&lt;/send&gt;</span>
-
-  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>crlf=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;/recv&gt;</span>
-
-  <span class=c>&lt;!-- definition of the response time repartition table (unit is ms)   --&gt;</span>
-  <span class=nt>&lt;ResponseTimeRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 20, 30, 40, 50, 100, 150, 200&#34;</span><span class=nt>/&gt;</span>
-
-  <span class=c>&lt;!-- definition of the call length repartition table (unit is ms)     --&gt;</span>
-  <span class=nt>&lt;CallLengthRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 50, 100, 500, 1000, 5000, 10000&#34;</span><span class=nt>/&gt;</span>
-
-<span class=nt>&lt;/scenario&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>CallNumber.csv</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=cp>&lt;?xml version=&#34;1.0&#34; encoding=&#34;ISO-8859-1&#34; ?&gt;</span>
+</span></span><span class=line><span class=cl><span class=cp>&lt;!DOCTYPE scenario SYSTEM &#34;sipp.dtd&#34;&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nt>&lt;scenario</span> <span class=na>name=</span><span class=s>&#34;Basic Sipstone UAC&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- In client mode (sipp placing calls), the Call-ID MUST be         --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- generated by sipp. To do so, use [call_id] keyword.              --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=cp>&lt;![CDATA[
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      INVITE sip:[field0]@[remote_ip]:[remote_port] SIP/2.0
+</span></span></span><span class=line><span class=cl><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+</span></span></span><span class=line><span class=cl><span class=cp>      From: &#34;[service]&#34; &lt;sip:[service]@[remote_ip]&gt;;tag=[call_number]
+</span></span></span><span class=line><span class=cl><span class=cp>      To: &#34;[field0]&#34; &lt;sip:[field0]@[remote_ip]&gt;
+</span></span></span><span class=line><span class=cl><span class=cp>      Call-ID: [call_id]
+</span></span></span><span class=line><span class=cl><span class=cp>      CSeq: 1 INVITE
+</span></span></span><span class=line><span class=cl><span class=cp>      Contact: sip:[service]@[local_ip]:[local_port]
+</span></span></span><span class=line><span class=cl><span class=cp>      Max-Forwards: 70
+</span></span></span><span class=line><span class=cl><span class=cp>      Subject: Performance Test
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Type: application/sdp
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Length: [len]
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      v=0
+</span></span></span><span class=line><span class=cl><span class=cp>      o=- 1 2 IN IP[local_ip_type] [local_ip]
+</span></span></span><span class=line><span class=cl><span class=cp>      s=-
+</span></span></span><span class=line><span class=cl><span class=cp>      c=IN IP[media_ip_type] [media_ip]
+</span></span></span><span class=line><span class=cl><span class=cp>      t=0 0
+</span></span></span><span class=line><span class=cl><span class=cp>      m=audio [media_port] RTP/AVP 0 8 18 101
+</span></span></span><span class=line><span class=cl><span class=cp>      a=rtpmap:18 G729/8000
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>    ]]&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/send&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;100&#34;</span> <span class=na>optional=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;180&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- Set Ring Time   --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;pause</span> <span class=na>milliseconds=</span><span class=s>&#34;8000&#34;</span><span class=nt>/&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- Abort Call   --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=cp>&lt;![CDATA[
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      CANCEL sip:[field0]@[remote_ip]:[remote_port] SIP/2.0
+</span></span></span><span class=line><span class=cl><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+</span></span></span><span class=line><span class=cl><span class=cp>      From: &#34;[service]&#34; &lt;sip:[service]@[remote_ip]&gt;;tag=[call_number]
+</span></span></span><span class=line><span class=cl><span class=cp>      To: &#34;[field0]&#34; &lt;sip:[field0]@[remote_ip]&gt;
+</span></span></span><span class=line><span class=cl><span class=cp>      Call-ID: [call_id]
+</span></span></span><span class=line><span class=cl><span class=cp>      CSeq: 1 CANCEL
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>    ]]&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/send&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- By adding rrs=&#34;true&#34; (Record Route Sets), the route sets         --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- are saved and used for following messages sent. Useful to test   --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- against stateful SIP proxies/B2BUAs.                             --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>rtd=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- Packet lost can be simulated in any send/recv message by         --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- by adding the &#39;lost = &#34;10&#34;&#39;. Value can be [1-100] percent.       --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;send&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=cp>&lt;![CDATA[
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      ACK sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+</span></span></span><span class=line><span class=cl><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+</span></span></span><span class=line><span class=cl><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
+</span></span></span><span class=line><span class=cl><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
+</span></span></span><span class=line><span class=cl><span class=cp>      Call-ID: [call_id]
+</span></span></span><span class=line><span class=cl><span class=cp>      CSeq: 1 ACK
+</span></span></span><span class=line><span class=cl><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
+</span></span></span><span class=line><span class=cl><span class=cp>      Max-Forwards: 70
+</span></span></span><span class=line><span class=cl><span class=cp>      Subject: Performance Test
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Length: 0
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>    ]]&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/send&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- This delay can be customized by the -d command-line option       --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- or by adding a &#39;milliseconds = &#34;value&#34;&#39; option here.             --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;pause</span> <span class=na>milliseconds=</span><span class=s>&#34;8000&#34;</span><span class=nt>/&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- The &#39;crlf&#39; option inserts a blank line in the statistics report. --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;send</span> <span class=na>retrans=</span><span class=s>&#34;500&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=cp>&lt;![CDATA[
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>      BYE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+</span></span></span><span class=line><span class=cl><span class=cp>      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+</span></span></span><span class=line><span class=cl><span class=cp>      From: sipp &lt;sip:sipp@[local_ip]:[local_port]&gt;;tag=[call_number]
+</span></span></span><span class=line><span class=cl><span class=cp>      To: sut &lt;sip:[service]@[remote_ip]:[remote_port]&gt;[peer_tag_param]
+</span></span></span><span class=line><span class=cl><span class=cp>      Call-ID: [call_id]
+</span></span></span><span class=line><span class=cl><span class=cp>      CSeq: 2 BYE
+</span></span></span><span class=line><span class=cl><span class=cp>      Contact: sip:sipp@[local_ip]:[local_port]
+</span></span></span><span class=line><span class=cl><span class=cp>      Max-Forwards: 70
+</span></span></span><span class=line><span class=cl><span class=cp>      Subject: Performance Test
+</span></span></span><span class=line><span class=cl><span class=cp>      Content-Length: 0
+</span></span></span><span class=line><span class=cl><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>    ]]&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/send&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;recv</span> <span class=na>response=</span><span class=s>&#34;200&#34;</span> <span class=na>crlf=</span><span class=s>&#34;true&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/recv&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- definition of the response time repartition table (unit is ms)   --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;ResponseTimeRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 20, 30, 40, 50, 100, 150, 200&#34;</span><span class=nt>/&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c>&lt;!-- definition of the call length repartition table (unit is ms)     --&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;CallLengthRepartition</span> <span class=na>value=</span><span class=s>&#34;10, 50, 100, 500, 1000, 5000, 10000&#34;</span><span class=nt>/&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/scenario&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>CallNumber.csv</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>SEQUENTIAL
-96038000;
-96038001;
-96038002;
-......
-</code></pre></td></tr></table>
-</div>
-</div>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>文章作者</span>
-<span class=item-content>debugtalk</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>上次更新</span>
-<span class=item-content>
-2014-05-11
-</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>许可协议</span>
-<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
-</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://debugtalk.com/tags/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/>性能测试</a>
-<a href=https://debugtalk.com/tags/SIP/>SIP</a>
-</div>
-<nav class=post-nav>
-<a class=prev href=/post/Introspection-on-WebService-Test/>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
-</i>
-<span class="prev-text nav-default">基于 WSDL 或 SOAP 的 WebService 测试方法--对原理的思考</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/post/loadrunner-get-system-time/>
-<span class="next-text nav-default">LoadRunner 中获取当前系统时间</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>SEQUENTIAL
+</span></span><span class=line><span class=cl>96038000;
+</span></span><span class=line><span class=cl>96038001;
+</span></span><span class=line><span class=cl>96038002;
+</span></span><span class=line><span class=cl>......
+</span></span></code></pre></td></tr></table></div></div></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2014-05-11</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span></p></div><footer class=post-footer><div class=post-tags><a href=https://debugtalk.com/tags/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/>性能测试</a>
+<a href=https://debugtalk.com/tags/SIP/>SIP</a></div><nav class=post-nav><a class=prev href=/post/Introspection-on-WebService-Test/><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg></i><span class="prev-text nav-default">基于 WSDL 或 SOAP 的 WebService 测试方法--对原理的思考</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/post/loadrunner-get-system-time/><span class="next-text nav-default">LoadRunner 中获取当前系统时间</span>
 <span class="prev-text nav-mobile">下一篇</span>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
-</i>
-</a>
-</nav>
-</footer>
-</article>
-<div class="post bg-white">
-<script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=icon-links>
-<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
-</a>
-<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
-</a>
-<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
-</a>
-</div>
-<div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg></i></a></nav></footer></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div></div></main><footer id=footer class=footer><div class=icon-links><a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg></a><a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg></a><a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a></span>
+<span class=copyright-year>&copy;
 2011 -
 2022
-<span class=heart>
-<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
-</i>
-</span><span class=author>
-debugtalk
-</span></span>
-<span id=busuanzi_container>
-访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
-</i>
-</div>
-</div>
-<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<span class=heart><i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg></i></span><span class=author>debugtalk</span></span>
+<span id=busuanzi_container>访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span></span></div></footer><div class=back-to-top id=back-to-top><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg></i></div></div><script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
 <script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
 <script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/load-photoswipe.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<script src=/js/custom.js></script>
-</body>
-</html>
+<script src=/js/custom.js></script></body></html>

@@ -1,210 +1,21 @@
-<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<title>深入浅出 Git 权限校验 - DebugTalk</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
-<meta name=MobileOptimized content="width">
-<meta name=HandheldFriendly content="true">
-<meta name=applicable-device content="pc,mobile">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=mobile-web-app-capable content="yes">
-<meta name=author content="debugtalk">
-<meta name=description content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信">
-<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
-<meta name=generator content="Hugo 0.92.1">
-<link rel=canonical href=https://debugtalk.com/post/head-first-git-authority-verification/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
-<link rel=stylesheet href=/css/custom.css>
-<meta property="og:title" content="深入浅出 Git 权限校验">
-<meta property="og:description" content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://debugtalk.com/post/head-first-git-authority-verification/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2016-06-15T00:00:00+00:00">
-<meta property="article:modified_time" content="2016-06-15T00:00:00+00:00">
-<meta itemprop=name content="深入浅出 Git 权限校验">
-<meta itemprop=description content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信"><meta itemprop=datePublished content="2016-06-15T00:00:00+00:00">
-<meta itemprop=dateModified content="2016-06-15T00:00:00+00:00">
-<meta itemprop=wordCount content="5323">
-<meta itemprop=keywords content="SSH,GitHub,HTTP(S),Git,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="深入浅出 Git 权限校验">
-<meta name=twitter:description content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>DebugTalk</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>深入浅出 Git 权限校验 - DebugTalk</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes"><meta name=MobileOptimized content="width"><meta name=HandheldFriendly content="true"><meta name=applicable-device content="pc,mobile"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=mobile-web-app-capable content="yes"><meta name=author content="debugtalk"><meta name=description content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信"><meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试"><meta name=generator content="Hugo 0.94.2"><link rel=canonical href=https://debugtalk.com/post/head-first-git-authority-verification/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous><link rel=stylesheet href=/css/custom.css><meta property="og:title" content="深入浅出 Git 权限校验"><meta property="og:description" content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信"><meta property="og:type" content="article"><meta property="og:url" content="https://debugtalk.com/post/head-first-git-authority-verification/"><meta property="article:section" content="post"><meta property="article:published_time" content="2016-06-15T00:00:00+00:00"><meta property="article:modified_time" content="2016-06-15T00:00:00+00:00"><meta itemprop=name content="深入浅出 Git 权限校验"><meta itemprop=description content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信"><meta itemprop=datePublished content="2016-06-15T00:00:00+00:00"><meta itemprop=dateModified content="2016-06-15T00:00:00+00:00"><meta itemprop=wordCount content="5323"><meta itemprop=keywords content="SSH,GitHub,HTTP(S),Git,"><meta name=twitter:card content="summary"><meta name=twitter:title content="深入浅出 Git 权限校验"><meta name=twitter:description content="借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。 在本地计算机与GitHub（或GitLab）进行通信"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-81639610-1","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>DebugTalk</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
-<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav><link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css><link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header id=header class="header container">
-<div class=logo-wrapper>
-<a href=/ class=logo>
-DebugTalk
-</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-</header>
-<div id=mobile-panel>
-<main id=main class="main bg-llight">
-<div class=content-wrapper>
-<div id=content class="content container">
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>深入浅出 Git 权限校验</h1>
-<div class=post-meta>
-<time datetime=2016-06-15 class=post-time>
-2016-06-15
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/Development/> Development </a>
-</div>
-<span class=more-meta> 约 5323 字 </span>
-<span class=more-meta> 预计阅读 11 分钟 </span>
-<span id=busuanzi_container_page_pv>
-| 阅读 <span id=busuanzi_value_page_pv></span>
-</span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class=post-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#https-urls>HTTPS URLs</a></li>
-<li><a href=#ssh-urls>SSH URLs</a></li>
-<li><a href=#同时使用多个github账号>同时使用多个GitHub账号</a>
-<ul>
-<li><a href=#git配置存储位置及其优先级>Git配置存储位置及其优先级</a></li>
-<li><a href=#基于ssh协议实现多账号共存>基于<code>SSH</code>协议实现多账号共存</a></li>
-<li><a href=#基于https协议实现多账号共存>基于<code>HTTPS</code>协议实现多账号共存</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<p>借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。</p>
-<p>在本地计算机与GitHub（或GitLab）进行通信时，传输主要基于两种协议，<code>HTTPS</code>和<code>SSH</code>，对应的仓库地址就是<code>HTTPS URLs</code>和<code>SSH URLs</code>。</p>
-<p>首先需要强调的是，<code>HTTPS URLs</code>和<code>SSH URLs</code>对应的是两套完全独立的权限校验方式，主要的区别就是<code>HTTPS URLs</code>采用账号密码进行校验，<code>SSH URLs</code>采用<code>SSH</code>秘钥对进行校验。平时使用的时候我们可以根据实际情况，选择一种即可。</p>
-<h2 id=https-urls>HTTPS URLs</h2>
-<p>GitHub官方推荐采用<code>HTTPS URLs</code>的方式，因为该种方式适用面更广（即使在有防火墙或代理的情况下也同样适用），使用更方便（配置更简单）。</p>
-<p>采用<code>HTTPS URLs</code>地址<code>clone</code>/<code>fetch</code>/<code>pull</code>/<code>push</code>仓库时，事先无需对本地系统进行任何配置，只需要输入GitHub的账号和密码即可。不过如果每次都要手动输入账号密码，也是一件很繁琐的事情。</p>
-<p>好在已经有多个机制可以让操作不用这么麻烦。</p>
-<p>在Mac系统中，在启用<code>Keychain</code>机制的情况下，首次输入GitHub账号密码后，认证信息就会自动保存到系统的<code>Keychain</code>中，下次再次访问仓库时就会自动读取<code>Keychain</code>中保存的认证信息。</p>
-<p>在非Mac系统中，虽然没有<code>Keychain</code>机制，但是Git提供了<code>credential helper</code>机制，可以将账号密码以cache的形式在内存中缓存一段时间（默认15分钟），或者以文件的形式存储起来（<code>~/.git-credentials</code>）。当然，Mac系统如果不启用<code>Keychain</code>机制，也可以采用这种方式。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header id=header class="header container"><div class=logo-wrapper><a href=/ class=logo>DebugTalk</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav></header><div id=mobile-panel><main id=main class="main bg-llight"><div class=content-wrapper><div id=content class="content container"><article class="post bg-white"><header class=post-header><h1 class=post-title>深入浅出 Git 权限校验</h1><div class=post-meta><time datetime=2016-06-15 class=post-time>2016-06-15</time><div class=post-category><a href=https://debugtalk.com/categories/Development/>Development</a></div><span class=more-meta>约 5323 字</span>
+<span class=more-meta>预计阅读 11 分钟</span>
+<span id=busuanzi_container_page_pv>| 阅读 <span id=busuanzi_value_page_pv></span></span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#https-urls>HTTPS URLs</a></li><li><a href=#ssh-urls>SSH URLs</a></li><li><a href=#同时使用多个github账号>同时使用多个GitHub账号</a><ul><li><a href=#git配置存储位置及其优先级>Git配置存储位置及其优先级</a></li><li><a href=#基于ssh协议实现多账号共存>基于<code>SSH</code>协议实现多账号共存</a></li><li><a href=#基于https协议实现多账号共存>基于<code>HTTPS</code>协议实现多账号共存</a></li></ul></li></ul></nav></div></div><div class=post-content><p>借助上次“掉坑”的经历，我对Git权限校验的两种方式重头进行了梳理，形成了这篇总结记录。</p><p>在本地计算机与GitHub（或GitLab）进行通信时，传输主要基于两种协议，<code>HTTPS</code>和<code>SSH</code>，对应的仓库地址就是<code>HTTPS URLs</code>和<code>SSH URLs</code>。</p><p>首先需要强调的是，<code>HTTPS URLs</code>和<code>SSH URLs</code>对应的是两套完全独立的权限校验方式，主要的区别就是<code>HTTPS URLs</code>采用账号密码进行校验，<code>SSH URLs</code>采用<code>SSH</code>秘钥对进行校验。平时使用的时候我们可以根据实际情况，选择一种即可。</p><h2 id=https-urls>HTTPS URLs</h2><p>GitHub官方推荐采用<code>HTTPS URLs</code>的方式，因为该种方式适用面更广（即使在有防火墙或代理的情况下也同样适用），使用更方便（配置更简单）。</p><p>采用<code>HTTPS URLs</code>地址<code>clone</code>/<code>fetch</code>/<code>pull</code>/<code>push</code>仓库时，事先无需对本地系统进行任何配置，只需要输入GitHub的账号和密码即可。不过如果每次都要手动输入账号密码，也是一件很繁琐的事情。</p><p>好在已经有多个机制可以让操作不用这么麻烦。</p><p>在Mac系统中，在启用<code>Keychain</code>机制的情况下，首次输入GitHub账号密码后，认证信息就会自动保存到系统的<code>Keychain</code>中，下次再次访问仓库时就会自动读取<code>Keychain</code>中保存的认证信息。</p><p>在非Mac系统中，虽然没有<code>Keychain</code>机制，但是Git提供了<code>credential helper</code>机制，可以将账号密码以cache的形式在内存中缓存一段时间（默认15分钟），或者以文件的形式存储起来（<code>~/.git-credentials</code>）。当然，Mac系统如果不启用<code>Keychain</code>机制，也可以采用这种方式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=c1># cache credential in memory</span>
-$ git config --global credential.helper cache
-<span class=c1># store credential in ~/.git-credential</span>
-$ git config --global credential.helper store
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>credential.helper</code>设置为<code>store</code>的情况下，首次输入GitHub账号密码后，就会自动保存到<code>~/.git-credentials</code>文件中，保存形式为<code>https://user:pass@github.com</code>；下次再次访问仓库时就会自动读取<code>~/.git-credentials</code>中保存的认证信息。</p>
-<p>另一个需要说明的情况是，如果在GitHub中开启了<code>2FA（two-factor authentication）</code>，那么在本地系统中输入GitHub账号密码时，不能输入原始的密码（即GitHub网站的登录密码），而是需要事先在GitHub网站中创建一个<code>Personal access token</code>，后续在访问代码仓库需要进行权限校验的时候，采用<code>access token</code>作为密码进行输入。</p>
-<h2 id=ssh-urls>SSH URLs</h2>
-<p>除了<code>HTTPS URLs</code>，还可以采用<code>SSH URLs</code>的方式访问GitHub代码仓库。</p>
-<p>采用<code>SSH URLs</code>方式之前，需要先在本地计算机中生成<code>SSH keypair</code>（秘钥对，包括私钥和公钥）。默认情况下，生成的秘钥位于<code>$HOME/.ssh/</code>目录中，文件名称分别为<code>id_rsa</code>和<code>id_rsa.pub</code>，通常无需修改，保持默认即可。不过，如果一台计算机中存在多个秘钥对，就需要修改秘钥文件名，名称没有强制的命名规范，便于自己辨识即可。</p>
-<p>如下是创建秘钥对的过程。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl><span class=c1># cache credential in memory</span>
+</span></span><span class=line><span class=cl>$ git config --global credential.helper cache
+</span></span><span class=line><span class=cl><span class=c1># store credential in ~/.git-credential</span>
+</span></span><span class=line><span class=cl>$ git config --global credential.helper store
+</span></span></code></pre></td></tr></table></div></div><p>在<code>credential.helper</code>设置为<code>store</code>的情况下，首次输入GitHub账号密码后，就会自动保存到<code>~/.git-credentials</code>文件中，保存形式为<code>https://user:pass@github.com</code>；下次再次访问仓库时就会自动读取<code>~/.git-credentials</code>中保存的认证信息。</p><p>另一个需要说明的情况是，如果在GitHub中开启了<code>2FA（two-factor authentication）</code>，那么在本地系统中输入GitHub账号密码时，不能输入原始的密码（即GitHub网站的登录密码），而是需要事先在GitHub网站中创建一个<code>Personal access token</code>，后续在访问代码仓库需要进行权限校验的时候，采用<code>access token</code>作为密码进行输入。</p><h2 id=ssh-urls>SSH URLs</h2><p>除了<code>HTTPS URLs</code>，还可以采用<code>SSH URLs</code>的方式访问GitHub代码仓库。</p><p>采用<code>SSH URLs</code>方式之前，需要先在本地计算机中生成<code>SSH keypair</code>（秘钥对，包括私钥和公钥）。默认情况下，生成的秘钥位于<code>$HOME/.ssh/</code>目录中，文件名称分别为<code>id_rsa</code>和<code>id_rsa.pub</code>，通常无需修改，保持默认即可。不过，如果一台计算机中存在多个秘钥对，就需要修改秘钥文件名，名称没有强制的命名规范，便于自己辨识即可。</p><p>如下是创建秘钥对的过程。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -225,120 +36,64 @@ $ git config --global credential.helper store
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span><span class=lnt>21
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ ssh-keygen -t rsa -b <span class=m>4096</span> -C <span class=s2>&#34;mail@debugtalk.com&#34;</span>
-Generating public/private rsa key pair.
-Enter file in which to save the key <span class=o>(</span>/Users/Leo/.ssh/id_rsa<span class=o>)</span>: /Users/Leo/.ssh/debugtalk_id_rsa
-Enter passphrase <span class=o>(</span>empty <span class=k>for</span> no passphrase<span class=o>)</span>: &lt;myPassphrase&gt;
-Enter same passphrase again: &lt;myPassphrase&gt;
-Your identification has been saved in /Users/Leo/.ssh/debugtalk_id_rsa.
-Your public key has been saved in /Users/Leo/.ssh/debugtalk_id_rsa.pub.
-The key fingerprint is:
-SHA256:jCyEEKjlCU1klROnuBg+UH08GJ1u252rQMADdD9kYMo mail@debugtalk.com
-The key<span class=err>&#39;</span>s randomart image is:
-+---<span class=o>[</span>RSA 4096<span class=o>]</span>----+
-<span class=p>|</span>+*BoBO+.         <span class=p>|</span>
-<span class=p>|</span><span class=nv>o</span><span class=o>=</span><span class=nv>oO</span><span class=o>=</span>**          <span class=p>|</span>
-<span class=p>|</span>++E.*+o.         <span class=p>|</span>
-<span class=p>|</span>+ooo +o+         <span class=p>|</span>
-<span class=p>|</span>.o. ..+oS. .     <span class=p>|</span>
-<span class=p>|</span>  .  o. . o      <span class=p>|</span>
-<span class=p>|</span>      .    .     <span class=p>|</span>
-<span class=p>|</span>       .  .      <span class=p>|</span>
-<span class=p>|</span>        ..       <span class=p>|</span>
-+----<span class=o>[</span>SHA256<span class=o>]</span>-----+
-</code></pre></td></tr></table>
-</div>
-</div><p>在创建秘钥的过程中，系统还建议创建一个名为<code>passphrase</code>的东西，这是用来干嘛的呢？</p>
-<blockquote>
-<p>首先，单独采用密码肯定是不够安全的。如果密码太简单，那么就很容易被暴力破解，如果密码太复杂，那么用户就很难记忆，记录到小本子里面更不安全。</p>
-</blockquote>
-<blockquote>
-<p>因此，<code>SSH keys</code>诞生了。<code>SSH</code>秘钥对的可靠性非常高，被暴力破解的可能性基本没有。不过，这要求用户非常谨慎地保管好私钥，如果别人使用你的计算机时偷偷地将你的私钥拷走了，那么就好比是别人拿到了你家里的钥匙，也能随时打开你家的门。</p>
-</blockquote>
-<blockquote>
-<p>基于以上情况，解决办法就是在<code>SSH keys</code>之外再增加一个密码，即<code>passphrase</code>。只有同时具备<code>SSH private key</code>和<code>passphrase</code>的情况下，才能通过<code>SSH</code>的权限校验，这就大大地增加了安全性。当然，这个<code>passphrase</code>也不是必须的，在创建秘钥对时也可以不设置<code>passphrase</code>。</p>
-</blockquote>
-<blockquote>
-<p>另外，如果每次权限校验时都要输入<code>passphrase</code>，这也是挺麻烦的。好在我们不用再担心这个问题，因为<code>ssh-agent</code>可以帮我们记住<code>passphrase</code>，Mac系统的Keychain也可以记住<code>passphrase</code>，这样我们在同一台计算机中就不用重新输入密码了。</p>
-</blockquote>
-<p>秘钥对创建好以后，私钥存放于本地计算机（<code>~/.ssh/id_rsa</code>），将公钥（<code>~/.ssh/id_rsa.pub</code>）中的内容添加至GitHub账户。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ ssh-keygen -t rsa -b <span class=m>4096</span> -C <span class=s2>&#34;mail@debugtalk.com&#34;</span>
+</span></span><span class=line><span class=cl>Generating public/private rsa key pair.
+</span></span><span class=line><span class=cl>Enter file in which to save the key <span class=o>(</span>/Users/Leo/.ssh/id_rsa<span class=o>)</span>: /Users/Leo/.ssh/debugtalk_id_rsa
+</span></span><span class=line><span class=cl>Enter passphrase <span class=o>(</span>empty <span class=k>for</span> no passphrase<span class=o>)</span>: &lt;myPassphrase&gt;
+</span></span><span class=line><span class=cl>Enter same passphrase again: &lt;myPassphrase&gt;
+</span></span><span class=line><span class=cl>Your identification has been saved in /Users/Leo/.ssh/debugtalk_id_rsa.
+</span></span><span class=line><span class=cl>Your public key has been saved in /Users/Leo/.ssh/debugtalk_id_rsa.pub.
+</span></span><span class=line><span class=cl>The key fingerprint is:
+</span></span><span class=line><span class=cl>SHA256:jCyEEKjlCU1klROnuBg+UH08GJ1u252rQMADdD9kYMo mail@debugtalk.com
+</span></span><span class=line><span class=cl>The key<span class=err>&#39;</span>s randomart image is:
+</span></span><span class=line><span class=cl>+---<span class=o>[</span>RSA 4096<span class=o>]</span>----+
+</span></span><span class=line><span class=cl><span class=p>|</span>+*BoBO+.         <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span><span class=nv>o</span><span class=o>=</span><span class=nv>oO</span><span class=o>=</span>**          <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span>++E.*+o.         <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span>+ooo +o+         <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span>.o. ..+oS. .     <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span>  .  o. . o      <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span>      .    .     <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span>       .  .      <span class=p>|</span>
+</span></span><span class=line><span class=cl><span class=p>|</span>        ..       <span class=p>|</span>
+</span></span><span class=line><span class=cl>+----<span class=o>[</span>SHA256<span class=o>]</span>-----+
+</span></span></code></pre></td></tr></table></div></div><p>在创建秘钥的过程中，系统还建议创建一个名为<code>passphrase</code>的东西，这是用来干嘛的呢？</p><blockquote><p>首先，单独采用密码肯定是不够安全的。如果密码太简单，那么就很容易被暴力破解，如果密码太复杂，那么用户就很难记忆，记录到小本子里面更不安全。</p></blockquote><blockquote><p>因此，<code>SSH keys</code>诞生了。<code>SSH</code>秘钥对的可靠性非常高，被暴力破解的可能性基本没有。不过，这要求用户非常谨慎地保管好私钥，如果别人使用你的计算机时偷偷地将你的私钥拷走了，那么就好比是别人拿到了你家里的钥匙，也能随时打开你家的门。</p></blockquote><blockquote><p>基于以上情况，解决办法就是在<code>SSH keys</code>之外再增加一个密码，即<code>passphrase</code>。只有同时具备<code>SSH private key</code>和<code>passphrase</code>的情况下，才能通过<code>SSH</code>的权限校验，这就大大地增加了安全性。当然，这个<code>passphrase</code>也不是必须的，在创建秘钥对时也可以不设置<code>passphrase</code>。</p></blockquote><blockquote><p>另外，如果每次权限校验时都要输入<code>passphrase</code>，这也是挺麻烦的。好在我们不用再担心这个问题，因为<code>ssh-agent</code>可以帮我们记住<code>passphrase</code>，Mac系统的Keychain也可以记住<code>passphrase</code>，这样我们在同一台计算机中就不用重新输入密码了。</p></blockquote><p>秘钥对创建好以后，私钥存放于本地计算机（<code>~/.ssh/id_rsa</code>），将公钥（<code>~/.ssh/id_rsa.pub</code>）中的内容添加至GitHub账户。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=c1># copy the contents of id_rsa.pub to the clipboard</span>
-➜ pbcopy &lt; ~/.ssh/id_rsa.pub
-
-<span class=c1># paste to GitHub</span>
-<span class=c1># Login GitHub, 【Settings】-&gt;【SSH and GPG keys】-&gt;【New SSH Key】</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>不过，如果此时检测本地计算机与GitHub的连接状态，会发现系统仍提示权限校验失败。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl><span class=c1># copy the contents of id_rsa.pub to the clipboard</span>
+</span></span><span class=line><span class=cl>➜ pbcopy &lt; ~/.ssh/id_rsa.pub
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># paste to GitHub</span>
+</span></span><span class=line><span class=cl><span class=c1># Login GitHub, 【Settings】-&gt;【SSH and GPG keys】-&gt;【New SSH Key】</span>
+</span></span></code></pre></td></tr></table></div></div><p>不过，如果此时检测本地计算机与GitHub的连接状态，会发现系统仍提示权限校验失败。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ ssh -T git@github.com
-Permission denied <span class=o>(</span>publickey<span class=o>)</span>.
-</code></pre></td></tr></table>
-</div>
-</div><p>这是因为在本地计算机与GitHub建立连接的时候，实际上是本机计算机的<code>ssh-agent</code>与GitHub服务器进行通信。虽然本地计算机有了私钥，但是<code>ssh-agent</code>并不知道私钥存储在哪儿。因此，要想正常使用秘钥对，需要先将私钥加入到本地计算机的<code>ssh-agent</code>中（添加过程中需要输入<code>passphrase</code>）。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ ssh -T git@github.com
+</span></span><span class=line><span class=cl>Permission denied <span class=o>(</span>publickey<span class=o>)</span>.
+</span></span></code></pre></td></tr></table></div></div><p>这是因为在本地计算机与GitHub建立连接的时候，实际上是本机计算机的<code>ssh-agent</code>与GitHub服务器进行通信。虽然本地计算机有了私钥，但是<code>ssh-agent</code>并不知道私钥存储在哪儿。因此，要想正常使用秘钥对，需要先将私钥加入到本地计算机的<code>ssh-agent</code>中（添加过程中需要输入<code>passphrase</code>）。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># start ssh-agent in the background</span>
-➜ <span class=nb>eval</span> <span class=s2>&#34;</span><span class=k>$(</span>ssh-agent -s<span class=k>)</span><span class=s2>&#34;</span>
-Agent pid <span class=m>78370</span>
-
-➜ ssh-add ~/.ssh/id_rsa
-Enter passphrase <span class=k>for</span> /Users/Leo/.ssh/id_rsa: &lt;myPassphrase&gt;
-Identity added: /Users/Leo/.ssh/id_rsa <span class=o>(</span>/Users/Leo/.ssh/id_rsa<span class=o>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>添加完成后，就可以查看到当前计算机中存储的密钥。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># start ssh-agent in the background</span>
+</span></span><span class=line><span class=cl>➜ <span class=nb>eval</span> <span class=s2>&#34;</span><span class=k>$(</span>ssh-agent -s<span class=k>)</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>Agent pid <span class=m>78370</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>➜ ssh-add ~/.ssh/id_rsa
+</span></span><span class=line><span class=cl>Enter passphrase <span class=k>for</span> /Users/Leo/.ssh/id_rsa: &lt;myPassphrase&gt;
+</span></span><span class=line><span class=cl>Identity added: /Users/Leo/.ssh/id_rsa <span class=o>(</span>/Users/Leo/.ssh/id_rsa<span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>添加完成后，就可以查看到当前计算机中存储的密钥。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ ssh-add -l
-<span class=m>4096</span> SHA256:xRg49AgTxxxxxxxx8q2SPPOfxxxxxxxxRlBY /Users/Leo/.ssh/id_rsa <span class=o>(</span>RSA<span class=o>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>再次检测本地计算机与GitHub的连接状态，校验就正常通过了。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ ssh-add -l
+</span></span><span class=line><span class=cl><span class=m>4096</span> SHA256:xRg49AgTxxxxxxxx8q2SPPOfxxxxxxxxRlBY /Users/Leo/.ssh/id_rsa <span class=o>(</span>RSA<span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>再次检测本地计算机与GitHub的连接状态，校验就正常通过了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ ssh -T git@github.com
-Hi leolee! You<span class=err>&#39;</span>ve successfully authenticated, but GitHub does not provide shell access.
-</code></pre></td></tr></table>
-</div>
-</div><p>后续再进行<code>clone</code>/<code>fetch</code>/<code>pull</code>/<code>push</code>操作时，就可以正常访问GitHub代码仓库了，并且也不需要再重新输入账号密码。</p>
-<p>而且，将私钥加入<code>ssh-agent</code>后，即使删除私钥文件，本地计算机仍可以正常访问GitHub代码仓库。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ ssh -T git@github.com
+</span></span><span class=line><span class=cl>Hi leolee! You<span class=err>&#39;</span>ve successfully authenticated, but GitHub does not provide shell access.
+</span></span></code></pre></td></tr></table></div></div><p>后续再进行<code>clone</code>/<code>fetch</code>/<code>pull</code>/<code>push</code>操作时，就可以正常访问GitHub代码仓库了，并且也不需要再重新输入账号密码。</p><p>而且，将私钥加入<code>ssh-agent</code>后，即使删除私钥文件，本地计算机仍可以正常访问GitHub代码仓库。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -347,71 +102,34 @@ Hi leolee! You<span class=err>&#39;</span>ve successfully authenticated, but Git
 </span><span class=lnt>7
 </span><span class=lnt>8
 </span><span class=lnt>9
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ rm -rf ~/.ssh
-➜ ssh-add -l
-<span class=m>4096</span> SHA256:xRg49AgTxxxxxxxx8q2SPPOfxxxxxxxxRlBY /Users/Leo/.ssh/id_rsa <span class=o>(</span>RSA<span class=o>)</span>
-➜ ssh -T git@github.com
-The authenticity of host <span class=s1>&#39;github.com (192.30.252.130)&#39;</span> can<span class=s1>&#39;t be established.
-</span><span class=s1>RSA key fingerprint is SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8.
-</span><span class=s1>Are you sure you want to continue connecting (yes/no)? yes
-</span><span class=s1>Warning: Permanently added &#39;</span>github.com,192.30.252.130<span class=s1>&#39; (RSA) to the list of known hosts.
-</span><span class=s1>Hi leolee! You&#39;</span>ve successfully authenticated, but GitHub does not provide shell access.
-</code></pre></td></tr></table>
-</div>
-</div><p>只有执行<code>ssh-add -D</code>或<code>ssh-add -d pub_key</code>命令，将私钥从<code>ssh-agent</code>删除后，认证信息才会失效。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ rm -rf ~/.ssh
+</span></span><span class=line><span class=cl>➜ ssh-add -l
+</span></span><span class=line><span class=cl><span class=m>4096</span> SHA256:xRg49AgTxxxxxxxx8q2SPPOfxxxxxxxxRlBY /Users/Leo/.ssh/id_rsa <span class=o>(</span>RSA<span class=o>)</span>
+</span></span><span class=line><span class=cl>➜ ssh -T git@github.com
+</span></span><span class=line><span class=cl>The authenticity of host <span class=s1>&#39;github.com (192.30.252.130)&#39;</span> can<span class=s1>&#39;t be established.
+</span></span></span><span class=line><span class=cl><span class=s1>RSA key fingerprint is SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8.
+</span></span></span><span class=line><span class=cl><span class=s1>Are you sure you want to continue connecting (yes/no)? yes
+</span></span></span><span class=line><span class=cl><span class=s1>Warning: Permanently added &#39;</span>github.com,192.30.252.130<span class=s1>&#39; (RSA) to the list of known hosts.
+</span></span></span><span class=line><span class=cl><span class=s1>Hi leolee! You&#39;</span>ve successfully authenticated, but GitHub does not provide shell access.
+</span></span></code></pre></td></tr></table></div></div><p>只有执行<code>ssh-add -D</code>或<code>ssh-add -d pub_key</code>命令，将私钥从<code>ssh-agent</code>删除后，认证信息才会失效。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ ssh-add -d ~/.ssh/id_rsa.pub
-Identity removed: /Users/Leo/.ssh/id_rsa.pub <span class=o>(</span>mail@debugtalk.com<span class=o>)</span>
-➜ ssh-add -l
-The agent has no identities.
-➜ ssh -T git@github.com
-Permission denied <span class=o>(</span>publickey<span class=o>)</span>.
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=同时使用多个github账号>同时使用多个GitHub账号</h2>
-<p>熟悉了<code>HTTPS URLs</code>和<code>SSH URLs</code>这两种校验方式之后，我们再来看之前遇到的问题。要想在一台计算机上同时使用多个GitHub账号访问不同的仓库，需要怎么做呢？</p>
-<p>为了更好地演示，现假设有两个GitHub账号，<code>debugtalk</code>和<code>leolee</code>，在两个账号中各自有一个仓库，<code>debugtalk/DroidMeter</code>和<code>DebugTalk/MobileStore</code>（公司私有库）。</p>
-<p>前面已经说过，<code>HTTPS URLs</code>和<code>SSH URLs</code>对应着两套独立的权限校验方式，因此这两套方式应该是都能单独实现我们的需求的。</p>
-<p>不过在详细讲解Git权限校验的问题之前，我们先来回顾下Git配置文件的优先级。</p>
-<h3 id=git配置存储位置及其优先级>Git配置存储位置及其优先级</h3>
-<p><code>Unix-like</code>系统中，保存Git用户信息的主要有3个地方（Mac系统多一个<code>Keychain</code>）：</p>
-<ul>
-<li><code>/etc/gitconfig</code>：存储当前系统所有用户的git配置信息，使用带有<code>--system</code>选项的<code>git config</code>时，配置信息会写入该文件；</li>
-<li><code>~/.gitconfig</code>或<code>~/.config/git/config</code>：存储当前用户的git配置信息，使用带有<code>--global</code>选项的<code>git config</code>时，配置信息会写入该文件；</li>
-<li><code>Keychain Access</code>：在开启<code>Keychain</code>机制的情况下，进行权限校验后会自动将账号密码保存至<code>Keychain Access</code>。</li>
-<li>仓库的Git目录中的config文件（即<code>repo/.git/config</code>）：存储当前仓库的git配置信息，在仓库中使用带有<code>--local</code>选项的<code>git config</code>时，配置信息会写入该文件；</li>
-</ul>
-<p>在优先级方面，以上4个配置项的优先级从上往下依次上升，即<code>repo/.git/config</code>的优先级最高，然后<code>Keychain Access</code>会覆盖<code>~/.gitconfig</code>中的配置，<code>~/.gitconfig</code>会覆盖<code>/etc/gitconfig</code>中的配置。</p>
-<h3 id=基于ssh协议实现多账号共存>基于<code>SSH</code>协议实现多账号共存</h3>
-<p>先来看下如何采用<code>SSH URLs</code>实现我们的需求。</p>
-<p>在处理多账号共存问题之前，两个账号均已分别创建<code>SSH</code>秘钥对，并且<code>SSH-key</code>均已加入本地计算机的<code>ssh-agent</code>。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ ssh-add -d ~/.ssh/id_rsa.pub
+</span></span><span class=line><span class=cl>Identity removed: /Users/Leo/.ssh/id_rsa.pub <span class=o>(</span>mail@debugtalk.com<span class=o>)</span>
+</span></span><span class=line><span class=cl>➜ ssh-add -l
+</span></span><span class=line><span class=cl>The agent has no identities.
+</span></span><span class=line><span class=cl>➜ ssh -T git@github.com
+</span></span><span class=line><span class=cl>Permission denied <span class=o>(</span>publickey<span class=o>)</span>.
+</span></span></code></pre></td></tr></table></div></div><h2 id=同时使用多个github账号>同时使用多个GitHub账号</h2><p>熟悉了<code>HTTPS URLs</code>和<code>SSH URLs</code>这两种校验方式之后，我们再来看之前遇到的问题。要想在一台计算机上同时使用多个GitHub账号访问不同的仓库，需要怎么做呢？</p><p>为了更好地演示，现假设有两个GitHub账号，<code>debugtalk</code>和<code>leolee</code>，在两个账号中各自有一个仓库，<code>debugtalk/DroidMeter</code>和<code>DebugTalk/MobileStore</code>（公司私有库）。</p><p>前面已经说过，<code>HTTPS URLs</code>和<code>SSH URLs</code>对应着两套独立的权限校验方式，因此这两套方式应该是都能单独实现我们的需求的。</p><p>不过在详细讲解Git权限校验的问题之前，我们先来回顾下Git配置文件的优先级。</p><h3 id=git配置存储位置及其优先级>Git配置存储位置及其优先级</h3><p><code>Unix-like</code>系统中，保存Git用户信息的主要有3个地方（Mac系统多一个<code>Keychain</code>）：</p><ul><li><code>/etc/gitconfig</code>：存储当前系统所有用户的git配置信息，使用带有<code>--system</code>选项的<code>git config</code>时，配置信息会写入该文件；</li><li><code>~/.gitconfig</code>或<code>~/.config/git/config</code>：存储当前用户的git配置信息，使用带有<code>--global</code>选项的<code>git config</code>时，配置信息会写入该文件；</li><li><code>Keychain Access</code>：在开启<code>Keychain</code>机制的情况下，进行权限校验后会自动将账号密码保存至<code>Keychain Access</code>。</li><li>仓库的Git目录中的config文件（即<code>repo/.git/config</code>）：存储当前仓库的git配置信息，在仓库中使用带有<code>--local</code>选项的<code>git config</code>时，配置信息会写入该文件；</li></ul><p>在优先级方面，以上4个配置项的优先级从上往下依次上升，即<code>repo/.git/config</code>的优先级最高，然后<code>Keychain Access</code>会覆盖<code>~/.gitconfig</code>中的配置，<code>~/.gitconfig</code>会覆盖<code>/etc/gitconfig</code>中的配置。</p><h3 id=基于ssh协议实现多账号共存>基于<code>SSH</code>协议实现多账号共存</h3><p>先来看下如何采用<code>SSH URLs</code>实现我们的需求。</p><p>在处理多账号共存问题之前，两个账号均已分别创建<code>SSH</code>秘钥对，并且<code>SSH-key</code>均已加入本地计算机的<code>ssh-agent</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ ssh-add -l
-<span class=m>4096</span> SHA256:lqujbjkWM1xxxxxxxxxxG6ERK6DNYj9tXExxxxxx8ew /Users/Leo/.ssh/debugtalk_id_rsa <span class=o>(</span>RSA<span class=o>)</span>
-<span class=m>4096</span> SHA256:II2O9vZutdQr8xxxxxxxxxxD7EYvxxxxxxbynx2hHtg /Users/Leo/.ssh/id_rsa <span class=o>(</span>RSA<span class=o>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在详细讲解多账号共存的问题之前，我们先来回想下平时在Terminal中与GitHub仓库进行交互的场景。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ ssh-add -l
+</span></span><span class=line><span class=cl><span class=m>4096</span> SHA256:lqujbjkWM1xxxxxxxxxxG6ERK6DNYj9tXExxxxxx8ew /Users/Leo/.ssh/debugtalk_id_rsa <span class=o>(</span>RSA<span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=m>4096</span> SHA256:II2O9vZutdQr8xxxxxxxxxxD7EYvxxxxxxbynx2hHtg /Users/Leo/.ssh/id_rsa <span class=o>(</span>RSA<span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>在详细讲解多账号共存的问题之前，我们先来回想下平时在Terminal中与GitHub仓库进行交互的场景。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -424,31 +142,20 @@ Permission denied <span class=o>(</span>publickey<span class=o>)</span>.
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh>➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> git pull
-Already up-to-date.
-➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> touch README.md
-➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> ✗ git add .
-➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> ✗ git commit -m <span class=s2>&#34;add README&#34;</span>
-➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> git push
-Counting objects: 3, <span class=k>done</span>.
-Delta compression using up to <span class=m>4</span> threads.
-Compressing objects: 100% <span class=o>(</span>2/2<span class=o>)</span>, <span class=k>done</span>.
-Writing objects: 100% <span class=o>(</span>3/3<span class=o>)</span>, <span class=m>310</span> bytes <span class=p>|</span> <span class=m>0</span> bytes/s, <span class=k>done</span>.
-Total <span class=m>3</span> <span class=o>(</span>delta 0<span class=o>)</span>, reused <span class=m>0</span> <span class=o>(</span>delta 0<span class=o>)</span>
-To git@debugtalk:debugtalk/DroidMeter.git
-   7df6839..68d085b  master -&gt; master
-</code></pre></td></tr></table>
-</div>
-</div><p>在操作过程中，本地计算机的<code>ssh-agent</code>与GitHub服务器建立了连接，并进行了账号权限校验。</p>
-<p>当本地计算机只有一个GitHub账号时，这个行为并不难理解，系统应该会采用这个唯一的GitHub账号进行操作。那如果本地计算机中有多个Github账号时，系统是根据什么来判断应该选择哪个账号呢？</p>
-<p>实际情况是，系统没法进行判断。系统只会有一个默认的账号，然后采用这个默认的账号去操作所有的代码仓库，当账号与仓库不匹配时，就会报权限校验失败的错误。</p>
-<p>那要怎样才能让系统正确区分账号呢？这就需要我们手动进行配置，配置文件即是<code>~/.ssh/config</code>。</p>
-<p>创建<code>~/.ssh/config</code>文件，在其中填写如下内容。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-zsh data-lang=zsh><span class=line><span class=cl>➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> git pull
+</span></span><span class=line><span class=cl>Already up-to-date.
+</span></span><span class=line><span class=cl>➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> touch README.md
+</span></span><span class=line><span class=cl>➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> ✗ git add .
+</span></span><span class=line><span class=cl>➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> ✗ git commit -m <span class=s2>&#34;add README&#34;</span>
+</span></span><span class=line><span class=cl>➜  DroidMeter git:<span class=o>(</span>master<span class=o>)</span> git push
+</span></span><span class=line><span class=cl>Counting objects: 3, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>Delta compression using up to <span class=m>4</span> threads.
+</span></span><span class=line><span class=cl>Compressing objects: 100% <span class=o>(</span>2/2<span class=o>)</span>, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>Writing objects: 100% <span class=o>(</span>3/3<span class=o>)</span>, <span class=m>310</span> bytes <span class=p>|</span> <span class=m>0</span> bytes/s, <span class=k>done</span>.
+</span></span><span class=line><span class=cl>Total <span class=m>3</span> <span class=o>(</span>delta 0<span class=o>)</span>, reused <span class=m>0</span> <span class=o>(</span>delta 0<span class=o>)</span>
+</span></span><span class=line><span class=cl>To git@debugtalk:debugtalk/DroidMeter.git
+</span></span><span class=line><span class=cl>   7df6839..68d085b  master -&gt; master
+</span></span></code></pre></td></tr></table></div></div><p>在操作过程中，本地计算机的<code>ssh-agent</code>与GitHub服务器建立了连接，并进行了账号权限校验。</p><p>当本地计算机只有一个GitHub账号时，这个行为并不难理解，系统应该会采用这个唯一的GitHub账号进行操作。那如果本地计算机中有多个Github账号时，系统是根据什么来判断应该选择哪个账号呢？</p><p>实际情况是，系统没法进行判断。系统只会有一个默认的账号，然后采用这个默认的账号去操作所有的代码仓库，当账号与仓库不匹配时，就会报权限校验失败的错误。</p><p>那要怎样才能让系统正确区分账号呢？这就需要我们手动进行配置，配置文件即是<code>~/.ssh/config</code>。</p><p>创建<code>~/.ssh/config</code>文件，在其中填写如下内容。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -459,189 +166,59 @@ To git@debugtalk:debugtalk/DroidMeter.git
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># debugtalk</span>
-Host debugtalk
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/id_rsa
-
-<span class=c1># DT</span>
-Host leolee
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/dt_id_rsa
-</code></pre></td></tr></table>
-</div>
-</div><p>要理解以上配置文件的含义并不难，我们可以对比看下两个项目的<code>SSH URLs</code>：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># debugtalk</span>
+</span></span><span class=line><span class=cl>Host debugtalk
+</span></span><span class=line><span class=cl>    HostName github.com
+</span></span><span class=line><span class=cl>    User git
+</span></span><span class=line><span class=cl>    IdentityFile ~/.ssh/id_rsa
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># DT</span>
+</span></span><span class=line><span class=cl>Host leolee
+</span></span><span class=line><span class=cl>    HostName github.com
+</span></span><span class=line><span class=cl>    User git
+</span></span><span class=line><span class=cl>    IdentityFile ~/.ssh/dt_id_rsa
+</span></span></code></pre></td></tr></table></div></div><p>要理解以上配置文件的含义并不难，我们可以对比看下两个项目的<code>SSH URLs</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>git@github.com:debugtalk/DroidMeter.git
-git@github.com:DTSZ/Store_Android.git
-</code></pre></td></tr></table>
-</div>
-</div><p>其中，<code>git</code>是本地<code>ssh-agent</code>与GitHub服务器建立<code>SSH</code>连接采用的用户名（即<code>User</code>），<code>github.com</code>是GitHub服务器的主机（即<code>HostName</code>）。</p>
-<p>可以看出，如果采用原始的<code>SSH URLs</code>，由于<code>User</code>和<code>HostName</code>都相同，本地计算机并不知道应该采用哪个<code>SSH-key</code>去建立连接。</p>
-<p>因此，通过创建<code>~/.ssh/config</code>文件，在<code>Host</code>中进行区分，然后经过<code>CNAME</code>映射到<code>HostName</code>，然后分别指向不同的<code>SSH-key</code>，即<code>IdentityFile</code>。由于<code>HostName</code>才是真正指定GitHub服务器主机的字段，因此这么配置不会对本地<code>ssh-agent</code>连接GitHub主机产生影响，再加上<code>Host</code>别名指向了不同的<code>SSH-key</code>，从而实现了对两个GitHub账号的分离。</p>
-<p>配置完毕后，两个GitHub账号就可以通过<code>Host</code>别名来进行区分了。后续再与GitHub服务器进行通信时，就可以采用<code>Host</code>别名代替原先的<code>github.com</code>。例如，测试本地<code>ssh-agent</code>与GitHub服务器的连通性时，可采用如下方式：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>git@github.com:debugtalk/DroidMeter.git
+</span></span><span class=line><span class=cl>git@github.com:DTSZ/Store_Android.git
+</span></span></code></pre></td></tr></table></div></div><p>其中，<code>git</code>是本地<code>ssh-agent</code>与GitHub服务器建立<code>SSH</code>连接采用的用户名（即<code>User</code>），<code>github.com</code>是GitHub服务器的主机（即<code>HostName</code>）。</p><p>可以看出，如果采用原始的<code>SSH URLs</code>，由于<code>User</code>和<code>HostName</code>都相同，本地计算机并不知道应该采用哪个<code>SSH-key</code>去建立连接。</p><p>因此，通过创建<code>~/.ssh/config</code>文件，在<code>Host</code>中进行区分，然后经过<code>CNAME</code>映射到<code>HostName</code>，然后分别指向不同的<code>SSH-key</code>，即<code>IdentityFile</code>。由于<code>HostName</code>才是真正指定GitHub服务器主机的字段，因此这么配置不会对本地<code>ssh-agent</code>连接GitHub主机产生影响，再加上<code>Host</code>别名指向了不同的<code>SSH-key</code>，从而实现了对两个GitHub账号的分离。</p><p>配置完毕后，两个GitHub账号就可以通过<code>Host</code>别名来进行区分了。后续再与GitHub服务器进行通信时，就可以采用<code>Host</code>别名代替原先的<code>github.com</code>。例如，测试本地<code>ssh-agent</code>与GitHub服务器的连通性时，可采用如下方式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ ssh -T git@debugtalk
-Hi debugtalk! You have successfully authenticated, but GitHub does not provide shell access.
-➜ ssh -T git@leolee
-Hi leolee! You have successfully authenticated, but GitHub does not provide shell access.
-</code></pre></td></tr></table>
-</div>
-</div><p>可以看出，此时两个账号各司其职，不会再出现混淆的情况。</p>
-<p>不过，我们还遗漏了很重要的一点。在本地代码仓库中执行<code>push</code>/<code>pull</code>/<code>fetch</code>等操作的时候，命令中并不会包含<code>Host</code>信息，那系统怎么知道我们要采用哪个GitHub账号进行操作呢？</p>
-<p>答案是，系统还是没法判断，需要我们进行配置指定。</p>
-<p>显然，不同的仓库可能对应着不同的GitHub账号，因此这个配置不能配置成全局的，而只能在各个项目中分别进行配置，即<code>repo/.git/config</code>文件。</p>
-<p>配置的方式如下：</p>
-<p>在<code>debugtalk/DroidMeter</code>仓库中：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ git remote add origin git@debugtalk:debugtalk/DroidMeter.git
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>DebugTalk/MobileStore.git</code>仓库中：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ git remote add origin git@leolee:DebugTalk/MobileStore.git
-</code></pre></td></tr></table>
-</div>
-</div><p>配置的原理也很容易理解，就是将仓库的<code>Host</code>更换为之前设置的别名。添加完毕后，后续再在两个仓库中执行任何<code>git</code>操作时，系统就可以选择正确的<code>SSH-key</code>与GitHub服务器进行交互了。</p>
-<h3 id=基于https协议实现多账号共存>基于<code>HTTPS</code>协议实现多账号共存</h3>
-<p>再来看下如何采用<code>HTTPS URLs</code>实现我们的需求。</p>
-<p>有了前面的经验，我们的思路就清晰了许多。采用<code>HTTPS URLs</code>的方式进行Git权限校验后，系统会将GitHub账号密码存储到<code>Keychain</code>中（Mac系统），或者存储到<code>~/.git-credentials</code>文件中（<code>Git credential helper</code>）。</p>
-<p>不管是存储到哪里，我们面临的问题都是相同的，即如何在代码仓库中区分采用哪个GitHub账号。</p>
-<p>配置的方式其实也很简单：</p>
-<p>在<code>debugtalk/DroidMeter</code>仓库中：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ git remote add origin https://debugtalk@github.com/debugtalk/DroidMeter.git
-</code></pre></td></tr></table>
-</div>
-</div><p>在<code>DebugTalk/MobileStore.git</code>仓库中：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜ git remote add origin https://leolee@github.com/DebugTalk/MobileStore.git
-</code></pre></td></tr></table>
-</div>
-</div><p>配置的原理也很容易理解，将GitHub用户名添加到仓库的Git地址中，这样在执行git命令的时候，系统就会采用指定的GitHub用户名去<code>Keychain</code>或<code>~/.git-credentials</code>中寻找对应的认证信息，账号使用错乱的问题也就不复存在了。</p>
-<p><code>Done!</code></p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>文章作者</span>
-<span class=item-content>debugtalk</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>上次更新</span>
-<span class=item-content>
-2016-06-15
-</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>许可协议</span>
-<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
-</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://debugtalk.com/tags/SSH/>SSH</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ ssh -T git@debugtalk
+</span></span><span class=line><span class=cl>Hi debugtalk! You have successfully authenticated, but GitHub does not provide shell access.
+</span></span><span class=line><span class=cl>➜ ssh -T git@leolee
+</span></span><span class=line><span class=cl>Hi leolee! You have successfully authenticated, but GitHub does not provide shell access.
+</span></span></code></pre></td></tr></table></div></div><p>可以看出，此时两个账号各司其职，不会再出现混淆的情况。</p><p>不过，我们还遗漏了很重要的一点。在本地代码仓库中执行<code>push</code>/<code>pull</code>/<code>fetch</code>等操作的时候，命令中并不会包含<code>Host</code>信息，那系统怎么知道我们要采用哪个GitHub账号进行操作呢？</p><p>答案是，系统还是没法判断，需要我们进行配置指定。</p><p>显然，不同的仓库可能对应着不同的GitHub账号，因此这个配置不能配置成全局的，而只能在各个项目中分别进行配置，即<code>repo/.git/config</code>文件。</p><p>配置的方式如下：</p><p>在<code>debugtalk/DroidMeter</code>仓库中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ git remote add origin git@debugtalk:debugtalk/DroidMeter.git
+</span></span></code></pre></td></tr></table></div></div><p>在<code>DebugTalk/MobileStore.git</code>仓库中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ git remote add origin git@leolee:DebugTalk/MobileStore.git
+</span></span></code></pre></td></tr></table></div></div><p>配置的原理也很容易理解，就是将仓库的<code>Host</code>更换为之前设置的别名。添加完毕后，后续再在两个仓库中执行任何<code>git</code>操作时，系统就可以选择正确的<code>SSH-key</code>与GitHub服务器进行交互了。</p><h3 id=基于https协议实现多账号共存>基于<code>HTTPS</code>协议实现多账号共存</h3><p>再来看下如何采用<code>HTTPS URLs</code>实现我们的需求。</p><p>有了前面的经验，我们的思路就清晰了许多。采用<code>HTTPS URLs</code>的方式进行Git权限校验后，系统会将GitHub账号密码存储到<code>Keychain</code>中（Mac系统），或者存储到<code>~/.git-credentials</code>文件中（<code>Git credential helper</code>）。</p><p>不管是存储到哪里，我们面临的问题都是相同的，即如何在代码仓库中区分采用哪个GitHub账号。</p><p>配置的方式其实也很简单：</p><p>在<code>debugtalk/DroidMeter</code>仓库中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ git remote add origin https://debugtalk@github.com/debugtalk/DroidMeter.git
+</span></span></code></pre></td></tr></table></div></div><p>在<code>DebugTalk/MobileStore.git</code>仓库中：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜ git remote add origin https://leolee@github.com/DebugTalk/MobileStore.git
+</span></span></code></pre></td></tr></table></div></div><p>配置的原理也很容易理解，将GitHub用户名添加到仓库的Git地址中，这样在执行git命令的时候，系统就会采用指定的GitHub用户名去<code>Keychain</code>或<code>~/.git-credentials</code>中寻找对应的认证信息，账号使用错乱的问题也就不复存在了。</p><p><code>Done!</code></p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2016-06-15</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span></p></div><footer class=post-footer><div class=post-tags><a href=https://debugtalk.com/tags/SSH/>SSH</a>
 <a href=https://debugtalk.com/tags/GitHub/>GitHub</a>
 <a href=https://debugtalk.com/tags/HTTPS/>HTTP(S)</a>
-<a href=https://debugtalk.com/tags/Git/>Git</a>
-</div>
-<nav class=post-nav>
-<a class=prev href=/post/iOS-Android-Packing-with-Jenkins/>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
-</i>
-<span class="prev-text nav-default">使用 Jenkins 搭建 iOS/Android 持续集成打包平台</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/post/trap-in-GitHub-authority-verification/>
-<span class="next-text nav-default">GitHub 权限校验失败给我的启发</span>
+<a href=https://debugtalk.com/tags/Git/>Git</a></div><nav class=post-nav><a class=prev href=/post/iOS-Android-Packing-with-Jenkins/><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg></i><span class="prev-text nav-default">使用 Jenkins 搭建 iOS/Android 持续集成打包平台</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/post/trap-in-GitHub-authority-verification/><span class="next-text nav-default">GitHub 权限校验失败给我的启发</span>
 <span class="prev-text nav-mobile">下一篇</span>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
-</i>
-</a>
-</nav>
-</footer>
-</article>
-<div class="post bg-white">
-<script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=icon-links>
-<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
-</a>
-<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
-</a>
-<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
-</a>
-</div>
-<div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg></i></a></nav></footer></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div></div></main><footer id=footer class=footer><div class=icon-links><a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg></a><a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg></a><a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a></span>
+<span class=copyright-year>&copy;
 2011 -
 2022
-<span class=heart>
-<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
-</i>
-</span><span class=author>
-debugtalk
-</span></span>
-<span id=busuanzi_container>
-访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
-</i>
-</div>
-</div>
-<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<span class=heart><i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg></i></span><span class=author>debugtalk</span></span>
+<span id=busuanzi_container>访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span></span></div></footer><div class=back-to-top id=back-to-top><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg></i></div></div><script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
 <script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
 <script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/load-photoswipe.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<script src=/js/custom.js></script>
-</body>
-</html>
+<script src=/js/custom.js></script></body></html>

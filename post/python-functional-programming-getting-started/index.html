@@ -1,367 +1,77 @@
-<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<title>Python 的函数式编程 -- 从入门到⎡放弃⎦ - DebugTalk</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
-<meta name=MobileOptimized content="width">
-<meta name=HandheldFriendly content="true">
-<meta name=applicable-device content="pc,mobile">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=mobile-web-app-capable content="yes">
-<meta name=author content="debugtalk">
-<meta name=description content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么">
-<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
-<meta name=generator content="Hugo 0.92.1">
-<link rel=canonical href=https://debugtalk.com/post/python-functional-programming-getting-started/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
-<link rel=stylesheet href=/css/custom.css>
-<meta property="og:title" content="Python 的函数式编程 -- 从入门到⎡放弃⎦">
-<meta property="og:description" content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://debugtalk.com/post/python-functional-programming-getting-started/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2016-04-08T00:00:00+00:00">
-<meta property="article:modified_time" content="2016-04-08T00:00:00+00:00">
-<meta itemprop=name content="Python 的函数式编程 -- 从入门到⎡放弃⎦">
-<meta itemprop=description content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么"><meta itemprop=datePublished content="2016-04-08T00:00:00+00:00">
-<meta itemprop=dateModified content="2016-04-08T00:00:00+00:00">
-<meta itemprop=wordCount content="4913">
-<meta itemprop=keywords content="Python,函数式编程,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="Python 的函数式编程 -- 从入门到⎡放弃⎦">
-<meta name=twitter:description content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>DebugTalk</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>Python 的函数式编程 -- 从入门到⎡放弃⎦ - DebugTalk</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes"><meta name=MobileOptimized content="width"><meta name=HandheldFriendly content="true"><meta name=applicable-device content="pc,mobile"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=mobile-web-app-capable content="yes"><meta name=author content="debugtalk"><meta name=description content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么"><meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试"><meta name=generator content="Hugo 0.94.2"><link rel=canonical href=https://debugtalk.com/post/python-functional-programming-getting-started/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous><link rel=stylesheet href=/css/custom.css><meta property="og:title" content="Python 的函数式编程 -- 从入门到⎡放弃⎦"><meta property="og:description" content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么"><meta property="og:type" content="article"><meta property="og:url" content="https://debugtalk.com/post/python-functional-programming-getting-started/"><meta property="article:section" content="post"><meta property="article:published_time" content="2016-04-08T00:00:00+00:00"><meta property="article:modified_time" content="2016-04-08T00:00:00+00:00"><meta itemprop=name content="Python 的函数式编程 -- 从入门到⎡放弃⎦"><meta itemprop=description content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么"><meta itemprop=datePublished content="2016-04-08T00:00:00+00:00"><meta itemprop=dateModified content="2016-04-08T00:00:00+00:00"><meta itemprop=wordCount content="4913"><meta itemprop=keywords content="Python,函数式编程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Python 的函数式编程 -- 从入门到⎡放弃⎦"><meta name=twitter:description content="很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。 恰好这周组内的周会轮到我主持，一时也没想到要分享什么"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-81639610-1","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>DebugTalk</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
-<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav><link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css><link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header id=header class="header container">
-<div class=logo-wrapper>
-<a href=/ class=logo>
-DebugTalk
-</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-</header>
-<div id=mobile-panel>
-<main id=main class="main bg-llight">
-<div class=content-wrapper>
-<div id=content class="content container">
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>Python 的函数式编程 -- 从入门到⎡放弃⎦</h1>
-<div class=post-meta>
-<time datetime=2016-04-08 class=post-time>
-2016-04-08
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/Development/> Development </a>
-</div>
-<span class=more-meta> 约 4913 字 </span>
-<span class=more-meta> 预计阅读 10 分钟 </span>
-<span id=busuanzi_container_page_pv>
-| 阅读 <span id=busuanzi_value_page_pv></span>
-</span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class=post-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#目标>目标</a></li>
-<li><a href=#命令式编程--函数式编程>命令式编程 & 函数式编程</a></li>
-<li><a href=#python函数式编程的基本单元>Python函数式编程的基本单元</a>
-<ul>
-<li><a href=#lambda>lambda</a></li>
-<li><a href=#map>map()</a></li>
-<li><a href=#reduce>reduce()</a></li>
-<li><a href=#filter>filter()</a></li>
-</ul>
-</li>
-<li><a href=#替换条件控制语句>替换条件控制语句</a></li>
-<li><a href=#替换循环控制语句>替换循环控制语句</a>
-<ul>
-<li><a href=#替换for循环>替换for循环</a></li>
-<li><a href=#替换while循环>替换while循环</a></li>
-</ul>
-</li>
-<li><a href=#更多示例>更多示例</a></li>
-<li><a href=#总结>总结</a></li>
-<li><a href=#参考链接>参考链接</a></li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<p>很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。</p>
-<p>恰好这周组内的周会轮到我主持，一时也没想到要分享什么。灵光一闪，就选定函数式编程这个主题吧，反正组里的同事都没有学过，只需要讲解入门方面的知识就好，也正好可以借这个机会逼迫自己去学习下这种新的编程方式。</p>
-<p>经过初步了解，发现支持函数式编程的语言挺多的，除了像Lisp、Scheme、Haskell、Erlang这样专用的函数式编程语言，我们常用的好多通用型编程语言（如Java、Python、Ruby、Javascript等）都支持函数式编程模式。考虑了下实际情况，最终还是选择Python作为函数式编程的入门语言，因为组内同事都熟悉Python，以此作为切入点不会产生太大困难。</p>
-<p>经过查询资料和初步学习，对函数式编程有了些概念，经过整理，便形成了分享PPT。</p>
-<p>以下便是这次分享的内容。</p>
-<h2 id=目标>目标</h2>
-<p>通常，我们在新学习一门技术或者编程语言的时候，通常都会先从相关概念和特性入手。对于新接触函数式编程的人来说，可能会想知道如下几点：</p>
-<ul>
-<li>什么是函数式编程？</li>
-<li>函数式编程的特点？</li>
-<li>函数式编程的用途？</li>
-<li>函数式编程相比于命令式编程和面向对象编程的优缺点？</li>
-</ul>
-<p>但是我这次分享却没有按照这个思路，因为我感觉在一开始就向听众灌输太多概念性的东西，反倒会让听众感到迷糊。因为经过查询资料发现，对于什么是函数化编程，很难能有一个协调一致的定义。而且由于我也是新接触，自身的理解可能会存在较大的偏差。</p>
-<p>因此，我决定分享内容尽量从大家熟悉的命令式编程切入，通过大量实例来向听众展现函数式编程思维方式的不同之处。在这之后，再回过头看这几个问题，相信听众应该都会有更深刻的理解。</p>
-<p>考虑到实际情况，本次分享希望能达成的目标是：</p>
-<ul>
-<li>了解函数式编程与命令式编程的主要区别</li>
-<li>掌握Python语言函数式编程的基本函数和算子</li>
-<li>会将简单的命令式编程语句转换为函数式编程</li>
-</ul>
-<h2 id=命令式编程--函数式编程>命令式编程 & 函数式编程</h2>
-<p>首先从大家熟悉的命令式编程开始，我们先回顾下平时在写代码时主要的情景。</p>
-<p>其实，不管我们的业务代码有多复杂，都离不开以下几类操作：</p>
-<ul>
-<li>函数定义：def</li>
-<li>条件控制：if, elif, else</li>
-<li>循环控制：for, break, continue, while</li>
-</ul>
-<p>当然，这只是部分操作类型，除此之外还应该有类和模块、异常处理等等。但考虑到是入门，我们就先只关注上面这三种最常见的操作。</p>
-<p>对应地，函数式编程也有自己的关键字。在Python语言中，用于函数式编程的主要由3个基本函数和1个算子。</p>
-<ul>
-<li>基本函数：map()、reduce()、filter()</li>
-<li>算子(operator)：lambda</li>
-</ul>
-<p>令人惊讶的是，仅仅采用这几个函数和算子就基本上可以实现任意Python程序。</p>
-<p>当然，能实现是一回事儿，实际编码时是否这么写又是另外一回事儿。估计要真只采用这几个基本单元来写所有代码的话，不管是在表达上还是在阅读上应该都挺别扭的。不过，尝试采用这几个基本单元来替代上述的函数定义、条件控制、循环控制等操作，对理解函数式编程如何通过函数和递归表达流程控制应该会很有帮助。</p>
-<p>在开始尝试将命令式编程转换为函数式编程之前，我们还是需要先熟悉下这几个基本单元。</p>
-<h2 id=python函数式编程的基本单元>Python函数式编程的基本单元</h2>
-<h3 id=lambda>lambda</h3>
-<p>lambda这个关键词在很多语言中都存在。简单地说，它可以实现函数创建的功能。</p>
-<p>如下便是lambda的两种使用方式。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header id=header class="header container"><div class=logo-wrapper><a href=/ class=logo>DebugTalk</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav></header><div id=mobile-panel><main id=main class="main bg-llight"><div class=content-wrapper><div id=content class="content container"><article class="post bg-white"><header class=post-header><h1 class=post-title>Python 的函数式编程 -- 从入门到⎡放弃⎦</h1><div class=post-meta><time datetime=2016-04-08 class=post-time>2016-04-08</time><div class=post-category><a href=https://debugtalk.com/categories/Development/>Development</a></div><span class=more-meta>约 4913 字</span>
+<span class=more-meta>预计阅读 10 分钟</span>
+<span id=busuanzi_container_page_pv>| 阅读 <span id=busuanzi_value_page_pv></span></span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#目标>目标</a></li><li><a href=#命令式编程--函数式编程>命令式编程 & 函数式编程</a></li><li><a href=#python函数式编程的基本单元>Python函数式编程的基本单元</a><ul><li><a href=#lambda>lambda</a></li><li><a href=#map>map()</a></li><li><a href=#reduce>reduce()</a></li><li><a href=#filter>filter()</a></li></ul></li><li><a href=#替换条件控制语句>替换条件控制语句</a></li><li><a href=#替换循环控制语句>替换循环控制语句</a><ul><li><a href=#替换for循环>替换for循环</a></li><li><a href=#替换while循环>替换while循环</a></li></ul></li><li><a href=#更多示例>更多示例</a></li><li><a href=#总结>总结</a></li><li><a href=#参考链接>参考链接</a></li></ul></nav></div></div><div class=post-content><p>很早以前就听说过了函数式编程，印象中是一种很晦涩难懂的编程模式，但却一直没有去进行了解。</p><p>恰好这周组内的周会轮到我主持，一时也没想到要分享什么。灵光一闪，就选定函数式编程这个主题吧，反正组里的同事都没有学过，只需要讲解入门方面的知识就好，也正好可以借这个机会逼迫自己去学习下这种新的编程方式。</p><p>经过初步了解，发现支持函数式编程的语言挺多的，除了像Lisp、Scheme、Haskell、Erlang这样专用的函数式编程语言，我们常用的好多通用型编程语言（如Java、Python、Ruby、Javascript等）都支持函数式编程模式。考虑了下实际情况，最终还是选择Python作为函数式编程的入门语言，因为组内同事都熟悉Python，以此作为切入点不会产生太大困难。</p><p>经过查询资料和初步学习，对函数式编程有了些概念，经过整理，便形成了分享PPT。</p><p>以下便是这次分享的内容。</p><h2 id=目标>目标</h2><p>通常，我们在新学习一门技术或者编程语言的时候，通常都会先从相关概念和特性入手。对于新接触函数式编程的人来说，可能会想知道如下几点：</p><ul><li>什么是函数式编程？</li><li>函数式编程的特点？</li><li>函数式编程的用途？</li><li>函数式编程相比于命令式编程和面向对象编程的优缺点？</li></ul><p>但是我这次分享却没有按照这个思路，因为我感觉在一开始就向听众灌输太多概念性的东西，反倒会让听众感到迷糊。因为经过查询资料发现，对于什么是函数化编程，很难能有一个协调一致的定义。而且由于我也是新接触，自身的理解可能会存在较大的偏差。</p><p>因此，我决定分享内容尽量从大家熟悉的命令式编程切入，通过大量实例来向听众展现函数式编程思维方式的不同之处。在这之后，再回过头看这几个问题，相信听众应该都会有更深刻的理解。</p><p>考虑到实际情况，本次分享希望能达成的目标是：</p><ul><li>了解函数式编程与命令式编程的主要区别</li><li>掌握Python语言函数式编程的基本函数和算子</li><li>会将简单的命令式编程语句转换为函数式编程</li></ul><h2 id=命令式编程--函数式编程>命令式编程 & 函数式编程</h2><p>首先从大家熟悉的命令式编程开始，我们先回顾下平时在写代码时主要的情景。</p><p>其实，不管我们的业务代码有多复杂，都离不开以下几类操作：</p><ul><li>函数定义：def</li><li>条件控制：if, elif, else</li><li>循环控制：for, break, continue, while</li></ul><p>当然，这只是部分操作类型，除此之外还应该有类和模块、异常处理等等。但考虑到是入门，我们就先只关注上面这三种最常见的操作。</p><p>对应地，函数式编程也有自己的关键字。在Python语言中，用于函数式编程的主要由3个基本函数和1个算子。</p><ul><li>基本函数：map()、reduce()、filter()</li><li>算子(operator)：lambda</li></ul><p>令人惊讶的是，仅仅采用这几个函数和算子就基本上可以实现任意Python程序。</p><p>当然，能实现是一回事儿，实际编码时是否这么写又是另外一回事儿。估计要真只采用这几个基本单元来写所有代码的话，不管是在表达上还是在阅读上应该都挺别扭的。不过，尝试采用这几个基本单元来替代上述的函数定义、条件控制、循环控制等操作，对理解函数式编程如何通过函数和递归表达流程控制应该会很有帮助。</p><p>在开始尝试将命令式编程转换为函数式编程之前，我们还是需要先熟悉下这几个基本单元。</p><h2 id=python函数式编程的基本单元>Python函数式编程的基本单元</h2><h3 id=lambda>lambda</h3><p>lambda这个关键词在很多语言中都存在。简单地说，它可以实现函数创建的功能。</p><p>如下便是lambda的两种使用方式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>func1</span> <span class=o>=</span> <span class=k>lambda</span> <span class=p>:</span> <span class=o>&lt;</span><span class=n>expression</span><span class=p>()</span><span class=o>&gt;</span>
-<span class=n>func2</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span> <span class=p>:</span> <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>)</span><span class=o>&gt;</span>
-<span class=n>func3</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span><span class=n>y</span> <span class=p>:</span> <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>)</span><span class=o>&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在第一条语句中，采用lambda创建了一个无参的函数func1。这和下面采用def创建函数的效果是相同的。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>func1</span> <span class=o>=</span> <span class=k>lambda</span> <span class=p>:</span> <span class=o>&lt;</span><span class=n>expression</span><span class=p>()</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl><span class=n>func2</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span> <span class=p>:</span> <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>)</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl><span class=n>func3</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span><span class=n>y</span> <span class=p>:</span> <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>)</span><span class=o>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>在第一条语句中，采用lambda创建了一个无参的函数func1。这和下面采用def创建函数的效果是相同的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>func1</span><span class=p>():</span>
-    <span class=o>&lt;</span><span class=n>expression</span><span class=p>()</span><span class=o>&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在第二条和第三条语句中，分别采用lambda创建了需要传入1个参数的函数func2，以及传入2个参数的函数func3。这和下面采用<code>def</code>创建函数的效果是相同的。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>func1</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=o>&lt;</span><span class=n>expression</span><span class=p>()</span><span class=o>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>在第二条和第三条语句中，分别采用lambda创建了需要传入1个参数的函数func2，以及传入2个参数的函数func3。这和下面采用<code>def</code>创建函数的效果是相同的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>func2</span><span class=p>(</span><span class=n>x</span><span class=p>):</span>
-    <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>)</span><span class=o>&gt;</span>
-
-<span class=k>def</span> <span class=nf>func3</span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>):</span>
-    <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>)</span><span class=o>&gt;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>需要注意的是，调用func1的时候，虽然不需要传入参数，但是必须要带有括号<code>()</code>，否则返回的只是函数的定义，而非函数执行的结果。这个和在ruby中调用无参函数时有所不同，希望ruby程序员引起注意。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>func2</span><span class=p>(</span><span class=n>x</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>)</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>func3</span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=o>&lt;</span><span class=n>expression</span><span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>)</span><span class=o>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>需要注意的是，调用func1的时候，虽然不需要传入参数，但是必须要带有括号<code>()</code>，否则返回的只是函数的定义，而非函数执行的结果。这个和在ruby中调用无参函数时有所不同，希望ruby程序员引起注意。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>func</span> <span class=o>=</span> <span class=k>lambda</span> <span class=p>:</span> <span class=mi>123</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>func</span>
-<span class=o>&lt;</span><span class=n>function</span> <span class=o>&lt;</span><span class=k>lambda</span><span class=o>&gt;</span> <span class=n>at</span> <span class=mh>0x100f4e1b8</span><span class=o>&gt;</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>func</span><span class=p>()</span>
-<span class=mi>123</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>另外，虽然在上面例子中都将lambda创建的函数赋值给了一个函数名，但这并不是必须的。从下面的例子中大家可以看到，很多时候我们都是直接调用lambda创建的函数，而并没有命名一个函数，这也是我们常听说的匿名函数的由来。</p>
-<h3 id=map>map()</h3>
-<p><code>map()</code>函数的常见调用形式如下所示：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=nb>map</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable</span><span class=p>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><code>map()</code>需要两个必填参数，第一个参数是一个函数名，第二个参数是一个可迭代的对象，如列表、元组等。</p>
-<p><code>map()</code>实现的功能很简单，就是将第二个参数（iterable）中的每一个元素分别传给第一个参数（func），依次执行函数得到结果，并将结果组成一个新的<code>list</code>对象后进行返回。返回结果永远都是一个<code>list</code>。</p>
-<p>简单示例如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>func</span> <span class=o>=</span> <span class=k>lambda</span> <span class=p>:</span> <span class=mi>123</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>func</span>
+</span></span><span class=line><span class=cl><span class=o>&lt;</span><span class=n>function</span> <span class=o>&lt;</span><span class=k>lambda</span><span class=o>&gt;</span> <span class=n>at</span> <span class=mh>0x100f4e1b8</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>func</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=mi>123</span>
+</span></span></code></pre></td></tr></table></div></div><p>另外，虽然在上面例子中都将lambda创建的函数赋值给了一个函数名，但这并不是必须的。从下面的例子中大家可以看到，很多时候我们都是直接调用lambda创建的函数，而并没有命名一个函数，这也是我们常听说的匿名函数的由来。</p><h3 id=map>map()</h3><p><code>map()</code>函数的常见调用形式如下所示：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nb>map</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>map()</code>需要两个必填参数，第一个参数是一个函数名，第二个参数是一个可迭代的对象，如列表、元组等。</p><p><code>map()</code>实现的功能很简单，就是将第二个参数（iterable）中的每一个元素分别传给第一个参数（func），依次执行函数得到结果，并将结果组成一个新的<code>list</code>对象后进行返回。返回结果永远都是一个<code>list</code>。</p><p>简单示例如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>double_func</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>s</span> <span class=p>:</span> <span class=n>s</span> <span class=o>*</span> <span class=mi>2</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>double_func</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>])</span>
-<span class=p>[</span><span class=mi>2</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>8</span><span class=p>,</span> <span class=mi>10</span><span class=p>]</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>除了传入一个可迭代对象这种常见的模式外，<code>map()</code>还支持传入多个可迭代对象。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=nb>map</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable1</span><span class=p>,</span> <span class=n>iterable2</span><span class=p>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在传入多个可迭代对象的情况下，<code>map()</code>会依次从所有可迭代对象中依次取一个元素，组成一个元组列表，然后将元组依次传给func；若可迭代对象的长度不一致，则会以None进行补上。</p>
-<p>通过以下示例应该就比较容易理解。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>double_func</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>s</span> <span class=p>:</span> <span class=n>s</span> <span class=o>*</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>double_func</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>2</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>8</span><span class=p>,</span> <span class=mi>10</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>除了传入一个可迭代对象这种常见的模式外，<code>map()</code>还支持传入多个可迭代对象。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nb>map</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable1</span><span class=p>,</span> <span class=n>iterable2</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>在传入多个可迭代对象的情况下，<code>map()</code>会依次从所有可迭代对象中依次取一个元素，组成一个元组列表，然后将元组依次传给func；若可迭代对象的长度不一致，则会以None进行补上。</p><p>通过以下示例应该就比较容易理解。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>plus</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span><span class=n>y</span> <span class=p>:</span> <span class=p>(</span><span class=n>x</span> <span class=ow>or</span> <span class=mi>0</span><span class=p>)</span> <span class=o>+</span> <span class=p>(</span><span class=n>y</span> <span class=ow>or</span> <span class=mi>0</span><span class=p>)</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>],</span> <span class=p>[</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>])</span>
-<span class=p>[</span><span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>]</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>])</span>
-<span class=p>[</span><span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>4</span><span class=p>]</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>],</span> <span class=p>[</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>])</span>
-<span class=p>[</span><span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>7</span><span class=p>]</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在上面的例子中，之所以采用<code>x or 0</code>的形式，是为了防止<code>None + int</code>出现异常。</p>
-<p>需要注意的是，可迭代对象的个数应该与func的参数个数一致，否则就会出现异常，因为传参个数与函数参数个数不一致了，这个应该比较好理解。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>plus</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span><span class=n>y</span> <span class=p>:</span> <span class=p>(</span><span class=n>x</span> <span class=ow>or</span> <span class=mi>0</span><span class=p>)</span> <span class=o>+</span> <span class=p>(</span><span class=n>y</span> <span class=ow>or</span> <span class=mi>0</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>],</span> <span class=p>[</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>4</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>],</span> <span class=p>[</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>7</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>在上面的例子中，之所以采用<code>x or 0</code>的形式，是为了防止<code>None + int</code>出现异常。</p><p>需要注意的是，可迭代对象的个数应该与func的参数个数一致，否则就会出现异常，因为传参个数与函数参数个数不一致了，这个应该比较好理解。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>plus</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span><span class=n>y</span> <span class=p>:</span> <span class=n>x</span> <span class=o>+</span> <span class=n>y</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>])</span>
-<span class=n>Traceback</span> <span class=p>(</span><span class=n>most</span> <span class=n>recent</span> <span class=n>call</span> <span class=n>last</span><span class=p>):</span>
-  <span class=n>File</span> <span class=s2>&#34;&lt;stdin&gt;&#34;</span><span class=p>,</span> <span class=n>line</span> <span class=mi>1</span><span class=p>,</span> <span class=ow>in</span> <span class=o>&lt;</span><span class=n>module</span><span class=o>&gt;</span>
-<span class=ne>TypeError</span><span class=p>:</span> <span class=o>&lt;</span><span class=k>lambda</span><span class=o>&gt;</span><span class=p>()</span> <span class=n>takes</span> <span class=n>exactly</span> <span class=mi>2</span> <span class=n>arguments</span> <span class=p>(</span><span class=mi>1</span> <span class=n>given</span><span class=p>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>另外，<code>map()</code>还存在一种特殊情况，就是func为None。这个时候，<code>map()</code>仍然是从所有可迭代对象中依次取一个元素，组成一个元组列表，然后将这个元组列表作为结果进行返回。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>plus</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span><span class=n>y</span> <span class=p>:</span> <span class=n>x</span> <span class=o>+</span> <span class=n>y</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=n>Traceback</span> <span class=p>(</span><span class=n>most</span> <span class=n>recent</span> <span class=n>call</span> <span class=n>last</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>  <span class=n>File</span> <span class=s2>&#34;&lt;stdin&gt;&#34;</span><span class=p>,</span> <span class=n>line</span> <span class=mi>1</span><span class=p>,</span> <span class=ow>in</span> <span class=o>&lt;</span><span class=n>module</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl><span class=ne>TypeError</span><span class=p>:</span> <span class=o>&lt;</span><span class=k>lambda</span><span class=o>&gt;</span><span class=p>()</span> <span class=n>takes</span> <span class=n>exactly</span> <span class=mi>2</span> <span class=n>arguments</span> <span class=p>(</span><span class=mi>1</span> <span class=n>given</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>另外，<code>map()</code>还存在一种特殊情况，就是func为None。这个时候，<code>map()</code>仍然是从所有可迭代对象中依次取一个元素，组成一个元组列表，然后将这个元组列表作为结果进行返回。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -369,33 +79,17 @@ DebugTalk
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>])</span>
-<span class=p>[</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>]</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>,</span><span class=mi>8</span><span class=p>])</span>
-<span class=p>[(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>5</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>6</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>7</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>8</span><span class=p>)]</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>])</span>
-<span class=p>[(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>5</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>6</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>7</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=kc>None</span><span class=p>)]</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>,</span><span class=mi>8</span><span class=p>,</span><span class=mi>9</span><span class=p>],</span> <span class=p>[</span><span class=mi>11</span><span class=p>,</span><span class=mi>12</span><span class=p>])</span>
-<span class=p>[(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>11</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>12</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>8</span><span class=p>,</span> <span class=kc>None</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=kc>None</span><span class=p>)]</span>
-</code></pre></td></tr></table>
-</div>
-</div><h3 id=reduce>reduce()</h3>
-<p><code>reduce()</code>函数的调用形式如下所示：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>reduce</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable</span><span class=p>[,</span> <span class=n>initializer</span><span class=p>])</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><code>reduce()</code>函数的功能是对可迭代对象（iterable）中的元素从左到右进行累计运算，最终得到一个数值。第三个参数initializer是初始数值，可以空置，空置为None时就从可迭代对象（iterable）的第二个元素开始，并将第一个元素作为之前的结果。</p>
-<p>文字描述可能不大清楚，看下<code>reduce()</code>的源码应该就比较清晰了。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>,</span><span class=mi>8</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>5</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>6</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>7</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>8</span><span class=p>)]</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>5</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>6</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>7</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=kc>None</span><span class=p>)]</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],</span> <span class=p>[</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>,</span><span class=mi>8</span><span class=p>,</span><span class=mi>9</span><span class=p>],</span> <span class=p>[</span><span class=mi>11</span><span class=p>,</span><span class=mi>12</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>6</span><span class=p>,</span> <span class=mi>11</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>12</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>8</span><span class=p>,</span> <span class=kc>None</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=kc>None</span><span class=p>)]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=reduce>reduce()</h3><p><code>reduce()</code>函数的调用形式如下所示：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>reduce</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable</span><span class=p>[,</span> <span class=n>initializer</span><span class=p>])</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>reduce()</code>函数的功能是对可迭代对象（iterable）中的元素从左到右进行累计运算，最终得到一个数值。第三个参数initializer是初始数值，可以空置，空置为None时就从可迭代对象（iterable）的第二个元素开始，并将第一个元素作为之前的结果。</p><p>文字描述可能不大清楚，看下<code>reduce()</code>的源码应该就比较清晰了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -406,103 +100,48 @@ DebugTalk
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>reduce</span><span class=p>(</span><span class=n>function</span><span class=p>,</span> <span class=n>iterable</span><span class=p>,</span> <span class=n>initializer</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
-    <span class=n>it</span> <span class=o>=</span> <span class=nb>iter</span><span class=p>(</span><span class=n>iterable</span><span class=p>)</span>
-    <span class=k>if</span> <span class=n>initializer</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
-        <span class=k>try</span><span class=p>:</span>
-            <span class=n>initializer</span> <span class=o>=</span> <span class=nb>next</span><span class=p>(</span><span class=n>it</span><span class=p>)</span>
-        <span class=k>except</span> <span class=ne>StopIteration</span><span class=p>:</span>
-            <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s1>&#39;reduce() of empty sequence with no initial value&#39;</span><span class=p>)</span>
-    <span class=n>accum_value</span> <span class=o>=</span> <span class=n>initializer</span>
-    <span class=k>for</span> <span class=n>x</span> <span class=ow>in</span> <span class=n>it</span><span class=p>:</span>
-        <span class=n>accum_value</span> <span class=o>=</span> <span class=n>function</span><span class=p>(</span><span class=n>accum_value</span><span class=p>,</span> <span class=n>x</span><span class=p>)</span>
-    <span class=k>return</span> <span class=n>accum_value</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>再加上如下示例，对<code>reduce()</code>的功能应该就能掌握了。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>reduce</span><span class=p>(</span><span class=n>function</span><span class=p>,</span> <span class=n>iterable</span><span class=p>,</span> <span class=n>initializer</span><span class=o>=</span><span class=kc>None</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>it</span> <span class=o>=</span> <span class=nb>iter</span><span class=p>(</span><span class=n>iterable</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>initializer</span> <span class=ow>is</span> <span class=kc>None</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>initializer</span> <span class=o>=</span> <span class=nb>next</span><span class=p>(</span><span class=n>it</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>except</span> <span class=ne>StopIteration</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>raise</span> <span class=ne>TypeError</span><span class=p>(</span><span class=s1>&#39;reduce() of empty sequence with no initial value&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>accum_value</span> <span class=o>=</span> <span class=n>initializer</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>x</span> <span class=ow>in</span> <span class=n>it</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>accum_value</span> <span class=o>=</span> <span class=n>function</span><span class=p>(</span><span class=n>accum_value</span><span class=p>,</span> <span class=n>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>accum_value</span>
+</span></span></code></pre></td></tr></table></div></div><p>再加上如下示例，对<code>reduce()</code>的功能应该就能掌握了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>plus</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span> <span class=p>:</span> <span class=n>x</span> <span class=o>+</span> <span class=n>y</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>reduce</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>])</span>
-<span class=mi>15</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>reduce</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>],</span> <span class=mi>10</span><span class=p>)</span>
-<span class=mi>25</span>
-</code></pre></td></tr></table>
-</div>
-</div><h3 id=filter>filter()</h3>
-<p><code>filter()</code>函数的调用形式如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=nb>filter</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable</span><span class=p>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><code>filter()</code>有且仅有两个参数，第一个参数是一个函数名，第二个参数是一个可迭代的对象，如列表、元组等。</p>
-<p><code>filter()</code>函数的调用形式与<code>map()</code>比较相近，都是将第二个参数（iterable）中的每一个元素分别传给第一个参数（func），依次执行函数得到结果；差异在于，<code>filter()</code>会判断每次执行结果的<code>bool</code>值，并只将<code>bool</code>值为<code>true</code>的筛选出来，组成一个新的列表并进行返回。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>plus</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span> <span class=p>:</span> <span class=n>x</span> <span class=o>+</span> <span class=n>y</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>reduce</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=mi>15</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>reduce</span><span class=p>(</span><span class=n>plus</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>],</span> <span class=mi>10</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=mi>25</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=filter>filter()</h3><p><code>filter()</code>函数的调用形式如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nb>filter</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>iterable</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>filter()</code>有且仅有两个参数，第一个参数是一个函数名，第二个参数是一个可迭代的对象，如列表、元组等。</p><p><code>filter()</code>函数的调用形式与<code>map()</code>比较相近，都是将第二个参数（iterable）中的每一个元素分别传给第一个参数（func），依次执行函数得到结果；差异在于，<code>filter()</code>会判断每次执行结果的<code>bool</code>值，并只将<code>bool</code>值为<code>true</code>的筛选出来，组成一个新的列表并进行返回。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>mode2</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span> <span class=p>:</span> <span class=n>x</span> <span class=o>%</span> <span class=mi>2</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>filter</span><span class=p>(</span><span class=n>mode2</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>,</span><span class=mi>8</span><span class=p>,</span><span class=mi>9</span><span class=p>,</span><span class=mi>10</span><span class=p>])</span>
-<span class=p>[</span><span class=mi>1</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>]</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>以上便是Python函数式编程基本单元的核心内容。</p>
-<p>接下来，我们就开始尝试采用新学习到的基本单元对命令式编程中的<code>条件控制</code>和<code>循环控制</code>进行转换。</p>
-<h2 id=替换条件控制语句>替换条件控制语句</h2>
-<p>在对<code>条件控制</code>进行替换之前，我们先来回顾下Python中对布尔表达式求值时进行的“短路”处理。</p>
-<p>什么叫“短路”处理？简单地讲，就是如下两点：</p>
-<ul>
-<li>在<code>f(x) and g(y)</code>中，当<code>f(x)</code>为<code>false</code>时，不会再执行<code>g(y)</code>，直接返回<code>false</code></li>
-<li>在<code>f(x) or g(y)</code>中，当<code>f(x)</code>为<code>true</code>时，不会再执行<code>g(y)</code>，直接返回<code>true</code></li>
-</ul>
-<p>结论是显然易现的，就不再过多解释。</p>
-<p>那么，对应到条件控制语句，我们不难理解，如下条件控制语句和表达式是等价的。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>mode2</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span> <span class=p>:</span> <span class=n>x</span> <span class=o>%</span> <span class=mi>2</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>filter</span><span class=p>(</span><span class=n>mode2</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>,</span><span class=mi>7</span><span class=p>,</span><span class=mi>8</span><span class=p>,</span><span class=mi>9</span><span class=p>,</span><span class=mi>10</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>1</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>5</span><span class=p>,</span> <span class=mi>7</span><span class=p>,</span> <span class=mi>9</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><p>以上便是Python函数式编程基本单元的核心内容。</p><p>接下来，我们就开始尝试采用新学习到的基本单元对命令式编程中的<code>条件控制</code>和<code>循环控制</code>进行转换。</p><h2 id=替换条件控制语句>替换条件控制语句</h2><p>在对<code>条件控制</code>进行替换之前，我们先来回顾下Python中对布尔表达式求值时进行的“短路”处理。</p><p>什么叫“短路”处理？简单地讲，就是如下两点：</p><ul><li>在<code>f(x) and g(y)</code>中，当<code>f(x)</code>为<code>false</code>时，不会再执行<code>g(y)</code>，直接返回<code>false</code></li><li>在<code>f(x) or g(y)</code>中，当<code>f(x)</code>为<code>true</code>时，不会再执行<code>g(y)</code>，直接返回<code>true</code></li></ul><p>结论是显然易现的，就不再过多解释。</p><p>那么，对应到条件控制语句，我们不难理解，如下条件控制语句和表达式是等价的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># flow control statement</span>
-<span class=k>if</span> <span class=o>&lt;</span><span class=n>cond1</span><span class=o>&gt;</span><span class=p>:</span>   <span class=n>func1</span><span class=p>()</span>
-<span class=k>elif</span> <span class=o>&lt;</span><span class=n>cond2</span><span class=o>&gt;</span><span class=p>:</span> <span class=n>func2</span><span class=p>()</span>
-<span class=k>else</span><span class=p>:</span>         <span class=n>func3</span><span class=p>()</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># flow control statement</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=o>&lt;</span><span class=n>cond1</span><span class=o>&gt;</span><span class=p>:</span>   <span class=n>func1</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>elif</span> <span class=o>&lt;</span><span class=n>cond2</span><span class=o>&gt;</span><span class=p>:</span> <span class=n>func2</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>else</span><span class=p>:</span>         <span class=n>func3</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># Equivalent &#34;short circuit&#34; expression</span>
-<span class=p>(</span><span class=o>&lt;</span><span class=n>cond1</span><span class=o>&gt;</span> <span class=ow>and</span> <span class=n>func1</span><span class=p>())</span> <span class=ow>or</span> <span class=p>(</span><span class=o>&lt;</span><span class=n>cond2</span><span class=o>&gt;</span> <span class=ow>and</span> <span class=n>func2</span><span class=p>())</span> <span class=ow>or</span> <span class=p>(</span><span class=n>func3</span><span class=p>())</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>通过这个等价替换，我们就去除掉了<code>if/elif/else</code>关键词，将条件控制语句转换为一个表达式。那这个表达式和函数式编程有什么关系呢？</p>
-<p>这时我们回顾上面讲过的<code>lambda</code>，会发现<code>lambda</code>算子返回的就是一个表达式。</p>
-<p>基于这一点，我们就可以采用<code>lambda</code>创建如下函数。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># Equivalent &#34;short circuit&#34; expression</span>
+</span></span><span class=line><span class=cl><span class=p>(</span><span class=o>&lt;</span><span class=n>cond1</span><span class=o>&gt;</span> <span class=ow>and</span> <span class=n>func1</span><span class=p>())</span> <span class=ow>or</span> <span class=p>(</span><span class=o>&lt;</span><span class=n>cond2</span><span class=o>&gt;</span> <span class=ow>and</span> <span class=n>func2</span><span class=p>())</span> <span class=ow>or</span> <span class=p>(</span><span class=n>func3</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过这个等价替换，我们就去除掉了<code>if/elif/else</code>关键词，将条件控制语句转换为一个表达式。那这个表达式和函数式编程有什么关系呢？</p><p>这时我们回顾上面讲过的<code>lambda</code>，会发现<code>lambda</code>算子返回的就是一个表达式。</p><p>基于这一点，我们就可以采用<code>lambda</code>创建如下函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -512,45 +151,27 @@ DebugTalk
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>pr</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>s</span><span class=p>:</span><span class=n>s</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>:</span> <span class=p>(</span><span class=n>x</span><span class=o>==</span><span class=mi>1</span> <span class=ow>and</span> <span class=n>pr</span><span class=p>(</span><span class=s2>&#34;one&#34;</span><span class=p>))</span> \
-<span class=o>....</span>                  <span class=ow>or</span> <span class=p>(</span><span class=n>x</span><span class=o>==</span><span class=mi>2</span> <span class=ow>and</span> <span class=n>pr</span><span class=p>(</span><span class=s2>&#34;two&#34;</span><span class=p>))</span> \
-<span class=o>....</span>                  <span class=ow>or</span> <span class=p>(</span><span class=n>pr</span><span class=p>(</span><span class=s2>&#34;other&#34;</span><span class=p>))</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
-<span class=s1>&#39;one&#39;</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span>
-<span class=s1>&#39;two&#39;</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
-<span class=s1>&#39;other&#39;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>通过函数调用的结果可以看到，以上函数实现的功能与之前的条件控制语句实现的功能完全相同。</p>
-<p>到这里，我们就实现了命令式条件控制语句向函数式语句的转换。并且这个转换的方法是通用的，所有条件控制语句都可以采用这种方式转换为函数式语句。</p>
-<h2 id=替换循环控制语句>替换循环控制语句</h2>
-<p>接下来我们再看<code>循环控制</code>语句的转换。在Python中，循环控制是通过<code>for</code>和<code>while</code>这两种方式实现的。</p>
-<h3 id=替换for循环>替换for循环</h3>
-<p><code>for</code>循环语句的替换十分简单，采用<code>map()</code>函数就能轻松实现。这主要是因为<code>for</code>语句和<code>map()</code>原理相同，都是对可迭代对象里面的每一个元素进行操作，因此转换过程比较自然。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>pr</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>s</span><span class=p>:</span><span class=n>s</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span><span class=p>:</span> <span class=p>(</span><span class=n>x</span><span class=o>==</span><span class=mi>1</span> <span class=ow>and</span> <span class=n>pr</span><span class=p>(</span><span class=s2>&#34;one&#34;</span><span class=p>))</span> \
+</span></span><span class=line><span class=cl><span class=o>....</span>                  <span class=ow>or</span> <span class=p>(</span><span class=n>x</span><span class=o>==</span><span class=mi>2</span> <span class=ow>and</span> <span class=n>pr</span><span class=p>(</span><span class=s2>&#34;two&#34;</span><span class=p>))</span> \
+</span></span><span class=line><span class=cl><span class=o>....</span>                  <span class=ow>or</span> <span class=p>(</span><span class=n>pr</span><span class=p>(</span><span class=s2>&#34;other&#34;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=s1>&#39;one&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span><span class=p>(</span><span class=mi>2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=s1>&#39;two&#39;</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>print_num</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=s1>&#39;other&#39;</span>
+</span></span></code></pre></td></tr></table></div></div><p>通过函数调用的结果可以看到，以上函数实现的功能与之前的条件控制语句实现的功能完全相同。</p><p>到这里，我们就实现了命令式条件控制语句向函数式语句的转换。并且这个转换的方法是通用的，所有条件控制语句都可以采用这种方式转换为函数式语句。</p><h2 id=替换循环控制语句>替换循环控制语句</h2><p>接下来我们再看<code>循环控制</code>语句的转换。在Python中，循环控制是通过<code>for</code>和<code>while</code>这两种方式实现的。</p><h3 id=替换for循环>替换for循环</h3><p><code>for</code>循环语句的替换十分简单，采用<code>map()</code>函数就能轻松实现。这主要是因为<code>for</code>语句和<code>map()</code>原理相同，都是对可迭代对象里面的每一个元素进行操作，因此转换过程比较自然。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># statement-based for loop</span>
-<span class=k>for</span> <span class=n>e</span> <span class=ow>in</span> <span class=n>lst</span><span class=p>:</span>  <span class=n>func</span><span class=p>(</span><span class=n>e</span><span class=p>)</span>
-
-<span class=c1># Equivalent map()-based loop</span>
-<span class=nb>map</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>lst</span><span class=p>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># statement-based for loop</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=n>e</span> <span class=ow>in</span> <span class=n>lst</span><span class=p>:</span>  <span class=n>func</span><span class=p>(</span><span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Equivalent map()-based loop</span>
+</span></span><span class=line><span class=cl><span class=nb>map</span><span class=p>(</span><span class=n>func</span><span class=p>,</span> <span class=n>lst</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -560,26 +181,17 @@ DebugTalk
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=o>&gt;&gt;&gt;</span> <span class=n>square</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span> <span class=p>:</span> <span class=n>x</span> <span class=o>*</span> <span class=n>x</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=k>for</span> <span class=n>x</span> <span class=ow>in</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>]:</span> <span class=n>square</span><span class=p>(</span><span class=n>x</span><span class=p>)</span>
-<span class=o>...</span>
-<span class=mi>1</span>
-<span class=mi>4</span>
-<span class=mi>9</span>
-<span class=mi>16</span>
-<span class=mi>25</span>
-<span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>square</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>])</span>
-<span class=p>[</span><span class=mi>1</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>16</span><span class=p>,</span> <span class=mi>25</span><span class=p>]</span>
-</code></pre></td></tr></table>
-</div>
-</div><h3 id=替换while循环>替换while循环</h3>
-<p><code>while</code>循环语句的替换相比而言就复杂了许多。</p>
-<p>下面分别是<code>while</code>循环语句及其对应的函数式风格的代码。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=n>square</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>x</span> <span class=p>:</span> <span class=n>x</span> <span class=o>*</span> <span class=n>x</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=k>for</span> <span class=n>x</span> <span class=ow>in</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>]:</span> <span class=n>square</span><span class=p>(</span><span class=n>x</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=mi>4</span>
+</span></span><span class=line><span class=cl><span class=mi>9</span>
+</span></span><span class=line><span class=cl><span class=mi>16</span>
+</span></span><span class=line><span class=cl><span class=mi>25</span>
+</span></span><span class=line><span class=cl><span class=o>&gt;&gt;&gt;</span> <span class=nb>map</span><span class=p>(</span><span class=n>square</span><span class=p>,</span> <span class=p>[</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>])</span>
+</span></span><span class=line><span class=cl><span class=p>[</span><span class=mi>1</span><span class=p>,</span> <span class=mi>4</span><span class=p>,</span> <span class=mi>9</span><span class=p>,</span> <span class=mi>16</span><span class=p>,</span> <span class=mi>25</span><span class=p>]</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=替换while循环>替换while循环</h3><p><code>while</code>循环语句的替换相比而言就复杂了许多。</p><p>下面分别是<code>while</code>循环语句及其对应的函数式风格的代码。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -598,34 +210,26 @@ DebugTalk
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># statement-based while loop</span>
-<span class=k>while</span> <span class=o>&lt;</span><span class=n>condition</span><span class=o>&gt;</span><span class=p>:</span>
-    <span class=o>&lt;</span><span class=n>pre</span><span class=o>-</span><span class=n>suite</span><span class=o>&gt;</span>
-    <span class=k>if</span> <span class=o>&lt;</span><span class=n>break_condition</span><span class=o>&gt;</span><span class=p>:</span>
-        <span class=k>break</span>
-    <span class=k>else</span><span class=p>:</span>
-        <span class=o>&lt;</span><span class=n>suite</span><span class=o>&gt;</span>
-
-<span class=c1># Equivalent FP-style recursive while loop</span>
-<span class=k>def</span> <span class=nf>while_block</span><span class=p>():</span>
-    <span class=o>&lt;</span><span class=n>pre</span><span class=o>-</span><span class=n>suite</span><span class=o>&gt;</span>
-    <span class=k>if</span> <span class=o>&lt;</span><span class=n>break_condition</span><span class=o>&gt;</span><span class=p>:</span>
-        <span class=k>return</span> <span class=mi>1</span>
-    <span class=k>else</span><span class=p>:</span>
-        <span class=o>&lt;</span><span class=n>suite</span><span class=o>&gt;</span>
-    <span class=k>return</span> <span class=mi>0</span>
- 
-<span class=n>while_FP</span> <span class=o>=</span> <span class=k>lambda</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>condition</span><span class=o>&gt;</span> <span class=ow>and</span> <span class=p>(</span><span class=n>while_block</span><span class=p>()</span> <span class=ow>or</span> <span class=n>while_FP</span><span class=p>())</span>
-<span class=n>while_FP</span><span class=p>()</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>这里的难点在于，函数式<code>while_FP</code>循环采用了递归的概念。当<code>&lt;condition></code>为<code>true</code>时，进入循环体，执行<code>while_block()</code>；若<code>&lt;break_condition></code>为<code>true</code>时，返回1，<code>while_FP()</code>调用结束；若<code>&lt;break_condition></code>为<code>false</code>时，返回0，会继续执行<code>or</code>右侧的<code>while_FP()</code>，从而实现递归调用；若<code>&lt;break_condition></code>始终为<code>false</code>，则会持续递归调用<code>while_FP()</code>，这就实现了<code>while</code>语句中同样的功能。</p>
-<p>为了对函数式的<code>while</code>循环有更深刻的理解，可以再看下如下示例。这个例子是在网上找的，实现的是<code>echo</code>功能：输入任意非"quit"字符时，打印输入的字符；输入"quit"字符时，退出程序。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># statement-based while loop</span>
+</span></span><span class=line><span class=cl><span class=k>while</span> <span class=o>&lt;</span><span class=n>condition</span><span class=o>&gt;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=o>&lt;</span><span class=n>pre</span><span class=o>-</span><span class=n>suite</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=o>&lt;</span><span class=n>break_condition</span><span class=o>&gt;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>break</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=o>&lt;</span><span class=n>suite</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Equivalent FP-style recursive while loop</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>while_block</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=o>&lt;</span><span class=n>pre</span><span class=o>-</span><span class=n>suite</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=o>&lt;</span><span class=n>break_condition</span><span class=o>&gt;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=o>&lt;</span><span class=n>suite</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl> 
+</span></span><span class=line><span class=cl><span class=n>while_FP</span> <span class=o>=</span> <span class=k>lambda</span><span class=p>:</span> <span class=o>&lt;</span><span class=n>condition</span><span class=o>&gt;</span> <span class=ow>and</span> <span class=p>(</span><span class=n>while_block</span><span class=p>()</span> <span class=ow>or</span> <span class=n>while_FP</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=n>while_FP</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>这里的难点在于，函数式<code>while_FP</code>循环采用了递归的概念。当<code>&lt;condition></code>为<code>true</code>时，进入循环体，执行<code>while_block()</code>；若<code>&lt;break_condition></code>为<code>true</code>时，返回1，<code>while_FP()</code>调用结束；若<code>&lt;break_condition></code>为<code>false</code>时，返回0，会继续执行<code>or</code>右侧的<code>while_FP()</code>，从而实现递归调用；若<code>&lt;break_condition></code>始终为<code>false</code>，则会持续递归调用<code>while_FP()</code>，这就实现了<code>while</code>语句中同样的功能。</p><p>为了对函数式的<code>while</code>循环有更深刻的理解，可以再看下如下示例。这个例子是在网上找的，实现的是<code>echo</code>功能：输入任意非"quit"字符时，打印输入的字符；输入"quit"字符时，退出程序。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -637,26 +241,19 @@ DebugTalk
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span><span class=lnt>12
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>➜  PythonFP python pyecho.py
-IMP -- <span class=m>1</span>
-<span class=m>1</span>
-IMP -- <span class=m>2</span>
-<span class=m>2</span>
-IMP -- abc
-abc
-IMP -- <span class=m>1</span> + <span class=m>1</span>
-<span class=m>1</span> + <span class=m>1</span>
-IMP -- quit
-quit
-➜  PythonFP
-</code></pre></td></tr></table>
-</div>
-</div><p>如下便是分别采用过程式和函数式语句实现的"echo"功能。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>➜  PythonFP python pyecho.py
+</span></span><span class=line><span class=cl>IMP -- <span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=m>1</span>
+</span></span><span class=line><span class=cl>IMP -- <span class=m>2</span>
+</span></span><span class=line><span class=cl><span class=m>2</span>
+</span></span><span class=line><span class=cl>IMP -- abc
+</span></span><span class=line><span class=cl>abc
+</span></span><span class=line><span class=cl>IMP -- <span class=m>1</span> + <span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=m>1</span> + <span class=m>1</span>
+</span></span><span class=line><span class=cl>IMP -- quit
+</span></span><span class=line><span class=cl>quit
+</span></span><span class=line><span class=cl>➜  PythonFP
+</span></span></code></pre></td></tr></table></div></div><p>如下便是分别采用过程式和函数式语句实现的"echo"功能。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -665,158 +262,63 @@ quit
 </span><span class=lnt>7
 </span><span class=lnt>8
 </span><span class=lnt>9
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=c1># imperative version of &#34;echo()&#34;</span>
-<span class=k>def</span> <span class=nf>echo_IMP</span><span class=p>():</span>
-    <span class=k>while</span> <span class=mi>1</span><span class=p>:</span>
-        <span class=n>x</span> <span class=o>=</span> <span class=n>raw_input</span><span class=p>(</span><span class=s2>&#34;IMP -- &#34;</span><span class=p>)</span>
-        <span class=nb>print</span> <span class=n>x</span>
-        <span class=k>if</span> <span class=n>x</span> <span class=o>==</span> <span class=s1>&#39;quit&#39;</span><span class=p>:</span>
-            <span class=k>break</span>
-
-<span class=n>echo_IMP</span><span class=p>()</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># imperative version of &#34;echo()&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>echo_IMP</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=mi>1</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>x</span> <span class=o>=</span> <span class=n>raw_input</span><span class=p>(</span><span class=s2>&#34;IMP -- &#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span> <span class=n>x</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=n>x</span> <span class=o>==</span> <span class=s1>&#39;quit&#39;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>echo_IMP</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>monadic_print</span><span class=p>(</span><span class=n>x</span><span class=p>):</span>
-    <span class=nb>print</span> <span class=n>x</span>
-    <span class=k>return</span> <span class=n>x</span>
-
-<span class=c1># FP version of &#34;echo()&#34;</span>
-<span class=n>echo_FP</span> <span class=o>=</span> <span class=k>lambda</span><span class=p>:</span> <span class=n>monadic_print</span><span class=p>(</span><span class=n>raw_input</span><span class=p>(</span><span class=s2>&#34;FP -- &#34;</span><span class=p>))</span><span class=o>==</span><span class=s1>&#39;quit&#39;</span> <span class=ow>or</span> <span class=n>echo_FP</span><span class=p>()</span>
-<span class=n>echo_FP</span><span class=p>()</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=更多示例>更多示例</h2>
-<p>到此为止，我们对函数式编程总算有了点认识，到达之前设定的目标应该是没有问题了，看来函数式编程也并没有想象中的那么难懂。</p>
-<p>然而，这都只是函数式编程的皮毛而已，不信？再看下如下示例。</p>
-<p>这个示例也是在网上找的，实现的是两个列表笛卡尔积的筛选功能，找出笛卡尔积元组集合中两个元素之积大于25的所有元组。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>monadic_print</span><span class=p>(</span><span class=n>x</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span> <span class=n>x</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>x</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># FP version of &#34;echo()&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>echo_FP</span> <span class=o>=</span> <span class=k>lambda</span><span class=p>:</span> <span class=n>monadic_print</span><span class=p>(</span><span class=n>raw_input</span><span class=p>(</span><span class=s2>&#34;FP -- &#34;</span><span class=p>))</span><span class=o>==</span><span class=s1>&#39;quit&#39;</span> <span class=ow>or</span> <span class=n>echo_FP</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>echo_FP</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><h2 id=更多示例>更多示例</h2><p>到此为止，我们对函数式编程总算有了点认识，到达之前设定的目标应该是没有问题了，看来函数式编程也并没有想象中的那么难懂。</p><p>然而，这都只是函数式编程的皮毛而已，不信？再看下如下示例。</p><p>这个示例也是在网上找的，实现的是两个列表笛卡尔积的筛选功能，找出笛卡尔积元组集合中两个元素之积大于25的所有元组。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>bigmuls</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>xs</span><span class=p>,</span><span class=n>ys</span><span class=p>:</span> <span class=nb>filter</span><span class=p>(</span><span class=k>lambda</span> <span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>):</span><span class=n>x</span><span class=o>*</span><span class=n>y</span> <span class=o>&gt;</span> <span class=mi>25</span><span class=p>,</span> <span class=n>combine</span><span class=p>(</span><span class=n>xs</span><span class=p>,</span><span class=n>ys</span><span class=p>))</span>
-<span class=n>combine</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>xs</span><span class=p>,</span><span class=n>ys</span><span class=p>:</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=n>xs</span><span class=o>*</span><span class=nb>len</span><span class=p>(</span><span class=n>ys</span><span class=p>),</span> <span class=n>dupelms</span><span class=p>(</span><span class=n>ys</span><span class=p>,</span><span class=nb>len</span><span class=p>(</span><span class=n>xs</span><span class=p>)))</span>
-<span class=n>dupelms</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>lst</span><span class=p>,</span><span class=n>n</span><span class=p>:</span> <span class=n>reduce</span><span class=p>(</span><span class=k>lambda</span> <span class=n>s</span><span class=p>,</span><span class=n>t</span><span class=p>:</span><span class=n>s</span><span class=o>+</span><span class=n>t</span><span class=p>,</span> <span class=nb>map</span><span class=p>(</span><span class=k>lambda</span> <span class=n>l</span><span class=p>,</span><span class=n>n</span><span class=o>=</span><span class=n>n</span><span class=p>:</span> <span class=p>[</span><span class=n>l</span><span class=p>]</span><span class=o>*</span><span class=n>n</span><span class=p>,</span> <span class=n>lst</span><span class=p>))</span>
-
-<span class=nb>print</span> <span class=n>bigmuls</span><span class=p>([</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],[</span><span class=mi>10</span><span class=p>,</span><span class=mi>15</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>22</span><span class=p>])</span>
-
-<span class=p>[(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>10</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>10</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>15</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>15</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>15</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>22</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>22</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>22</span><span class=p>)]</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>虽然这个例子中<code>lambda/map/reduce/filter</code>都是我们已经比较熟悉了的基本单元，但是经过组合后，理解起来还是会比较吃力。</p>
-<h2 id=总结>总结</h2>
-<p>看到这里，有的同学就开玩笑说我这标题名称非常贴切，《Python的函数式编程&ndash;从入门到⎡放弃⎦》，因为以后在工作中应该也不会再尝试使用函数式编程了，^_^。</p>
-<p>不过，我还是觉得函数式编程挺有意思的，更高级的特性后面值得再继续学习。即使代码不用写成pure函数式风格，但在某些时候局部使用<code>lambda/map/reduce/filter</code>也能大大简化代码，也是一个不错的选择。</p>
-<p>另外，通过此次分享，再次切身体会到了教授是最好的学习方式，只有当你真正能将一个概念讲解清楚的时候，你才算是掌握了这个概念。</p>
-<h2 id=参考链接>参考链接</h2>
-<p><a href=http://www.ibm.com/developerworks/linux/library/l-prog/index.html>http://www.ibm.com/developerworks/linux/library/l-prog/index.html</a></p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>文章作者</span>
-<span class=item-content>debugtalk</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>上次更新</span>
-<span class=item-content>
-2016-04-08
-</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>许可协议</span>
-<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
-</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://debugtalk.com/tags/Python/>Python</a>
-<a href=https://debugtalk.com/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a>
-</div>
-<nav class=post-nav>
-<a class=prev href=/post/Android-performance-test-UI-Automation-with-Python/>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
-</i>
-<span class="prev-text nav-default">Android App持续集成性能测试：使用Python实现UI自动化</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/post/cheat-in-wechat-moments-voting-activity/>
-<span class="next-text nav-default">微信朋友圈投票活动的刷票案例分析</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>bigmuls</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>xs</span><span class=p>,</span><span class=n>ys</span><span class=p>:</span> <span class=nb>filter</span><span class=p>(</span><span class=k>lambda</span> <span class=p>(</span><span class=n>x</span><span class=p>,</span><span class=n>y</span><span class=p>):</span><span class=n>x</span><span class=o>*</span><span class=n>y</span> <span class=o>&gt;</span> <span class=mi>25</span><span class=p>,</span> <span class=n>combine</span><span class=p>(</span><span class=n>xs</span><span class=p>,</span><span class=n>ys</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=n>combine</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>xs</span><span class=p>,</span><span class=n>ys</span><span class=p>:</span> <span class=nb>map</span><span class=p>(</span><span class=kc>None</span><span class=p>,</span> <span class=n>xs</span><span class=o>*</span><span class=nb>len</span><span class=p>(</span><span class=n>ys</span><span class=p>),</span> <span class=n>dupelms</span><span class=p>(</span><span class=n>ys</span><span class=p>,</span><span class=nb>len</span><span class=p>(</span><span class=n>xs</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl><span class=n>dupelms</span> <span class=o>=</span> <span class=k>lambda</span> <span class=n>lst</span><span class=p>,</span><span class=n>n</span><span class=p>:</span> <span class=n>reduce</span><span class=p>(</span><span class=k>lambda</span> <span class=n>s</span><span class=p>,</span><span class=n>t</span><span class=p>:</span><span class=n>s</span><span class=o>+</span><span class=n>t</span><span class=p>,</span> <span class=nb>map</span><span class=p>(</span><span class=k>lambda</span> <span class=n>l</span><span class=p>,</span><span class=n>n</span><span class=o>=</span><span class=n>n</span><span class=p>:</span> <span class=p>[</span><span class=n>l</span><span class=p>]</span><span class=o>*</span><span class=n>n</span><span class=p>,</span> <span class=n>lst</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nb>print</span> <span class=n>bigmuls</span><span class=p>([</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>],[</span><span class=mi>10</span><span class=p>,</span><span class=mi>15</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>22</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>[(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>10</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>10</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>15</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>15</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>15</span><span class=p>),</span> <span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=mi>22</span><span class=p>),</span> <span class=p>(</span><span class=mi>3</span><span class=p>,</span> <span class=mi>22</span><span class=p>),</span> <span class=p>(</span><span class=mi>4</span><span class=p>,</span> <span class=mi>22</span><span class=p>)]</span>
+</span></span></code></pre></td></tr></table></div></div><p>虽然这个例子中<code>lambda/map/reduce/filter</code>都是我们已经比较熟悉了的基本单元，但是经过组合后，理解起来还是会比较吃力。</p><h2 id=总结>总结</h2><p>看到这里，有的同学就开玩笑说我这标题名称非常贴切，《Python的函数式编程&ndash;从入门到⎡放弃⎦》，因为以后在工作中应该也不会再尝试使用函数式编程了，^_^。</p><p>不过，我还是觉得函数式编程挺有意思的，更高级的特性后面值得再继续学习。即使代码不用写成pure函数式风格，但在某些时候局部使用<code>lambda/map/reduce/filter</code>也能大大简化代码，也是一个不错的选择。</p><p>另外，通过此次分享，再次切身体会到了教授是最好的学习方式，只有当你真正能将一个概念讲解清楚的时候，你才算是掌握了这个概念。</p><h2 id=参考链接>参考链接</h2><p><a href=http://www.ibm.com/developerworks/linux/library/l-prog/index.html>http://www.ibm.com/developerworks/linux/library/l-prog/index.html</a></p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2016-04-08</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span></p></div><footer class=post-footer><div class=post-tags><a href=https://debugtalk.com/tags/Python/>Python</a>
+<a href=https://debugtalk.com/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/>函数式编程</a></div><nav class=post-nav><a class=prev href=/post/Android-performance-test-UI-Automation-with-Python/><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg></i><span class="prev-text nav-default">Android App持续集成性能测试：使用Python实现UI自动化</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/post/cheat-in-wechat-moments-voting-activity/><span class="next-text nav-default">微信朋友圈投票活动的刷票案例分析</span>
 <span class="prev-text nav-mobile">下一篇</span>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
-</i>
-</a>
-</nav>
-</footer>
-</article>
-<div class="post bg-white">
-<script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=icon-links>
-<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
-</a>
-<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
-</a>
-<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
-</a>
-</div>
-<div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg></i></a></nav></footer></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div></div></main><footer id=footer class=footer><div class=icon-links><a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg></a><a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg></a><a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a></span>
+<span class=copyright-year>&copy;
 2011 -
 2022
-<span class=heart>
-<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
-</i>
-</span><span class=author>
-debugtalk
-</span></span>
-<span id=busuanzi_container>
-访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
-</i>
-</div>
-</div>
-<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<span class=heart><i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg></i></span><span class=author>debugtalk</span></span>
+<span id=busuanzi_container>访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span></span></div></footer><div class=back-to-top id=back-to-top><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg></i></div></div><script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
 <script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
 <script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/load-photoswipe.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<script src=/js/custom.js></script>
-</body>
-</html>
+<script src=/js/custom.js></script></body></html>

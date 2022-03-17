@@ -1,222 +1,15 @@
-<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<title>从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用 - DebugTalk</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
-<meta name=MobileOptimized content="width">
-<meta name=HandheldFriendly content="true">
-<meta name=applicable-device content="pc,mobile">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=mobile-web-app-capable content="yes">
-<meta name=author content="debugtalk">
-<meta name=description content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基">
-<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
-<meta name=generator content="Hugo 0.92.1">
-<link rel=canonical href=https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-Appium-inspector-iOS-simulator/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
-<link rel=stylesheet href=/css/custom.css>
-<meta property="og:title" content="从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用">
-<meta property="og:description" content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-Appium-inspector-iOS-simulator/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2016-05-21T00:00:00+00:00">
-<meta property="article:modified_time" content="2016-05-21T00:00:00+00:00">
-<meta itemprop=name content="从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用">
-<meta itemprop=description content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基"><meta itemprop=datePublished content="2016-05-21T00:00:00+00:00">
-<meta itemprop=dateModified content="2016-05-21T00:00:00+00:00">
-<meta itemprop=wordCount content="3623">
-<meta itemprop=keywords content="Appium,iOS,AppiumBooster,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用">
-<meta name=twitter:description content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>DebugTalk</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用 - DebugTalk</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes"><meta name=MobileOptimized content="width"><meta name=HandheldFriendly content="true"><meta name=applicable-device content="pc,mobile"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=mobile-web-app-capable content="yes"><meta name=author content="debugtalk"><meta name=description content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基"><meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试"><meta name=generator content="Hugo 0.94.2"><link rel=canonical href=https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-Appium-inspector-iOS-simulator/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous><link rel=stylesheet href=/css/custom.css><meta property="og:title" content="从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用"><meta property="og:description" content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基"><meta property="og:type" content="article"><meta property="og:url" content="https://debugtalk.com/post/build-app-automated-test-platform-from-0-to-1-Appium-inspector-iOS-simulator/"><meta property="article:section" content="post"><meta property="article:published_time" content="2016-05-21T00:00:00+00:00"><meta property="article:modified_time" content="2016-05-21T00:00:00+00:00"><meta itemprop=name content="从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用"><meta itemprop=description content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基"><meta itemprop=datePublished content="2016-05-21T00:00:00+00:00"><meta itemprop=dateModified content="2016-05-21T00:00:00+00:00"><meta itemprop=wordCount content="3623"><meta itemprop=keywords content="Appium,iOS,AppiumBooster,"><meta name=twitter:card content="summary"><meta name=twitter:title content="从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用"><meta name=twitter:description content="在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。 在本文中，我将在已准备就绪的iOS自动化测试环境的基"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-81639610-1","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>DebugTalk</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
-<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav><link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css><link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header id=header class="header container">
-<div class=logo-wrapper>
-<a href=/ class=logo>
-DebugTalk
-</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-</header>
-<div id=mobile-panel>
-<main id=main class="main bg-llight">
-<div class=content-wrapper>
-<div id=content class="content container">
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用</h1>
-<div class=post-meta>
-<time datetime=2016-05-21 class=post-time>
-2016-05-21
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
-</div>
-<span class=more-meta> 约 3623 字 </span>
-<span class=more-meta> 预计阅读 8 分钟 </span>
-<span id=busuanzi_container_page_pv>
-| 阅读 <span id=busuanzi_value_page_pv></span>
-</span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class=post-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#ios应用安装包的基础知识>iOS应用安装包的基础知识</a></li>
-<li><a href=#准备app文件>准备<code>.app</code>文件</a></li>
-<li><a href=#模拟器中运行ios应用>模拟器中运行iOS应用</a></li>
-<li><a href=#经历的一个坑>经历的一个坑</a></li>
-<li><a href=#to-be-continued->To be continued &mldr;</a></li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<p>在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。</p>
-<p>在本文中，我将在已准备就绪的iOS自动化测试环境的基础上，通过Appium调用模拟器运行iOS应用。内容很是基础，熟悉的同学可直接略过。</p>
-<h2 id=ios应用安装包的基础知识>iOS应用安装包的基础知识</h2>
-<p>作为完全的iOS新手，困惑的第一个问题就是iOS安装包文件。</p>
-<p>在Android系统中，安装App的途径很多，除了各类应用市场，普通用户也经常直接下载apk安装包文件后手动进行安装，因此大家对Android的安装包文件都比较熟悉。</p>
-<p>但是对于iOS系统就不一样了，由于我们普通用户在iOS上安装应用的时候基本上只能通过Apple Store进行安装（未越狱），没有机会接触原始的安装包文件，因此往往连iOS应用的安装包到底是什么格式后缀都不清楚。</p>
-<p>现在我们想在Appium App中通过模拟器运行被测应用，需要指定iOS app的安装包路径，因此需要首先获得一个iOS app安装包。</p>
-<p><img src=/image/Appium_iOS_Settings_init.jpg alt="Appium initialize iOS Settings"></p>
-<p>那么iOS app的安装包长啥样呢？</p>
-<p>或者在这个问题之前，我们先来看下另一个问题：对于iOS设备来说，如果不通过Apple Store，我们可以怎样安装一个应用？</p>
-<p>针对这个问题，我搜了些资料，也请教了周围的同事，了解到的途径有如下几个：</p>
-<ul>
-<li>企业证书：该种方式适用于企业内部；通过企业证书编译出的iOS应用，无需上传至Apple Store，即可无限制的安装到企业员工的iOS设备中。只是需要解决的一个问题是，由于iOS设备没有文件管理器，没法将安装包拷贝到iOS设备中，因此常用的做法是将安装包（<code>.ipa</code>文件）上传至一些下载服务器（例如<code>fir.im</code>），并生成二维码，然后用户扫描二维码后即可通过浏览器下载安装包并进行安装。由此联想到另外一个方法，通过微信文件传输助手将安装包（<code>.ipa</code>）传输至iOS设备，然后再进行安装应该也是可以的吧？这种方法不知在原理上是否可行，因为在试验时由于安装包大于30M，微信无法传输，所以没能进行验证。</li>
-<li>Xcode：该种方式适用于iOS开发者；开发者在Xcode中连上iOS设备对源码进行编译，编译生成的应用会自动安装至iOS设备。当然，该种方式也是需要iOS开发者证书。</li>
-<li>PP助手：该种方式适用于普通用户；PP助手是一个非苹果官方的设备资源管理工具，可以实现对未越狱的iOS设备进行应用管理，也可以安装本地<code>.ipa</code>文件，前提是<code>.ipa</code>文件具有合适的签名。</li>
-</ul>
-<p>在上面列举的安装应用的途径中，反复提到了<code>.ipa</code>文件，那<code>.ipa</code>应该就是iOS应用程序的后缀了吧？暂且这么认为吧。</p>
-<p>再回到前面的场景，要在iOS模拟器中运行iOS应用，我们是否可以找研发人员要一个<code>.ipa</code>安装包文件，然后就能在模拟器中加载运行应用呢？</p>
-<p>刚开始的时候我是这么认为的。于是我获取到<code>.ipa</code>文件后，在<code>App Path</code>中填写该文件的路径，然后启动Appium Server；接着我再打开Inspector时，发现iOS模拟器启动了，但是在应用启动的时候就出问题了，始终无法正常启动，感觉像是启动崩溃，反复尝试多次仍然如此。</p>
-<p>再次经过Google，总算是明白出现问题的原因了，总结下来有如下几点：</p>
-<ul>
-<li>不管是从Apple Store或iTunes上下载的应用，还是在Xcode中针对真机设备编译生成的<code>.ipa</code>文件，都是面向于ARM处理器的iOS设备，只能在真机设备中进行安装；</li>
-<li>而在Mac OSX系统中运行的iOS模拟器，运行环境是基于Intel处理器的；</li>
-<li>因此，若是针对真机设备编译生成的<code>.ipa</code>文件，是无法在iOS模拟器中正常运行的，毕竟处理器架构都不一样；</li>
-<li>要想在iOS模拟器中运行应用，则必须在Xcode中编译时选择模拟器类型；编译生成的文件后缀为<code>.app</code>。</li>
-</ul>
-<h2 id=准备app文件>准备<code>.app</code>文件</h2>
-<p>接下来，就说下如何获取<code>.app</code>文件。</p>
-<p>虽然是测试人员，不会对被测iOS项目贡献代码，但是也不能总是找研发帮忙编译生成<code>.app</code>文件。所以，在本地搭建完整的iOS项目开发环境还是很有必要的。</p>
-<p>对于iOS开发环境的搭建，当前社区中应该已经有了很多完整的教程，我在这儿就不详细描述了，只简单说下我搭建过程中涉及到的几个点。</p>
-<p>首先，Mac OSX、Xcode、Apple Developer Tools这些基础环境的安装，在上一篇文章中已经进行说明了；</p>
-<p>然后，申请项目源码的访问权限，<code>git clone</code>到本地；</p>
-<p>接着是项目依赖环境的问题；通常一个较大型的iOS项目都会引用许多第三方库，而这些依赖库并不会直接保存到项目仓库中，通常是采用<code>CocoaPods</code>进行管理；简单地说，<code>CocoaPods</code>是针对<code>Swift</code>和<code>Objective-C</code>项目的依赖管理器，类似于Java中的<code>Maven</code>，Ruby中的<code>Gem</code>，Python中的<code>pip</code>。</p>
-<p>当然，iOS项目的依赖管理工具也不是只有<code>CocoaPods</code>一个，如果是采用的别的依赖管理器，请自行查找对应的资料。</p>
-<p>采用<code>CocoaPods</code>管理的项目，在项目根目录下会包含<code>Podfile</code>和<code>Podfile.lock</code>文件，里面记录了当前项目依赖的第三方库以及对应的版本号。</p>
-<p>安装<code>CocoaPods</code>很简单，采用<code>gem</code>即可。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-sh data-lang=sh>$ sudo gem install cocoapods
-</code></pre></td></tr></table>
-</div>
-</div><p>然后，进入到iOS项目的目录，执行<code>pod install</code>命令即可安装当前项目的所有依赖。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header id=header class="header container"><div class=logo-wrapper><a href=/ class=logo>DebugTalk</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav></header><div id=mobile-panel><main id=main class="main bg-llight"><div class=content-wrapper><div id=content class="content container"><article class="post bg-white"><header class=post-header><h1 class=post-title>从0到1搭建移动App功能自动化测试平台（1）：模拟器中运行iOS应用</h1><div class=post-meta><time datetime=2016-05-21 class=post-time>2016-05-21</time><div class=post-category><a href=https://debugtalk.com/categories/OpenSource/>OpenSource</a></div><span class=more-meta>约 3623 字</span>
+<span class=more-meta>预计阅读 8 分钟</span>
+<span id=busuanzi_container_page_pv>| 阅读 <span id=busuanzi_value_page_pv></span></span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#ios应用安装包的基础知识>iOS应用安装包的基础知识</a></li><li><a href=#准备app文件>准备<code>.app</code>文件</a></li><li><a href=#模拟器中运行ios应用>模拟器中运行iOS应用</a></li><li><a href=#经历的一个坑>经历的一个坑</a></li><li><a href=#to-be-continued->To be continued &mldr;</a></li></ul></nav></div></div><div class=post-content><p>在上一篇文章中，我对本系列教程的项目背景进行了介绍，并对自动化测试平台的建设进行了规划。</p><p>在本文中，我将在已准备就绪的iOS自动化测试环境的基础上，通过Appium调用模拟器运行iOS应用。内容很是基础，熟悉的同学可直接略过。</p><h2 id=ios应用安装包的基础知识>iOS应用安装包的基础知识</h2><p>作为完全的iOS新手，困惑的第一个问题就是iOS安装包文件。</p><p>在Android系统中，安装App的途径很多，除了各类应用市场，普通用户也经常直接下载apk安装包文件后手动进行安装，因此大家对Android的安装包文件都比较熟悉。</p><p>但是对于iOS系统就不一样了，由于我们普通用户在iOS上安装应用的时候基本上只能通过Apple Store进行安装（未越狱），没有机会接触原始的安装包文件，因此往往连iOS应用的安装包到底是什么格式后缀都不清楚。</p><p>现在我们想在Appium App中通过模拟器运行被测应用，需要指定iOS app的安装包路径，因此需要首先获得一个iOS app安装包。</p><p><img src=/image/Appium_iOS_Settings_init.jpg alt="Appium initialize iOS Settings"></p><p>那么iOS app的安装包长啥样呢？</p><p>或者在这个问题之前，我们先来看下另一个问题：对于iOS设备来说，如果不通过Apple Store，我们可以怎样安装一个应用？</p><p>针对这个问题，我搜了些资料，也请教了周围的同事，了解到的途径有如下几个：</p><ul><li>企业证书：该种方式适用于企业内部；通过企业证书编译出的iOS应用，无需上传至Apple Store，即可无限制的安装到企业员工的iOS设备中。只是需要解决的一个问题是，由于iOS设备没有文件管理器，没法将安装包拷贝到iOS设备中，因此常用的做法是将安装包（<code>.ipa</code>文件）上传至一些下载服务器（例如<code>fir.im</code>），并生成二维码，然后用户扫描二维码后即可通过浏览器下载安装包并进行安装。由此联想到另外一个方法，通过微信文件传输助手将安装包（<code>.ipa</code>）传输至iOS设备，然后再进行安装应该也是可以的吧？这种方法不知在原理上是否可行，因为在试验时由于安装包大于30M，微信无法传输，所以没能进行验证。</li><li>Xcode：该种方式适用于iOS开发者；开发者在Xcode中连上iOS设备对源码进行编译，编译生成的应用会自动安装至iOS设备。当然，该种方式也是需要iOS开发者证书。</li><li>PP助手：该种方式适用于普通用户；PP助手是一个非苹果官方的设备资源管理工具，可以实现对未越狱的iOS设备进行应用管理，也可以安装本地<code>.ipa</code>文件，前提是<code>.ipa</code>文件具有合适的签名。</li></ul><p>在上面列举的安装应用的途径中，反复提到了<code>.ipa</code>文件，那<code>.ipa</code>应该就是iOS应用程序的后缀了吧？暂且这么认为吧。</p><p>再回到前面的场景，要在iOS模拟器中运行iOS应用，我们是否可以找研发人员要一个<code>.ipa</code>安装包文件，然后就能在模拟器中加载运行应用呢？</p><p>刚开始的时候我是这么认为的。于是我获取到<code>.ipa</code>文件后，在<code>App Path</code>中填写该文件的路径，然后启动Appium Server；接着我再打开Inspector时，发现iOS模拟器启动了，但是在应用启动的时候就出问题了，始终无法正常启动，感觉像是启动崩溃，反复尝试多次仍然如此。</p><p>再次经过Google，总算是明白出现问题的原因了，总结下来有如下几点：</p><ul><li>不管是从Apple Store或iTunes上下载的应用，还是在Xcode中针对真机设备编译生成的<code>.ipa</code>文件，都是面向于ARM处理器的iOS设备，只能在真机设备中进行安装；</li><li>而在Mac OSX系统中运行的iOS模拟器，运行环境是基于Intel处理器的；</li><li>因此，若是针对真机设备编译生成的<code>.ipa</code>文件，是无法在iOS模拟器中正常运行的，毕竟处理器架构都不一样；</li><li>要想在iOS模拟器中运行应用，则必须在Xcode中编译时选择模拟器类型；编译生成的文件后缀为<code>.app</code>。</li></ul><h2 id=准备app文件>准备<code>.app</code>文件</h2><p>接下来，就说下如何获取<code>.app</code>文件。</p><p>虽然是测试人员，不会对被测iOS项目贡献代码，但是也不能总是找研发帮忙编译生成<code>.app</code>文件。所以，在本地搭建完整的iOS项目开发环境还是很有必要的。</p><p>对于iOS开发环境的搭建，当前社区中应该已经有了很多完整的教程，我在这儿就不详细描述了，只简单说下我搭建过程中涉及到的几个点。</p><p>首先，Mac OSX、Xcode、Apple Developer Tools这些基础环境的安装，在上一篇文章中已经进行说明了；</p><p>然后，申请项目源码的访问权限，<code>git clone</code>到本地；</p><p>接着是项目依赖环境的问题；通常一个较大型的iOS项目都会引用许多第三方库，而这些依赖库并不会直接保存到项目仓库中，通常是采用<code>CocoaPods</code>进行管理；简单地说，<code>CocoaPods</code>是针对<code>Swift</code>和<code>Objective-C</code>项目的依赖管理器，类似于Java中的<code>Maven</code>，Ruby中的<code>Gem</code>，Python中的<code>pip</code>。</p><p>当然，iOS项目的依赖管理工具也不是只有<code>CocoaPods</code>一个，如果是采用的别的依赖管理器，请自行查找对应的资料。</p><p>采用<code>CocoaPods</code>管理的项目，在项目根目录下会包含<code>Podfile</code>和<code>Podfile.lock</code>文件，里面记录了当前项目依赖的第三方库以及对应的版本号。</p><p>安装<code>CocoaPods</code>很简单，采用<code>gem</code>即可。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>$ sudo gem install cocoapods
+</span></span></code></pre></td></tr></table></div></div><p>然后，进入到iOS项目的目录，执行<code>pod install</code>命令即可安装当前项目的所有依赖。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -227,144 +20,40 @@ DebugTalk
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-sh data-lang=sh>$ <span class=nb>cd</span> Project_Folder
-$ pod install
-Re-creating CocoaPods due to major version update.
-Analyzing dependencies
-.....（略）
-Downloading dependencies
-.....（略）
-Generating Pods project
-Integrating client project
-Sending stats
-Pod installation complete! There are <span class=m>27</span> dependencies from the Podfile and <span class=m>28</span> total pods installed.
-</code></pre></td></tr></table>
-</div>
-</div><p>关于<code>CocoaPods</code>的更多信息，请自行查看<a href=https://cocoapods.org>官方网站</a></p>
-<p>在依赖安装完成后，正常情况下，就可以在Xcode中编译项目了。</p>
-<p>没有别的需要注意的，将target选择为模拟器（iOS Simulator）即可。而且针对模拟器进行编译时，也不会涉及到开发者证书的问题，项目配置上会简单很多。待后续讲到真机上的自动化测试时，我再对证书方面的内容进行补充。</p>
-<p>编译完成后，在Products目录下，就可以看到<code>XXX.app</code>文件，这里的<code>XXX</code>就是项目名称；然后，选中<code>XXX.app</code>文件，【Show in Finder】，即可在文件目录中定位到该文件。</p>
-<p>接下来，将<code>XXX.app</code>文件拷贝出来，或者复制该文件的<code>Full path</code>，怎样都行，只要在<code>Appium</code>的<code>App Path</code>中能定位到该文件就行。</p>
-<h2 id=模拟器中运行ios应用>模拟器中运行iOS应用</h2>
-<p>被测应用<code>.app</code>准备就绪后，接下来就可以在iOS模拟器中运行了。</p>
-<p>回到前面的那张图。启动<code>Appium app</code>后，对于模拟器运行的情况，在<code>iOS Settings</code>中必须设置的参数项就3个，<code>App Path</code>、<code>Force Device</code>和<code>Platform Version</code>。对于真机运行的情况，后续再单独进行说明。</p>
-<p>设置完毕后，点击【Launch】，启动<code>Appium Server</code>。</p>
-<p><img src=/image/Appium_Inspector_Button.jpg alt="Appium inspector button"></p>
-<p>然后，点击图中红框处的按钮，即可通过<code>Inspector</code>启动模拟器，并在模拟器中加载iOS应用。</p>
-<p><img src=/image/Appium_iOS_Simulator_Console.jpg alt="Appium iOS Simulator Console"></p>
-<p>在模拟器中，我们可以像在真机中一样，体验被测应用的各项功能；并且，在Appium的日志台中，可以实时查看到日志信息。</p>
-<h2 id=经历的一个坑>经历的一个坑</h2>
-<p>整个过程是挺简单的，不过，在探索过程中我还是有遇到一个坑。</p>
-<p>通过<code>Inspector</code>启动模拟器时，总是弹框报错，报错形式如下。</p>
-<p><img src=/image/Appium_Inspector_Error.jpg alt="Appium Inspector Error"></p>
-<p>刚开始出现这问题时百思不得其解，因为提示的信息并不明显，Google了好一阵也没找到原因。最后只有详细去看日志信息，才发现问题所在。</p>
-<p>在日志中，发现的报错信息如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>[iOS] Error: Could not find a device to launch. You requested &#39;iPhone 6 (8.4)&#39;, but the available devices were: [&#34;Apple TV 1080p (9.2) [98638D25-7C82-48DF-BDCA-7F682F951533] (Simulator)&#34;,&#34;iPad 2 (9.2) [5E22F53E-EAB3-45DF-A1DD-10F58E920679] (Simulator)&#34;,&#34;iPad 2 (9.3) [4B2D2F9A-C099-4C13-8DE9-27C826A521C2] (Simulator)&#34;,&#34;iPad Air (9.2) [825E4997-9CD8-4225-9977-4C7AE2C98389] (Simulator)&#34;,&#34;iPad Air (9.3) [E4523799-E35F-4499-832B-12CF33F09144] (Simulator)&#34;,&#34;iPad Air 2 (9.2) [8057039D-F848-453E-97EC-2F75CAEA2E77] (Simulator)&#34;,&#34;iPad Air 2 (9.3) [0B8F49DA-832A-4248-BA1D-9DA5D11E31FD] (Simulator)&#34;,&#34;iPad Pro (9.2) [AF1F2D06-3067-41B5-AC2B-4B0ED88BF5D9] (Simulator)&#34;,&#34;iPad Pro (9.3) [C39617A6-9D91-4C0B-B25B-741BD57B016C] (Simulator)&#34;,&#34;iPad Retina (9.2) [D3C694E1-E3B4-47BE-AB5E-80B3D4E22FC2] (Simulator)&#34;,&#34;iPad Retina (9.3) [907C7B06-ED2C-48AC-AC46-04E4AD6E0CA3] (Simulator)&#34;,&#34;iPhone 4s (9.2) [1A786195-94E3-4908-8309-7B66D84E4619] (Simulator)&#34;,&#34;iPhone 4s (9.3) [3F76F34B-5A8F-4FD1-928D-56F84C192DDD] (Simulator)&#34;,&#34;iPhone 5 (9.2) [0D79A4CA-71EB-48A6-9EE4-172BEF3EB4E0] (Simulator)&#34;,&#34;iPhone 5 (9.3) [04270D44-F831-4253-95F2-3D205D2BC0D9] (Simulator)&#34;,&#34;iPhone 5s (9.2) [13A16C07-3C5B-4B04-A94B-B40A63238958] (Simulator)&#34;,&#34;iPhone 5s (9.3) [D30A7B34-BA01-4203-80DA-FAEA436725F9] (Simulator)&#34;,&#34;iPhone 6 (9.2) [5D01650F-2A31-4D53-A47A-CCF7FD552ADD] (Simulator)&#34;,&#34;iPhone 6 (9.3) [2F0810F6-C73B-4BA4-93BA-06D4B6D96BDA] (Simulator)&#34;,&#34;iPhone 6 Plus (9.2) [9A840B78-E6CE-4D18-BE83-16B590411641] (Simulator)&#34;,&#34;iPhone 6 Plus (9.3) [27C6557A-B09D-4D8A-9846-DA8FE0A8E8D5] (Simulator)&#34;,&#34;iPhone 6s (9.2) [E7F5B8A5-0E85-404F-A4D4-191D63E7EC1B] (Simulator)&#34;,&#34;iPhone 6s (9.3) [6F702911-13C2-472C-9ECD-BADD4385CB77] (Simulator)&#34;,&#34;iPhone 6s (9.3) + Apple Watch - 38mm (2.2) [B63FFAA4-00A4-473B-9462-3664F41F9001] (Simulator)&#34;,&#34;iPhone 6s Plus (9.2) [58837F78-511A-4F0B-9DDF-782E3B9935BD] (Simulator)&#34;,&#34;iPhone 6s Plus (9.3) [C31003C6-DCE2-414D-AD7F-376F6FA995B0] (Simulator)&#34;,&#34;iPhone 6s Plus (9.3) + Apple Watch - 42mm (2.2) [E3154768-CA23-45CC-90E5-2D0386A57B7D] (Simulator)&#34;]
-</code></pre></td></tr></table>
-</div>
-</div><p>问题在于，我设置<code>iOS Settings</code>时，将<code>Force Device</code>设置为"iPhone 6"，将<code>Platform Version</code>设置为“8.4”，但是经过组合，<code>iPhone 6 (8.4)</code>并不在可用的模拟器设备列表中。</p>
-<p>再来看日志中提示的可用设备，发现“iPhone 6”设备对应的<code>Platform Version</code>只有“9.2”和“9.3”。然后回到<code>iOS Settings</code>，发现<code>Platform Version</code>的下拉框可选项就没有“9.2”和“9.3”，最新的一个可选版本也就是“8.4”。</p>
-<p><img src=/image/Appium_iOS_Settings_bug.jpg alt="Appium iOS Settings bug"></p>
-<p>这应该是<code>Appium app</code>的一个bug吧。不过好在<code>Platform Version</code>参数虽然是通过下拉框选择，但是也可以在框内直接填写内容。于是我在<code>Platform Version</code>设置框内填写为“9.3”，然后再次启动时，发现iOS模拟器就可以正常启动了。</p>
-<h2 id=to-be-continued->To be continued &mldr;</h2>
-<p>现在，我们已经成功地通过Appium Inspector调用模拟器并运行iOS应用，接下来，我们就要开始尝试编写自动化测试用例了。</p>
-<p>在下一篇文章中，我们将对Appium Inspector的功能进行熟悉，通过Inspector来查看iOS应用的UI元素信息，并尝试采用脚本语言与UI进行交互操作。</p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>文章作者</span>
-<span class=item-content>debugtalk</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>上次更新</span>
-<span class=item-content>
-2016-05-21
-</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>许可协议</span>
-<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
-</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://debugtalk.com/tags/Appium/>Appium</a>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-sh data-lang=sh><span class=line><span class=cl>$ <span class=nb>cd</span> Project_Folder
+</span></span><span class=line><span class=cl>$ pod install
+</span></span><span class=line><span class=cl>Re-creating CocoaPods due to major version update.
+</span></span><span class=line><span class=cl>Analyzing dependencies
+</span></span><span class=line><span class=cl>.....（略）
+</span></span><span class=line><span class=cl>Downloading dependencies
+</span></span><span class=line><span class=cl>.....（略）
+</span></span><span class=line><span class=cl>Generating Pods project
+</span></span><span class=line><span class=cl>Integrating client project
+</span></span><span class=line><span class=cl>Sending stats
+</span></span><span class=line><span class=cl>Pod installation complete! There are <span class=m>27</span> dependencies from the Podfile and <span class=m>28</span> total pods installed.
+</span></span></code></pre></td></tr></table></div></div><p>关于<code>CocoaPods</code>的更多信息，请自行查看<a href=https://cocoapods.org>官方网站</a></p><p>在依赖安装完成后，正常情况下，就可以在Xcode中编译项目了。</p><p>没有别的需要注意的，将target选择为模拟器（iOS Simulator）即可。而且针对模拟器进行编译时，也不会涉及到开发者证书的问题，项目配置上会简单很多。待后续讲到真机上的自动化测试时，我再对证书方面的内容进行补充。</p><p>编译完成后，在Products目录下，就可以看到<code>XXX.app</code>文件，这里的<code>XXX</code>就是项目名称；然后，选中<code>XXX.app</code>文件，【Show in Finder】，即可在文件目录中定位到该文件。</p><p>接下来，将<code>XXX.app</code>文件拷贝出来，或者复制该文件的<code>Full path</code>，怎样都行，只要在<code>Appium</code>的<code>App Path</code>中能定位到该文件就行。</p><h2 id=模拟器中运行ios应用>模拟器中运行iOS应用</h2><p>被测应用<code>.app</code>准备就绪后，接下来就可以在iOS模拟器中运行了。</p><p>回到前面的那张图。启动<code>Appium app</code>后，对于模拟器运行的情况，在<code>iOS Settings</code>中必须设置的参数项就3个，<code>App Path</code>、<code>Force Device</code>和<code>Platform Version</code>。对于真机运行的情况，后续再单独进行说明。</p><p>设置完毕后，点击【Launch】，启动<code>Appium Server</code>。</p><p><img src=/image/Appium_Inspector_Button.jpg alt="Appium inspector button"></p><p>然后，点击图中红框处的按钮，即可通过<code>Inspector</code>启动模拟器，并在模拟器中加载iOS应用。</p><p><img src=/image/Appium_iOS_Simulator_Console.jpg alt="Appium iOS Simulator Console"></p><p>在模拟器中，我们可以像在真机中一样，体验被测应用的各项功能；并且，在Appium的日志台中，可以实时查看到日志信息。</p><h2 id=经历的一个坑>经历的一个坑</h2><p>整个过程是挺简单的，不过，在探索过程中我还是有遇到一个坑。</p><p>通过<code>Inspector</code>启动模拟器时，总是弹框报错，报错形式如下。</p><p><img src=/image/Appium_Inspector_Error.jpg alt="Appium Inspector Error"></p><p>刚开始出现这问题时百思不得其解，因为提示的信息并不明显，Google了好一阵也没找到原因。最后只有详细去看日志信息，才发现问题所在。</p><p>在日志中，发现的报错信息如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>[iOS] Error: Could not find a device to launch. You requested &#39;iPhone 6 (8.4)&#39;, but the available devices were: [&#34;Apple TV 1080p (9.2) [98638D25-7C82-48DF-BDCA-7F682F951533] (Simulator)&#34;,&#34;iPad 2 (9.2) [5E22F53E-EAB3-45DF-A1DD-10F58E920679] (Simulator)&#34;,&#34;iPad 2 (9.3) [4B2D2F9A-C099-4C13-8DE9-27C826A521C2] (Simulator)&#34;,&#34;iPad Air (9.2) [825E4997-9CD8-4225-9977-4C7AE2C98389] (Simulator)&#34;,&#34;iPad Air (9.3) [E4523799-E35F-4499-832B-12CF33F09144] (Simulator)&#34;,&#34;iPad Air 2 (9.2) [8057039D-F848-453E-97EC-2F75CAEA2E77] (Simulator)&#34;,&#34;iPad Air 2 (9.3) [0B8F49DA-832A-4248-BA1D-9DA5D11E31FD] (Simulator)&#34;,&#34;iPad Pro (9.2) [AF1F2D06-3067-41B5-AC2B-4B0ED88BF5D9] (Simulator)&#34;,&#34;iPad Pro (9.3) [C39617A6-9D91-4C0B-B25B-741BD57B016C] (Simulator)&#34;,&#34;iPad Retina (9.2) [D3C694E1-E3B4-47BE-AB5E-80B3D4E22FC2] (Simulator)&#34;,&#34;iPad Retina (9.3) [907C7B06-ED2C-48AC-AC46-04E4AD6E0CA3] (Simulator)&#34;,&#34;iPhone 4s (9.2) [1A786195-94E3-4908-8309-7B66D84E4619] (Simulator)&#34;,&#34;iPhone 4s (9.3) [3F76F34B-5A8F-4FD1-928D-56F84C192DDD] (Simulator)&#34;,&#34;iPhone 5 (9.2) [0D79A4CA-71EB-48A6-9EE4-172BEF3EB4E0] (Simulator)&#34;,&#34;iPhone 5 (9.3) [04270D44-F831-4253-95F2-3D205D2BC0D9] (Simulator)&#34;,&#34;iPhone 5s (9.2) [13A16C07-3C5B-4B04-A94B-B40A63238958] (Simulator)&#34;,&#34;iPhone 5s (9.3) [D30A7B34-BA01-4203-80DA-FAEA436725F9] (Simulator)&#34;,&#34;iPhone 6 (9.2) [5D01650F-2A31-4D53-A47A-CCF7FD552ADD] (Simulator)&#34;,&#34;iPhone 6 (9.3) [2F0810F6-C73B-4BA4-93BA-06D4B6D96BDA] (Simulator)&#34;,&#34;iPhone 6 Plus (9.2) [9A840B78-E6CE-4D18-BE83-16B590411641] (Simulator)&#34;,&#34;iPhone 6 Plus (9.3) [27C6557A-B09D-4D8A-9846-DA8FE0A8E8D5] (Simulator)&#34;,&#34;iPhone 6s (9.2) [E7F5B8A5-0E85-404F-A4D4-191D63E7EC1B] (Simulator)&#34;,&#34;iPhone 6s (9.3) [6F702911-13C2-472C-9ECD-BADD4385CB77] (Simulator)&#34;,&#34;iPhone 6s (9.3) + Apple Watch - 38mm (2.2) [B63FFAA4-00A4-473B-9462-3664F41F9001] (Simulator)&#34;,&#34;iPhone 6s Plus (9.2) [58837F78-511A-4F0B-9DDF-782E3B9935BD] (Simulator)&#34;,&#34;iPhone 6s Plus (9.3) [C31003C6-DCE2-414D-AD7F-376F6FA995B0] (Simulator)&#34;,&#34;iPhone 6s Plus (9.3) + Apple Watch - 42mm (2.2) [E3154768-CA23-45CC-90E5-2D0386A57B7D] (Simulator)&#34;]
+</span></span></code></pre></td></tr></table></div></div><p>问题在于，我设置<code>iOS Settings</code>时，将<code>Force Device</code>设置为"iPhone 6"，将<code>Platform Version</code>设置为“8.4”，但是经过组合，<code>iPhone 6 (8.4)</code>并不在可用的模拟器设备列表中。</p><p>再来看日志中提示的可用设备，发现“iPhone 6”设备对应的<code>Platform Version</code>只有“9.2”和“9.3”。然后回到<code>iOS Settings</code>，发现<code>Platform Version</code>的下拉框可选项就没有“9.2”和“9.3”，最新的一个可选版本也就是“8.4”。</p><p><img src=/image/Appium_iOS_Settings_bug.jpg alt="Appium iOS Settings bug"></p><p>这应该是<code>Appium app</code>的一个bug吧。不过好在<code>Platform Version</code>参数虽然是通过下拉框选择，但是也可以在框内直接填写内容。于是我在<code>Platform Version</code>设置框内填写为“9.3”，然后再次启动时，发现iOS模拟器就可以正常启动了。</p><h2 id=to-be-continued->To be continued &mldr;</h2><p>现在，我们已经成功地通过Appium Inspector调用模拟器并运行iOS应用，接下来，我们就要开始尝试编写自动化测试用例了。</p><p>在下一篇文章中，我们将对Appium Inspector的功能进行熟悉，通过Inspector来查看iOS应用的UI元素信息，并尝试采用脚本语言与UI进行交互操作。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2016-05-21</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span></p></div><footer class=post-footer><div class=post-tags><a href=https://debugtalk.com/tags/Appium/>Appium</a>
 <a href=https://debugtalk.com/tags/iOS/>iOS</a>
-<a href=https://debugtalk.com/tags/AppiumBooster/>AppiumBooster</a>
-</div>
-<nav class=post-nav>
-<a class=prev href=/post/build-app-automated-test-platform-from-0-to-1-Appium-interrogate-iOS-UI/>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
-</i>
-<span class="prev-text nav-default">从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/post/build-app-automated-test-platform-from-0-to-1-backgroud-introduction/>
-<span class="next-text nav-default">从0到1搭建移动App功能自动化测试平台（0）：背景介绍和平台规划</span>
+<a href=https://debugtalk.com/tags/AppiumBooster/>AppiumBooster</a></div><nav class=post-nav><a class=prev href=/post/build-app-automated-test-platform-from-0-to-1-Appium-interrogate-iOS-UI/><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg></i><span class="prev-text nav-default">从0到1搭建移动App功能自动化测试平台（2）：操作iOS应用的控件</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/post/build-app-automated-test-platform-from-0-to-1-backgroud-introduction/><span class="next-text nav-default">从0到1搭建移动App功能自动化测试平台（0）：背景介绍和平台规划</span>
 <span class="prev-text nav-mobile">下一篇</span>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
-</i>
-</a>
-</nav>
-</footer>
-</article>
-<div class="post bg-white">
-<script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=icon-links>
-<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
-</a>
-<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
-</a>
-<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
-</a>
-</div>
-<div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg></i></a></nav></footer></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div></div></main><footer id=footer class=footer><div class=icon-links><a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg></a><a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg></a><a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a></span>
+<span class=copyright-year>&copy;
 2011 -
 2022
-<span class=heart>
-<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
-</i>
-</span><span class=author>
-debugtalk
-</span></span>
-<span id=busuanzi_container>
-访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
-</i>
-</div>
-</div>
-<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<span class=heart><i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg></i></span><span class=author>debugtalk</span></span>
+<span id=busuanzi_container>访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span></span></div></footer><div class=back-to-top id=back-to-top><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg></i></div></div><script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
 <script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
 <script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/load-photoswipe.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<script src=/js/custom.js></script>
-</body>
-</html>
+<script src=/js/custom.js></script></body></html>

@@ -1,187 +1,13 @@
-<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<title>HttpRunner 的结果校验器优化 - DebugTalk</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
-<meta name=MobileOptimized content="width">
-<meta name=HandheldFriendly content="true">
-<meta name=applicable-device content="pc,mobile">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=mobile-web-app-capable content="yes">
-<meta name=author content="debugtalk">
-<meta name=description content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，">
-<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
-<meta name=generator content="Hugo 0.92.1">
-<link rel=canonical href=https://debugtalk.com/post/HttpRunner-validator-optimization/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
-<link rel=stylesheet href=/css/custom.css>
-<meta property="og:title" content="HttpRunner 的结果校验器优化">
-<meta property="og:description" content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://debugtalk.com/post/HttpRunner-validator-optimization/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2017-12-13T00:00:00+00:00">
-<meta property="article:modified_time" content="2017-12-13T00:00:00+00:00">
-<meta itemprop=name content="HttpRunner 的结果校验器优化">
-<meta itemprop=description content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，"><meta itemprop=datePublished content="2017-12-13T00:00:00+00:00">
-<meta itemprop=dateModified content="2017-12-13T00:00:00+00:00">
-<meta itemprop=wordCount content="3508">
-<meta itemprop=keywords content="HttpRunner,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="HttpRunner 的结果校验器优化">
-<meta name=twitter:description content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>DebugTalk</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>HttpRunner 的结果校验器优化 - DebugTalk</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes"><meta name=MobileOptimized content="width"><meta name=HandheldFriendly content="true"><meta name=applicable-device content="pc,mobile"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=mobile-web-app-capable content="yes"><meta name=author content="debugtalk"><meta name=description content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，"><meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试"><meta name=generator content="Hugo 0.94.2"><link rel=canonical href=https://debugtalk.com/post/HttpRunner-validator-optimization/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous><link rel=stylesheet href=/css/custom.css><meta property="og:title" content="HttpRunner 的结果校验器优化"><meta property="og:description" content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，"><meta property="og:type" content="article"><meta property="og:url" content="https://debugtalk.com/post/HttpRunner-validator-optimization/"><meta property="article:section" content="post"><meta property="article:published_time" content="2017-12-13T00:00:00+00:00"><meta property="article:modified_time" content="2017-12-13T00:00:00+00:00"><meta itemprop=name content="HttpRunner 的结果校验器优化"><meta itemprop=description content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，"><meta itemprop=datePublished content="2017-12-13T00:00:00+00:00"><meta itemprop=dateModified content="2017-12-13T00:00:00+00:00"><meta itemprop=wordCount content="3508"><meta itemprop=keywords content="HttpRunner,"><meta name=twitter:card content="summary"><meta name=twitter:title content="HttpRunner 的结果校验器优化"><meta name=twitter:description content="在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-81639610-1","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>DebugTalk</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
-<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav><link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css><link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header id=header class="header container">
-<div class=logo-wrapper>
-<a href=/ class=logo>
-DebugTalk
-</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-</header>
-<div id=mobile-panel>
-<main id=main class="main bg-llight">
-<div class=content-wrapper>
-<div id=content class="content container">
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>HttpRunner 的结果校验器优化</h1>
-<div class=post-meta>
-<time datetime=2017-12-13 class=post-time>
-2017-12-13
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/OpenSource/> OpenSource </a>
-</div>
-<span class=more-meta> 约 3508 字 </span>
-<span class=more-meta> 预计阅读 8 分钟 </span>
-<span id=busuanzi_container_page_pv>
-| 阅读 <span id=busuanzi_value_page_pv></span>
-</span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class=post-toc-content>
-<nav id=TableOfContents>
-<ul>
-<li><a href=#设计之初>设计之初</a></li>
-<li><a href=#存在的局限性>存在的局限性</a></li>
-<li><a href=#改造结果>改造结果</a>
-<ul>
-<li><a href=#新增支持自定义结果校验器>新增支持自定义结果校验器</a></li>
-<li><a href=#结果校验器中实现变量引用>结果校验器中实现变量引用</a></li>
-<li><a href=#结果校验内容新增支持正则表达式提取>结果校验内容新增支持正则表达式提取</a></li>
-<li><a href=#结果校验器的进一步简化>结果校验器的进一步简化</a></li>
-</ul>
-</li>
-</ul>
-</nav>
-</div>
-</div>
-<div class=post-content>
-<p>在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，因此自动化测试用例中同样需要包含预期结果一项，只不过系统响应结果不再由人工来进行判断，而是交由测试工具或框架来实现。</p>
-<p>这部分功能对应的就是测试结果校验器（validator），基本上能称得上自动化测试工具或框架的都包含该功能特性。</p>
-<h2 id=设计之初>设计之初</h2>
-<p><code>HttpRunner</code>在设计之初，结果校验器（validator）的实现比较简单。</p>
-<p>对于每一个<code>test</code>，可以指定0个或多个校验项，放置在<code>validate</code>中。在自动化测试执行的时候，会在发起HTTP请求、解析结果响应之后，逐个检查各个校验项，若存在任意校验项不通过的情况，则该<code>test</code>将终止并被标记为失败。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header id=header class="header container"><div class=logo-wrapper><a href=/ class=logo>DebugTalk</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav></header><div id=mobile-panel><main id=main class="main bg-llight"><div class=content-wrapper><div id=content class="content container"><article class="post bg-white"><header class=post-header><h1 class=post-title>HttpRunner 的结果校验器优化</h1><div class=post-meta><time datetime=2017-12-13 class=post-time>2017-12-13</time><div class=post-category><a href=https://debugtalk.com/categories/OpenSource/>OpenSource</a></div><span class=more-meta>约 3508 字</span>
+<span class=more-meta>预计阅读 8 分钟</span>
+<span id=busuanzi_container_page_pv>| 阅读 <span id=busuanzi_value_page_pv></span></span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class=post-toc-content><nav id=TableOfContents><ul><li><a href=#设计之初>设计之初</a></li><li><a href=#存在的局限性>存在的局限性</a></li><li><a href=#改造结果>改造结果</a><ul><li><a href=#新增支持自定义结果校验器>新增支持自定义结果校验器</a></li><li><a href=#结果校验器中实现变量引用>结果校验器中实现变量引用</a></li><li><a href=#结果校验内容新增支持正则表达式提取>结果校验内容新增支持正则表达式提取</a></li><li><a href=#结果校验器的进一步简化>结果校验器的进一步简化</a></li></ul></li></ul></nav></div></div><div class=post-content><p>在测试用例中，包含预期结果这么一项，用于辅助测试人员执行测试用例时判断系统的功能是否正常。而在自动化测试中，我们的目标是让测试用例自动执行，因此自动化测试用例中同样需要包含预期结果一项，只不过系统响应结果不再由人工来进行判断，而是交由测试工具或框架来实现。</p><p>这部分功能对应的就是测试结果校验器（validator），基本上能称得上自动化测试工具或框架的都包含该功能特性。</p><h2 id=设计之初>设计之初</h2><p><code>HttpRunner</code>在设计之初，结果校验器（validator）的实现比较简单。</p><p>对于每一个<code>test</code>，可以指定0个或多个校验项，放置在<code>validate</code>中。在自动化测试执行的时候，会在发起HTTP请求、解析结果响应之后，逐个检查各个校验项，若存在任意校验项不通过的情况，则该<code>test</code>将终止并被标记为失败。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -191,26 +17,17 @@ DebugTalk
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml>- <span class=nt>test</span><span class=p>:</span><span class=w>
-</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
-</span><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
-</span><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
-</span><span class=w>    </span><span class=nt>extract</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>token</span><span class=p>:</span><span class=w> </span><span class=l>content.token</span><span class=w>
-</span><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=m>200</span>}<span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;content.token&#34;, &#34;comparator&#34;: &#34;len_eq&#34;, &#34;expect&#34;: </span><span class=m>16</span>}<span class=w>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>如上例所示，每一个校验项均为一个<code>json</code>结构，里面包含<code>check</code>、<code>expect</code>、<code>comparator</code>三个属性字段。其中，<code>check</code>对应着要检查的字段，<code>expect</code>对应着检查字段预期的值，这两项是必须指定的；<code>comparator</code>字段对应着比较方法，若不指定，则默认采用<code>eq</code>，即检查字段与预期值相等。</p>
-<p>为了实现尽可能强大的检查功能，<code>check</code>属性值可通过链式操作精确指定具体的字段，<code>comparator</code>也内置实现了大量的检查功能。</p>
-<p>举个例子可能会更清晰些。假如某结构的响应结果如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>extract</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>token</span><span class=p>:</span><span class=w> </span><span class=l>content.token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=m>200</span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;content.token&#34;, &#34;comparator&#34;: &#34;len_eq&#34;, &#34;expect&#34;: </span><span class=m>16</span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>如上例所示，每一个校验项均为一个<code>json</code>结构，里面包含<code>check</code>、<code>expect</code>、<code>comparator</code>三个属性字段。其中，<code>check</code>对应着要检查的字段，<code>expect</code>对应着检查字段预期的值，这两项是必须指定的；<code>comparator</code>字段对应着比较方法，若不指定，则默认采用<code>eq</code>，即检查字段与预期值相等。</p><p>为了实现尽可能强大的检查功能，<code>check</code>属性值可通过链式操作精确指定具体的字段，<code>comparator</code>也内置实现了大量的检查功能。</p><p>举个例子可能会更清晰些。假如某结构的响应结果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -229,77 +46,30 @@ DebugTalk
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=c1>// status code: 200
-</span><span class=c1></span>
-<span class=c1>// response headers
-</span><span class=c1></span><span class=p>{</span>
-   <span class=nt>&#34;Content-Type&#34;</span><span class=p>:</span> <span class=s2>&#34;application/json&#34;</span>
-<span class=p>}</span>
-
-<span class=c1>// response body content
-</span><span class=c1></span><span class=p>{</span>
-   <span class=nt>&#34;success&#34;</span><span class=p>:</span> <span class=err>False</span><span class=p>,</span>
-   <span class=nt>&#34;person&#34;</span><span class=p>:</span> <span class=p>{</span>
-       <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=p>{</span>
-           <span class=nt>&#34;first_name&#34;</span><span class=p>:</span> <span class=s2>&#34;Leo&#34;</span><span class=p>,</span>
-           <span class=nt>&#34;last_name&#34;</span><span class=p>:</span> <span class=s2>&#34;Lee&#34;</span><span class=p>,</span>
-       <span class=p>},</span>
-       <span class=nt>&#34;age&#34;</span><span class=p>:</span> <span class=mi>29</span><span class=p>,</span>
-       <span class=nt>&#34;cities&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;Guangzhou&#34;</span><span class=p>,</span> <span class=s2>&#34;Shenzhen&#34;</span><span class=p>]</span>
-   <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>那么假如我们要检查<code>status code</code>，<code>check</code>就可以指定为<code>status_code</code>；假如要检查<code>response headers</code>中的<code>Content-Type</code>，<code>check</code>就可以指定为<code>headers.content-type</code>；假如要检查<code>response body</code>中的<code>first_name</code>，<code>check</code>就可以指定为<code>content.person.name.first_name</code>。可以看出，假如下一层级为字典结构，那么就可以通过<code>.</code>运算符指定下一层级的<code>key</code>，依次类推。</p>
-<p>对于字段内容为列表<code>list</code>的情况略有不同，我们需要通过序号来指定具体检查哪一项内容。例如，<code>Guangzhou</code>对应的检查项为<code>content.person.cities.0</code>，<code>Shenzhen</code>对应的检查项为<code>content.person.cities.1</code>。</p>
-<p>在比较方式（<code>comparator</code>）方面，<code>HttpRunner</code>除了<code>eq</code>，还内置了大量的检查方法。例如，我们可以通过<code>gt</code>、<code>ge</code>、<code>lt</code>、<code>le</code>等比较数值大小，通过<code>len_eq</code>、<code>len_gt</code>、<code>len_lt</code>等比较长度是否相等（列表、字典、字符串均适用），通过<code>contains</code>、<code>contained_by</code>来判断包含关系，通过<code>startswith</code>、<code>endswith</code>判断字符串的开头结尾，甚至通过<code>regex_match</code>来判断是否满足正则匹配等。详细的比较方式还有许多，需要时可查看<a href=http://httprunner.readthedocs.io/en/latest/write-testcases.html#comparator>comparator</a>表格。</p>
-<h2 id=存在的局限性>存在的局限性</h2>
-<p>在大多数情况下，<code>HttpRunner</code>的结果校验器（validator）是够用的。不过问题在于，框架不可能为用户实现所有的检查方法，假如用户需要某些特殊的检查方法时，<code>HttpRunner</code>就没法实现了。</p>
-<p>这的确是一个问题，之前<code>Junho2010</code>提的issue <a href=https://github.com/HttpRunner/HttpRunner/issues/29>#29</a>中举了一个例子，应该也算是比较有代表性。</p>
-<blockquote>
-<p>发送请求时的数据使用了随机生成，然后需要比较结果中的数据是否是和这个相关（通过某个算法转换）。比如我输入的是321，我的结果是<code>(3+2+1) * avg(3+2+1)</code>这种转化，目前的comparator是比较难于实现的。</p>
-</blockquote>
-<p>要解决这个问题，最好的方式应该是在<code>HttpRunner</code>中实现自定义结果校验器的机制；用户在有需要的时候，可以自己编写校验函数，然后在<code>validate</code>中引用校验函数。之前也介绍过<code>HttpRunner</code>的热加载机制，<a href=https://debugtalk.com/post/apitestengine-hot-plugin/>《约定大于配置：ApiTestEngine实现热加载机制》</a>，自定义结果校验器应该也是可以采用这种方式来实现的。</p>
-<p>第二个需要优化的点，<code>HttpRunner</code>的结果校验器还不支持变量引用，会造成某些场景下的局限性。例如，<code>testwangchao</code>曾提过一个issue <a href=https://github.com/HttpRunner/HttpRunner/issues/52>#52</a>：</p>
-<blockquote>
-<p>接口response内，会返回数据库内的自增ID。ID校验的时候，希望<code>expected</code>为参数化的值。</p>
-</blockquote>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=c1>// status code: 200
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl><span class=c1>// response headers
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=nt>&#34;Content-Type&#34;</span><span class=p>:</span> <span class=s2>&#34;application/json&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// response body content
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=nt>&#34;success&#34;</span><span class=p>:</span> <span class=err>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=nt>&#34;person&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>       <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>           <span class=nt>&#34;first_name&#34;</span><span class=p>:</span> <span class=s2>&#34;Leo&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>           <span class=nt>&#34;last_name&#34;</span><span class=p>:</span> <span class=s2>&#34;Lee&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>       <span class=p>},</span>
+</span></span><span class=line><span class=cl>       <span class=nt>&#34;age&#34;</span><span class=p>:</span> <span class=mi>29</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>       <span class=nt>&#34;cities&#34;</span><span class=p>:</span> <span class=p>[</span><span class=s2>&#34;Guangzhou&#34;</span><span class=p>,</span> <span class=s2>&#34;Shenzhen&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>   <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>那么假如我们要检查<code>status code</code>，<code>check</code>就可以指定为<code>status_code</code>；假如要检查<code>response headers</code>中的<code>Content-Type</code>，<code>check</code>就可以指定为<code>headers.content-type</code>；假如要检查<code>response body</code>中的<code>first_name</code>，<code>check</code>就可以指定为<code>content.person.name.first_name</code>。可以看出，假如下一层级为字典结构，那么就可以通过<code>.</code>运算符指定下一层级的<code>key</code>，依次类推。</p><p>对于字段内容为列表<code>list</code>的情况略有不同，我们需要通过序号来指定具体检查哪一项内容。例如，<code>Guangzhou</code>对应的检查项为<code>content.person.cities.0</code>，<code>Shenzhen</code>对应的检查项为<code>content.person.cities.1</code>。</p><p>在比较方式（<code>comparator</code>）方面，<code>HttpRunner</code>除了<code>eq</code>，还内置了大量的检查方法。例如，我们可以通过<code>gt</code>、<code>ge</code>、<code>lt</code>、<code>le</code>等比较数值大小，通过<code>len_eq</code>、<code>len_gt</code>、<code>len_lt</code>等比较长度是否相等（列表、字典、字符串均适用），通过<code>contains</code>、<code>contained_by</code>来判断包含关系，通过<code>startswith</code>、<code>endswith</code>判断字符串的开头结尾，甚至通过<code>regex_match</code>来判断是否满足正则匹配等。详细的比较方式还有许多，需要时可查看<a href=http://httprunner.readthedocs.io/en/latest/write-testcases.html#comparator>comparator</a>表格。</p><h2 id=存在的局限性>存在的局限性</h2><p>在大多数情况下，<code>HttpRunner</code>的结果校验器（validator）是够用的。不过问题在于，框架不可能为用户实现所有的检查方法，假如用户需要某些特殊的检查方法时，<code>HttpRunner</code>就没法实现了。</p><p>这的确是一个问题，之前<code>Junho2010</code>提的issue <a href=https://github.com/HttpRunner/HttpRunner/issues/29>#29</a>中举了一个例子，应该也算是比较有代表性。</p><blockquote><p>发送请求时的数据使用了随机生成，然后需要比较结果中的数据是否是和这个相关（通过某个算法转换）。比如我输入的是321，我的结果是<code>(3+2+1) * avg(3+2+1)</code>这种转化，目前的comparator是比较难于实现的。</p></blockquote><p>要解决这个问题，最好的方式应该是在<code>HttpRunner</code>中实现自定义结果校验器的机制；用户在有需要的时候，可以自己编写校验函数，然后在<code>validate</code>中引用校验函数。之前也介绍过<code>HttpRunner</code>的热加载机制，<a href=https://debugtalk.com/post/apitestengine-hot-plugin/>《约定大于配置：ApiTestEngine实现热加载机制》</a>，自定义结果校验器应该也是可以采用这种方式来实现的。</p><p>第二个需要优化的点，<code>HttpRunner</code>的结果校验器还不支持变量引用，会造成某些场景下的局限性。例如，<code>testwangchao</code>曾提过一个issue <a href=https://github.com/HttpRunner/HttpRunner/issues/52>#52</a>：</p><blockquote><p>接口response内，会返回数据库内的自增ID。ID校验的时候，希望<code>expected</code>为参数化的值。</p></blockquote><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>validate</span><span class=p>:</span><span class=w>
-</span><span class=w>    </span>- {<span class=nt>&#34;check&#34;: &#34;content.data.table_list.0.id&#34;, &#34;expected&#34;: </span><span class=s2>&#34;$id&#34;</span>}<span class=w>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>另外，在<a href=https://debugtalk.com/post/apitestengine-not-only-about-json-api/>《ApiTestEngine，不再局限于API的测试》</a>一文中有介绍过，结果提取器（<code>extract</code>）新增实现了通过正则表达式对任意文本响应内容的字段提取。考虑到结果校验器（<code>validate</code>）也需要先从结果响应中提取出特定字段才能与预期值进行比较，在具体实现上完全可以复用同一部分代码，因此在<code>validate</code>的<code>check</code>部分也可以进行统一化处理。</p>
-<p>经过前面的局限性问题描述，我们的改造目标也明确了，主要有三个方面：</p>
-<ul>
-<li>新增支持自定义结果校验器</li>
-<li>结果校验器中实现变量引用</li>
-<li>结果校验内容新增支持正则表达式提取</li>
-</ul>
-<h2 id=改造结果>改造结果</h2>
-<p>具体的改造过程就不写了，有兴趣的同学可以直接阅读源码，重点查看<a href=https://github.com/HttpRunner/HttpRunner/blob/master/httprunner/context.py><code>httprunner/context.py</code></a>中的<code>parse_validator</code>、<code>do_validation</code>和<code>validate</code>三个函数。</p>
-<p>经过优化后，改造目标中的三项功能都实现了。为了更好地展现改造后的结果校验器，此处将结合实例进行演示。</p>
-<h3 id=新增支持自定义结果校验器>新增支持自定义结果校验器</h3>
-<p>先来看第一个优化项，新增支持自定义结果校验器。</p>
-<p>假设我们需要使用HTTP响应状态码各个数字的和来进行校验，例如，<code>201</code>状态码对应的数字和为3，<code>503</code>状态码对应的数字和为8。该实例只是为了演示用，实际上并不会用到这样的校验方式。</p>
-<p>首先，该种校验方式在<code>HttpRunner</code>中并没有内置，因此需要我们自己来实现。实现方式与热加载机制相同，只需要将自定义的校验函数放置到当前<code>YAML/JSON</code>文件同级或者父级目录的<code>debugtalk.py</code>中。</p>
-<p>对于自定义的校验函数，需要遵循三个规则：</p>
-<ul>
-<li>自定义校验函数需放置到<code>debugtalk.py</code>中</li>
-<li>参数有两个：第一个为原始数据，第二个为原始数据经过运算后得到的预期结果值</li>
-<li>在校验函数中通过<code>assert</code>将实际运算结果与预期结果值进行比较</li>
-</ul>
-<p>对于前面提到的演示案例，我们就可以在<code>debugtalk.py</code>中编写如下校验函数。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>validate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- {<span class=nt>&#34;check&#34;: &#34;content.data.table_list.0.id&#34;, &#34;expected&#34;: </span><span class=s2>&#34;$id&#34;</span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>另外，在<a href=https://debugtalk.com/post/apitestengine-not-only-about-json-api/>《ApiTestEngine，不再局限于API的测试》</a>一文中有介绍过，结果提取器（<code>extract</code>）新增实现了通过正则表达式对任意文本响应内容的字段提取。考虑到结果校验器（<code>validate</code>）也需要先从结果响应中提取出特定字段才能与预期值进行比较，在具体实现上完全可以复用同一部分代码，因此在<code>validate</code>的<code>check</code>部分也可以进行统一化处理。</p><p>经过前面的局限性问题描述，我们的改造目标也明确了，主要有三个方面：</p><ul><li>新增支持自定义结果校验器</li><li>结果校验器中实现变量引用</li><li>结果校验内容新增支持正则表达式提取</li></ul><h2 id=改造结果>改造结果</h2><p>具体的改造过程就不写了，有兴趣的同学可以直接阅读源码，重点查看<a href=https://github.com/HttpRunner/HttpRunner/blob/master/httprunner/context.py><code>httprunner/context.py</code></a>中的<code>parse_validator</code>、<code>do_validation</code>和<code>validate</code>三个函数。</p><p>经过优化后，改造目标中的三项功能都实现了。为了更好地展现改造后的结果校验器，此处将结合实例进行演示。</p><h3 id=新增支持自定义结果校验器>新增支持自定义结果校验器</h3><p>先来看第一个优化项，新增支持自定义结果校验器。</p><p>假设我们需要使用HTTP响应状态码各个数字的和来进行校验，例如，<code>201</code>状态码对应的数字和为3，<code>503</code>状态码对应的数字和为8。该实例只是为了演示用，实际上并不会用到这样的校验方式。</p><p>首先，该种校验方式在<code>HttpRunner</code>中并没有内置，因此需要我们自己来实现。实现方式与热加载机制相同，只需要将自定义的校验函数放置到当前<code>YAML/JSON</code>文件同级或者父级目录的<code>debugtalk.py</code>中。</p><p>对于自定义的校验函数，需要遵循三个规则：</p><ul><li>自定义校验函数需放置到<code>debugtalk.py</code>中</li><li>参数有两个：第一个为原始数据，第二个为原始数据经过运算后得到的预期结果值</li><li>在校验函数中通过<code>assert</code>将实际运算结果与预期结果值进行比较</li></ul><p>对于前面提到的演示案例，我们就可以在<code>debugtalk.py</code>中编写如下校验函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -308,23 +78,16 @@ DebugTalk
 </span><span class=lnt>7
 </span><span class=lnt>8
 </span><span class=lnt>9
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=k>def</span> <span class=nf>sum_status_code</span><span class=p>(</span><span class=n>status_code</span><span class=p>,</span> <span class=n>expect_sum</span><span class=p>):</span>
-    <span class=s2>&#34;&#34;&#34; sum status code digits
-</span><span class=s2>        e.g. 400 =&gt; 4, 201 =&gt; 3
-</span><span class=s2>    &#34;&#34;&#34;</span>
-    <span class=n>sum_value</span> <span class=o>=</span> <span class=mi>0</span>
-    <span class=k>for</span> <span class=n>digit</span> <span class=ow>in</span> <span class=nb>str</span><span class=p>(</span><span class=n>status_code</span><span class=p>):</span>
-        <span class=n>sum_value</span> <span class=o>+=</span> <span class=nb>int</span><span class=p>(</span><span class=n>digit</span><span class=p>)</span>
-
-    <span class=k>assert</span> <span class=n>sum_value</span> <span class=o>==</span> <span class=n>expect_sum</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>然后，在<code>YAML/JSON</code>格式测试用例的<code>validate</code>中，我们就可以将校验函数名称<code>sum_status_code</code>作为<code>comparator</code>进行使用了。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=k>def</span> <span class=nf>sum_status_code</span><span class=p>(</span><span class=n>status_code</span><span class=p>,</span> <span class=n>expect_sum</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34; sum status code digits
+</span></span></span><span class=line><span class=cl><span class=s2>        e.g. 400 =&gt; 4, 201 =&gt; 3
+</span></span></span><span class=line><span class=cl><span class=s2>    &#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>sum_value</span> <span class=o>=</span> <span class=mi>0</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>digit</span> <span class=ow>in</span> <span class=nb>str</span><span class=p>(</span><span class=n>status_code</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=n>sum_value</span> <span class=o>+=</span> <span class=nb>int</span><span class=p>(</span><span class=n>digit</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>assert</span> <span class=n>sum_value</span> <span class=o>==</span> <span class=n>expect_sum</span>
+</span></span></code></pre></td></tr></table></div></div><p>然后，在<code>YAML/JSON</code>格式测试用例的<code>validate</code>中，我们就可以将校验函数名称<code>sum_status_code</code>作为<code>comparator</code>进行使用了。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -332,24 +95,15 @@ DebugTalk
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml>- <span class=nt>test</span><span class=p>:</span><span class=w>
-</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
-</span><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
-</span><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
-</span><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=m>200</span>}<span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;sum_status_code&#34;, &#34;expect&#34;: </span><span class=m>2</span>}<span class=w>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>由此可见，自定义的校验函数<code>sum_status_code</code>与<code>HttpRunner</code>内置的校验方法<code>eq</code>在使用方式上完全相同，应该没有理解上的难度。</p>
-<h3 id=结果校验器中实现变量引用>结果校验器中实现变量引用</h3>
-<p>对于第二个优化项，结果校验器中实现变量引用。在使用方式上我们应该与<code>request</code>中的变量引用一致，即通过<code>$var</code>的方式来引用变量<code>var</code>。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=m>200</span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;sum_status_code&#34;, &#34;expect&#34;: </span><span class=m>2</span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>由此可见，自定义的校验函数<code>sum_status_code</code>与<code>HttpRunner</code>内置的校验方法<code>eq</code>在使用方式上完全相同，应该没有理解上的难度。</p><h3 id=结果校验器中实现变量引用>结果校验器中实现变量引用</h3><p>对于第二个优化项，结果校验器中实现变量引用。在使用方式上我们应该与<code>request</code>中的变量引用一致，即通过<code>$var</code>的方式来引用变量<code>var</code>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -363,74 +117,41 @@ DebugTalk
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span><span class=lnt>14
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml>- <span class=nt>test</span><span class=p>:</span><span class=w>
-</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
-</span><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
-</span><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
-</span><span class=w>    </span><span class=nt>variables</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>expect_status_code</span><span class=p>:</span><span class=w> </span><span class=m>200</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>token_len</span><span class=p>:</span><span class=w> </span><span class=m>16</span><span class=w>
-</span><span class=w>    </span><span class=nt>extract</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>token</span><span class=p>:</span><span class=w> </span><span class=l>content.token</span><span class=w>
-</span><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;$expect_status_code&#34;</span>}<span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;content.token&#34;, &#34;comparator&#34;: &#34;len_eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;$token_len&#34;</span>}<span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;$token&#34;, &#34;comparator&#34;: &#34;len_eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;$token_len&#34;</span>}<span class=w>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>通过以上示例可以看出，在结果校验器<code>validate</code>中，<code>check</code>和<code>expect</code>均可实现实现变量的引用；而引用的变量，可以来自四种类型：</p>
-<ul>
-<li>当前<code>test</code>中定义的<code>variables</code>，例如<code>expect_status_code</code></li>
-<li>当前<code>test</code>中提取（<code>extract</code>）的结果变量，例如<code>token</code></li>
-<li>当前测试用例集<code>testset</code>中，先前<code>test</code>中提取（<code>extract</code>）的结果变量</li>
-<li>当前测试用例集<code>testset</code>中，全局配置<code>config</code>中定义的变量</li>
-</ul>
-<p>而<code>check</code>字段除了可以引用变量，以及保留了之前的链式操作定位字段（例如上例中的<code>content.token</code>）外，还新增了采用正则表达式提取内容的方式，也就是第三个优化项。</p>
-<h3 id=结果校验内容新增支持正则表达式提取>结果校验内容新增支持正则表达式提取</h3>
-<p>假设如下接口的响应结果内容为<code>LB123abcRB789</code>，那么要提取出<code>abc</code>部分进行校验，就可以采用如下描述方式。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>variables</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>expect_status_code</span><span class=p>:</span><span class=w> </span><span class=m>200</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>token_len</span><span class=p>:</span><span class=w> </span><span class=m>16</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>extract</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>token</span><span class=p>:</span><span class=w> </span><span class=l>content.token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;status_code&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;$expect_status_code&#34;</span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;content.token&#34;, &#34;comparator&#34;: &#34;len_eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;$token_len&#34;</span>}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;$token&#34;, &#34;comparator&#34;: &#34;len_eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;$token_len&#34;</span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>通过以上示例可以看出，在结果校验器<code>validate</code>中，<code>check</code>和<code>expect</code>均可实现实现变量的引用；而引用的变量，可以来自四种类型：</p><ul><li>当前<code>test</code>中定义的<code>variables</code>，例如<code>expect_status_code</code></li><li>当前<code>test</code>中提取（<code>extract</code>）的结果变量，例如<code>token</code></li><li>当前测试用例集<code>testset</code>中，先前<code>test</code>中提取（<code>extract</code>）的结果变量</li><li>当前测试用例集<code>testset</code>中，全局配置<code>config</code>中定义的变量</li></ul><p>而<code>check</code>字段除了可以引用变量，以及保留了之前的链式操作定位字段（例如上例中的<code>content.token</code>）外，还新增了采用正则表达式提取内容的方式，也就是第三个优化项。</p><h3 id=结果校验内容新增支持正则表达式提取>结果校验内容新增支持正则表达式提取</h3><p>假设如下接口的响应结果内容为<code>LB123abcRB789</code>，那么要提取出<code>abc</code>部分进行校验，就可以采用如下描述方式。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml>- <span class=nt>test</span><span class=p>:</span><span class=w>
-</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
-</span><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
-</span><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
-</span><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;LB123(.*)RB789&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;abc&#34;</span>}<span class=w>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>可见在使用方式上与在结果提取器（<code>extract</code>）中完全相同。</p>
-<h3 id=结果校验器的进一步简化>结果校验器的进一步简化</h3>
-<p>最后，为了进一步简化结果校验的描述，我在<code>validate</code>中新增实现了一种描述方式。</p>
-<p>简化后的描述方式与原始方式对比如下：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- {<span class=nt>&#34;check&#34;: &#34;LB123(.*)RB789&#34;, &#34;comparator&#34;: &#34;eq&#34;, &#34;expect&#34;: </span><span class=s2>&#34;abc&#34;</span>}<span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>可见在使用方式上与在结果提取器（<code>extract</code>）中完全相同。</p><h3 id=结果校验器的进一步简化>结果校验器的进一步简化</h3><p>最后，为了进一步简化结果校验的描述，我在<code>validate</code>中新增实现了一种描述方式。</p><p>简化后的描述方式与原始方式对比如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=nt>validate</span><span class=p>:</span><span class=w>
-</span><span class=w>    </span>- <span class=nt>comparator_name</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>check_item, expect_value]</span><span class=w>
-</span><span class=w>    </span>- {<span class=nt>&#34;check&#34;: check_item, &#34;comparator&#34;: comparator_name, &#34;expect&#34;: </span><span class=l>expect_value}</span><span class=w>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>同样是前面的例子，采用新的描述方式后会更加简洁。而两种方式表达的含义是完全等价的。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>validate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>comparator_name</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=l>check_item, expect_value]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- {<span class=nt>&#34;check&#34;: check_item, &#34;comparator&#34;: comparator_name, &#34;expect&#34;: </span><span class=l>expect_value}</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>同样是前面的例子，采用新的描述方式后会更加简洁。而两种方式表达的含义是完全等价的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -441,109 +162,36 @@ DebugTalk
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml>- <span class=nt>test</span><span class=p>:</span><span class=w>
-</span><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
-</span><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
-</span><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
-</span><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;status_code&#34;</span><span class=p>,</span><span class=w> </span><span class=l>$expect_status_code]</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>sum_status_code</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;status_code&#34;</span><span class=p>,</span><span class=w> </span><span class=m>2</span><span class=p>]</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>len_eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;$token&#34;</span><span class=p>,</span><span class=w> </span><span class=l>$token_len]</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>len_eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;content.token&#34;</span><span class=p>,</span><span class=w> </span><span class=m>16</span><span class=p>]</span><span class=w>
-</span><span class=w>        </span>- <span class=nt>eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;LB123(.*)RB789&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;abc&#34;</span><span class=p>]</span><span class=w>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>当然，此次优化保证了与历史版本的兼容，之前编写的测试用例脚本的运行是完全不会受到任何影响的。</p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>文章作者</span>
-<span class=item-content>debugtalk</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>上次更新</span>
-<span class=item-content>
-2017-12-13
-</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>许可协议</span>
-<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
-</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://debugtalk.com/tags/HttpRunner/>HttpRunner</a>
-</div>
-<nav class=post-nav>
-<a class=prev href=/post/HttpRunner-testcase-layer/>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
-</i>
-<span class="prev-text nav-default">HttpRunner 的测试用例分层机制（已过期）</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/post/HttpRunner-supports-HAR/>
-<span class="next-text nav-default">HttpRunner 支持 HAR 意味着什么？</span>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl>- <span class=nt>test</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>get token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>request</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>url</span><span class=p>:</span><span class=w> </span><span class=l>http://127.0.0.1:5000/api/get-token</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span><span class=nt>method</span><span class=p>:</span><span class=w> </span><span class=l>GET</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>validate</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;status_code&#34;</span><span class=p>,</span><span class=w> </span><span class=l>$expect_status_code]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>sum_status_code</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;status_code&#34;</span><span class=p>,</span><span class=w> </span><span class=m>2</span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>len_eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;$token&#34;</span><span class=p>,</span><span class=w> </span><span class=l>$token_len]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>len_eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;content.token&#34;</span><span class=p>,</span><span class=w> </span><span class=m>16</span><span class=p>]</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>        </span>- <span class=nt>eq</span><span class=p>:</span><span class=w> </span><span class=p>[</span><span class=s2>&#34;LB123(.*)RB789&#34;</span><span class=p>,</span><span class=w> </span><span class=s2>&#34;abc&#34;</span><span class=p>]</span><span class=w>
+</span></span></span></code></pre></td></tr></table></div></div><p>当然，此次优化保证了与历史版本的兼容，之前编写的测试用例脚本的运行是完全不会受到任何影响的。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2017-12-13</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span></p></div><footer class=post-footer><div class=post-tags><a href=https://debugtalk.com/tags/HttpRunner/>HttpRunner</a></div><nav class=post-nav><a class=prev href=/post/HttpRunner-testcase-layer/><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg></i><span class="prev-text nav-default">HttpRunner 的测试用例分层机制（已过期）</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/post/HttpRunner-supports-HAR/><span class="next-text nav-default">HttpRunner 支持 HAR 意味着什么？</span>
 <span class="prev-text nav-mobile">下一篇</span>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
-</i>
-</a>
-</nav>
-</footer>
-</article>
-<div class="post bg-white">
-<script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=icon-links>
-<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
-</a>
-<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
-</a>
-<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
-</a>
-</div>
-<div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg></i></a></nav></footer></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div></div></main><footer id=footer class=footer><div class=icon-links><a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg></a><a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg></a><a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a></span>
+<span class=copyright-year>&copy;
 2011 -
 2022
-<span class=heart>
-<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
-</i>
-</span><span class=author>
-debugtalk
-</span></span>
-<span id=busuanzi_container>
-访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
-</i>
-</div>
-</div>
-<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<span class=heart><i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg></i></span><span class=author>debugtalk</span></span>
+<span id=busuanzi_container>访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span></span></div></footer><div class=back-to-top id=back-to-top><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg></i></div></div><script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
 <script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
 <script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/load-photoswipe.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<script src=/js/custom.js></script>
-</body>
-</html>
+<script src=/js/custom.js></script></body></html>

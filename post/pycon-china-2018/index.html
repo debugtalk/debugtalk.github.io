@@ -1,269 +1,31 @@
-<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage>
-<head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<title>PyCon China 2018 归来，感谢曾经没有怂的自己 - DebugTalk</title>
-<meta name=renderer content="webkit">
-<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes">
-<meta name=MobileOptimized content="width">
-<meta name=HandheldFriendly content="true">
-<meta name=applicable-device content="pc,mobile">
-<meta name=theme-color content="#f8f5ec">
-<meta name=msapplication-navbutton-color content="#f8f5ec">
-<meta name=apple-mobile-web-app-capable content="yes">
-<meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec">
-<meta name=mobile-web-app-capable content="yes">
-<meta name=author content="debugtalk">
-<meta name=description content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来">
-<meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试">
-<meta name=generator content="Hugo 0.92.1">
-<link rel=canonical href=https://debugtalk.com/post/pycon-china-2018/>
-<link rel=icon href=/favicon.ico>
-<link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous>
-<link rel=stylesheet href=/css/custom.css>
-<meta property="og:title" content="PyCon China 2018 归来，感谢曾经没有怂的自己">
-<meta property="og:description" content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://debugtalk.com/post/pycon-china-2018/"><meta property="article:section" content="post">
-<meta property="article:published_time" content="2018-10-14T00:00:00+00:00">
-<meta property="article:modified_time" content="2018-10-14T00:00:00+00:00">
-<meta itemprop=name content="PyCon China 2018 归来，感谢曾经没有怂的自己">
-<meta itemprop=description content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来"><meta itemprop=datePublished content="2018-10-14T00:00:00+00:00">
-<meta itemprop=dateModified content="2018-10-14T00:00:00+00:00">
-<meta itemprop=wordCount content="2207">
-<meta itemprop=keywords content="演讲,"><meta name=twitter:card content="summary">
-<meta name=twitter:title content="PyCon China 2018 归来，感谢曾经没有怂的自己">
-<meta name=twitter:description content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
-<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]-->
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-81639610-1','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-</head>
-<body>
-<div id=mobile-navbar class=mobile-navbar>
-<div class=mobile-header-logo>
-<a href=/ class=logo>DebugTalk</a>
-</div>
-<div class=mobile-navbar-icon>
+<!doctype html><html lang=zh-cn itemscope itemtype=http://schema.org/WebPage><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>PyCon China 2018 归来，感谢曾经没有怂的自己 - DebugTalk</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=yes"><meta name=MobileOptimized content="width"><meta name=HandheldFriendly content="true"><meta name=applicable-device content="pc,mobile"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=mobile-web-app-capable content="yes"><meta name=author content="debugtalk"><meta name=description content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来"><meta name=keywords content="HttpRunner,Python,Go,博客,debugtalk,接口自动化测试,性能测试"><meta name=generator content="Hugo 0.94.2"><link rel=canonical href=https://debugtalk.com/post/pycon-china-2018/><link rel=icon href=/favicon.ico><link rel=stylesheet href=/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css integrity="sha256-+ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media=screen crossorigin=anonymous><link rel=stylesheet href=/css/custom.css><meta property="og:title" content="PyCon China 2018 归来，感谢曾经没有怂的自己"><meta property="og:description" content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来"><meta property="og:type" content="article"><meta property="og:url" content="https://debugtalk.com/post/pycon-china-2018/"><meta property="article:section" content="post"><meta property="article:published_time" content="2018-10-14T00:00:00+00:00"><meta property="article:modified_time" content="2018-10-14T00:00:00+00:00"><meta itemprop=name content="PyCon China 2018 归来，感谢曾经没有怂的自己"><meta itemprop=description content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来"><meta itemprop=datePublished content="2018-10-14T00:00:00+00:00"><meta itemprop=dateModified content="2018-10-14T00:00:00+00:00"><meta itemprop=wordCount content="2207"><meta itemprop=keywords content="演讲,"><meta name=twitter:card content="summary"><meta name=twitter:title content="PyCon China 2018 归来，感谢曾经没有怂的自己"><meta name=twitter:description content="今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script>
+<script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-81639610-1","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>DebugTalk</a></div><div class=mobile-navbar-icon><span></span>
 <span></span>
-<span></span>
-<span></span>
-</div>
-</div>
-<nav id=mobile-menu class="mobile-menu slideout-menu">
-<ul class=mobile-menu-list>
-<li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li><li class=mobile-menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-<link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css>
-<link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css>
-<div class=pswp tabindex=-1 role=dialog aria-hidden=true>
-<div class=pswp__bg></div>
-<div class=pswp__scroll-wrap>
-<div class=pswp__container>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-<div class=pswp__item></div>
-</div>
-<div class="pswp__ui pswp__ui--hidden">
-<div class=pswp__top-bar>
-<div class=pswp__counter></div>
-<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+<span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=mobile-menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav><link rel=stylesheet href=/lib/photoswipe/photoswipe.min.css><link rel=stylesheet href=/lib/photoswipe/default-skin/default-skin.min.css><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
 <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-<div class=pswp__preloader>
-<div class=pswp__preloader__icn>
-<div class=pswp__preloader__cut>
-<div class=pswp__preloader__donut></div>
-</div>
-</div>
-</div>
-</div>
-<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-<div class=pswp__share-tooltip></div>
-</div>
-<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-</button>
-<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-</button>
-<div class=pswp__caption>
-<div class=pswp__caption__center></div>
-</div>
-</div>
-</div>
-</div>
-<header id=header class="header container">
-<div class=logo-wrapper>
-<a href=/ class=logo>
-DebugTalk
-</a>
-</div>
-<nav class=site-navbar>
-<ul id=menu class=menu>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/>主页</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/post/>归档</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/tags/>标签</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/categories/>分类</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/about/>关于</a>
-</li>
-<li class=menu-item>
-<a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a>
-</li>
-</ul>
-</nav>
-</header>
-<div id=mobile-panel>
-<main id=main class="main bg-llight">
-<div class=content-wrapper>
-<div id=content class="content container">
-<article class="post bg-white">
-<header class=post-header>
-<h1 class=post-title>PyCon China 2018 归来，感谢曾经没有怂的自己</h1>
-<div class=post-meta>
-<time datetime=2018-10-14 class=post-time>
-2018-10-14
-</time>
-<div class=post-category>
-<a href=https://debugtalk.com/categories/Growth/> Growth </a>
-</div>
-<span class=more-meta> 约 2207 字 </span>
-<span class=more-meta> 预计阅读 5 分钟 </span>
-<span id=busuanzi_container_page_pv>
-| 阅读 <span id=busuanzi_value_page_pv></span>
-</span>
-</div>
-</header>
-<div class=post-toc id=post-toc>
-<h2 class=post-toc-title>文章目录</h2>
-<div class=post-toc-content>
-<nav id=TableOfContents></nav>
-</div>
-</div>
-<div class=post-content>
-<p>今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来了，最终现场效果也还不错，总算松了口气，个人也算是完成了一次自我突破。这会儿在返回深圳的航班上，借着这段空闲时间进行下总结和记录。</p>
-<p>本件事情的起源挺有意思的，下面重点说下。</p>
-<p>大概在两三个月前，无意中在微信公众号中看到了 PyCon China 2018 的主题征集，在里面看到了测试的字眼。因为近些年来 Python 一直都是我的主要工作语言，也是我个人最喜欢的编程语言，因此我也产生了些许兴趣，加了文章中主办方联系人（辛庆姐）的微信，主要是想询问下大会中会有哪些跟测试相关的主题分享。</p>
-<p>在简单聊了下后，得知当前还没有测试相关的主题，对方也向我咨询是否有啥好的建议，同时也欢迎我参加大会进行下测试方面的分享。当时我也表达了我的疑虑，毕竟大会的参会者基本都是 Python 开发者，感觉测试相关的 topic 不一定受欢迎。然后就没继续聊了，这事儿我也就忘了。结果大概过了近一个月后，辛庆姐又跟我联系，还是希望我能做一场测试方面的分享，毕竟 Python 的应用领域这么广泛，当前在测试领域也有较多的应用。我想了下，那就参加下深圳分场的大会吧，多认识些珠三角地区的 Python 大佬也好。当然，我也存在点私心，就是想借这个机会再推广下我的开源项目 HttpRunner，要是能得到些指点就更好了，毕竟参会者基本都是 Python 开发者。</p>
-<p>结果令我万万没想到的是，几天后的一个早晨，我睡醒后看到辛庆姐的信息，说是希望我能到北京主会场千人峰会进行分享。我顿时懵逼了，觉得很不可思议。我又再次确认了下，大会总共就一天，主会场总共就 4 个主题，而其它三位嘉宾中一位是洪教授，另外两位是国外嘉宾，他们都是 Python 领域非常资深的前辈，编程年限都快跟我岁数差不多了。我还是觉得难以置信，测试主题居然也可以排进主会场（不是对测试不自信，毕竟是开发者大会）？而且在之前的主题征集中，基本都是围绕 Python 核心语言特性、当前火热的机器学习、大数据方面，测试只是放在其它类别中，所以在被告知安排后的确觉得非常诧异。再三询问才得知，今年大会也是在做改革，想做 Pythoneer 想听的大会，而且组委会中也有成员之前看过我的博客，所以比较支持我（非常感谢）。当然，面对这前所未有的自我挑战的机会，虽然心里没底儿，我也挺想尝试的，就当作一次突破自己的机会好了。不过我也跟组委会说希望他们能再考虑下，因为我还是担心最终不能达成好的效果。再后来，组委会又进行了一轮投票，最终超过一半的成员同意将我的 topic 安排在主会场，这件事就这么定下来了。在此我也非常感谢组委会的认可和信任。</p>
-<p>后来的事情就没啥特别的了，无非就是鼓足勇气，尽量克服内心的忐忑和不自信，然后尽量做好准备硬上了。最终结果证明，面对近千名听众进行分享也没那么可怕，和上一次 MTSC2018 服务端专场中面对三四百名听众相比感觉也都差不多，主要的差异还是在上台前的自我暗示。很庆幸，当初我克服了自身的恐惧心理将这件事答应下来了，我才能借助这次机会完成了一次自我突破，后面等我儿子长大了也多了件向他吹牛逼的素材。</p>
-<p>说到这里，可能有人希望我能分享下如何克服在大会进行主题分享的恐惧心理。</p>
-<p>其实对于这一点，我觉得也没有太多的秘诀，主要还是要多讲。如果还没有过技术分享的经历，不妨从公司的组内分享开始，勇敢地跨出第一步，然后不断地逼迫自己迎接更大的挑战，在部门层面、公司层面、行业沙龙活动等等，机会是非常多的。在这个过程中，积极地收集听众反馈并进行改进，多做几次之后，肯定大不一样。</p>
-<p>另外，在分享准备阶段，推荐给大家两个比较有可操作性的做法。</p>
-<ul>
-<li>首先是分享的主题思路一定要清晰和明确，各部分内容的内在衔接尽量做到自然和不生硬，做到这一点后，听众会更便于掌握主题的思路，分享人也能讲得更流畅，避免因为生硬的内容切换造成忘词儿的尴尬情况。同时，分享的内容一定要都是分享者充分理解的内容，避免在网上抄一些自己都不清楚真实含义的概念和解释。</li>
-<li>另一个很重要的点就是要充分重视开场白，如果心里没底儿，建议将开场白逐字写出来并反复进行斟酌，最终修改形成一份让自己满意的开场白，并多次自我演练直至熟练。之所以这么强调开场白，除了是要跟听众尽量留下好的第一印象外，还因为在开场阶段是演讲者最容易紧张的阶段，如果开场讲得不流畅，很容易造成演讲者变得更加紧张，影响后续一连串的表现，甚至会出现大脑一片空白，完全讲不下去的尴尬场面（之前我就有过这样的经历）。而如果开场经过精心准备并且有了一个比较好的表现后，就可以很好地建立自信，并且在这个过程中也熟悉了面向听众的感觉，后续的演讲也就不会有什么问题了。</li>
-</ul>
-<p>当然，这里只是列举了我个人觉得比较重要的两个点，对于其他人不一定适用。提升演讲和分享能力是一个持久的过程，我当前也是在不断摸索和提升的过程中。希望大家也能在留言中分享下这方面的经验，大家互相学习，共同进步。</p>
-<p>最后，再说件比较尴尬的事情。</p>
-<p>在会后，有几家出版社（也包括 GitChat 这类在线知识付费平台）的编辑跟我联系，询问我是否有意向进行合作和出版。我当然是非常难为情啦，去年年初跟博文视点签的出版合同，本来还打算在小坚果出生前出版呢，现在儿子都快满一岁了，至今还没交稿呢（确切地说，是搁置好久了）。唉，时间是一方面，主要还是执行力不够啊。所以现在对于出书的作者我是格外佩服的，内容好坏暂且不说，能坚持下来就真的很不容易了。如今我也有幸认识了不少畅销书的作者了，向他们看齐，加油吧。</p>
-</div>
-<div class=post-copyright>
-<p class=copyright-item>
-<span class=item-title>文章作者</span>
-<span class=item-content>debugtalk</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>上次更新</span>
-<span class=item-content>
-2018-10-14
-</span>
-</p>
-<p class=copyright-item>
-<span class=item-title>许可协议</span>
-<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span>
-</p>
-</div>
-<footer class=post-footer>
-<div class=post-tags>
-<a href=https://debugtalk.com/tags/%E6%BC%94%E8%AE%B2/>演讲</a>
-</div>
-<nav class=post-nav>
-<a class=prev href=/post/httprunner-2.0-release>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg>
-</i>
-<span class="prev-text nav-default">HttpRunner 2.0 正式发布</span>
-<span class="prev-text nav-mobile">上一篇</span>
-</a>
-<a class=next href=/post/recommend-geektime/>
-<span class="next-text nav-default">知识爆炸时代，技术人该如何克服焦虑？</span>
+<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button><div class=pswp__preloader><div class=pswp__preloader__icn><div class=pswp__preloader__cut><div class=pswp__preloader__donut></div></div></div></div></div><div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"><div class=pswp__share-tooltip></div></div><button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button><div class=pswp__caption><div class=pswp__caption__center></div></div></div></div></div><header id=header class="header container"><div class=logo-wrapper><a href=/ class=logo>DebugTalk</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/>主页</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/about/>关于</a></li><li class=menu-item><a class=menu-item-link href=https://debugtalk.com/index.xml>订阅</a></li></ul></nav></header><div id=mobile-panel><main id=main class="main bg-llight"><div class=content-wrapper><div id=content class="content container"><article class="post bg-white"><header class=post-header><h1 class=post-title>PyCon China 2018 归来，感谢曾经没有怂的自己</h1><div class=post-meta><time datetime=2018-10-14 class=post-time>2018-10-14</time><div class=post-category><a href=https://debugtalk.com/categories/Growth/>Growth</a></div><span class=more-meta>约 2207 字</span>
+<span class=more-meta>预计阅读 5 分钟</span>
+<span id=busuanzi_container_page_pv>| 阅读 <span id=busuanzi_value_page_pv></span></span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class=post-toc-content><nav id=TableOfContents></nav></div></div><div class=post-content><p>今天有幸作为 PyCon China 2018 的分享嘉宾，在主会场面向近千名 Python 开发工程师做了一场关于自动化测试框架方面的分享。虽然之前多少有些忐忑和不自信，但终究挺过来了，最终现场效果也还不错，总算松了口气，个人也算是完成了一次自我突破。这会儿在返回深圳的航班上，借着这段空闲时间进行下总结和记录。</p><p>本件事情的起源挺有意思的，下面重点说下。</p><p>大概在两三个月前，无意中在微信公众号中看到了 PyCon China 2018 的主题征集，在里面看到了测试的字眼。因为近些年来 Python 一直都是我的主要工作语言，也是我个人最喜欢的编程语言，因此我也产生了些许兴趣，加了文章中主办方联系人（辛庆姐）的微信，主要是想询问下大会中会有哪些跟测试相关的主题分享。</p><p>在简单聊了下后，得知当前还没有测试相关的主题，对方也向我咨询是否有啥好的建议，同时也欢迎我参加大会进行下测试方面的分享。当时我也表达了我的疑虑，毕竟大会的参会者基本都是 Python 开发者，感觉测试相关的 topic 不一定受欢迎。然后就没继续聊了，这事儿我也就忘了。结果大概过了近一个月后，辛庆姐又跟我联系，还是希望我能做一场测试方面的分享，毕竟 Python 的应用领域这么广泛，当前在测试领域也有较多的应用。我想了下，那就参加下深圳分场的大会吧，多认识些珠三角地区的 Python 大佬也好。当然，我也存在点私心，就是想借这个机会再推广下我的开源项目 HttpRunner，要是能得到些指点就更好了，毕竟参会者基本都是 Python 开发者。</p><p>结果令我万万没想到的是，几天后的一个早晨，我睡醒后看到辛庆姐的信息，说是希望我能到北京主会场千人峰会进行分享。我顿时懵逼了，觉得很不可思议。我又再次确认了下，大会总共就一天，主会场总共就 4 个主题，而其它三位嘉宾中一位是洪教授，另外两位是国外嘉宾，他们都是 Python 领域非常资深的前辈，编程年限都快跟我岁数差不多了。我还是觉得难以置信，测试主题居然也可以排进主会场（不是对测试不自信，毕竟是开发者大会）？而且在之前的主题征集中，基本都是围绕 Python 核心语言特性、当前火热的机器学习、大数据方面，测试只是放在其它类别中，所以在被告知安排后的确觉得非常诧异。再三询问才得知，今年大会也是在做改革，想做 Pythoneer 想听的大会，而且组委会中也有成员之前看过我的博客，所以比较支持我（非常感谢）。当然，面对这前所未有的自我挑战的机会，虽然心里没底儿，我也挺想尝试的，就当作一次突破自己的机会好了。不过我也跟组委会说希望他们能再考虑下，因为我还是担心最终不能达成好的效果。再后来，组委会又进行了一轮投票，最终超过一半的成员同意将我的 topic 安排在主会场，这件事就这么定下来了。在此我也非常感谢组委会的认可和信任。</p><p>后来的事情就没啥特别的了，无非就是鼓足勇气，尽量克服内心的忐忑和不自信，然后尽量做好准备硬上了。最终结果证明，面对近千名听众进行分享也没那么可怕，和上一次 MTSC2018 服务端专场中面对三四百名听众相比感觉也都差不多，主要的差异还是在上台前的自我暗示。很庆幸，当初我克服了自身的恐惧心理将这件事答应下来了，我才能借助这次机会完成了一次自我突破，后面等我儿子长大了也多了件向他吹牛逼的素材。</p><p>说到这里，可能有人希望我能分享下如何克服在大会进行主题分享的恐惧心理。</p><p>其实对于这一点，我觉得也没有太多的秘诀，主要还是要多讲。如果还没有过技术分享的经历，不妨从公司的组内分享开始，勇敢地跨出第一步，然后不断地逼迫自己迎接更大的挑战，在部门层面、公司层面、行业沙龙活动等等，机会是非常多的。在这个过程中，积极地收集听众反馈并进行改进，多做几次之后，肯定大不一样。</p><p>另外，在分享准备阶段，推荐给大家两个比较有可操作性的做法。</p><ul><li>首先是分享的主题思路一定要清晰和明确，各部分内容的内在衔接尽量做到自然和不生硬，做到这一点后，听众会更便于掌握主题的思路，分享人也能讲得更流畅，避免因为生硬的内容切换造成忘词儿的尴尬情况。同时，分享的内容一定要都是分享者充分理解的内容，避免在网上抄一些自己都不清楚真实含义的概念和解释。</li><li>另一个很重要的点就是要充分重视开场白，如果心里没底儿，建议将开场白逐字写出来并反复进行斟酌，最终修改形成一份让自己满意的开场白，并多次自我演练直至熟练。之所以这么强调开场白，除了是要跟听众尽量留下好的第一印象外，还因为在开场阶段是演讲者最容易紧张的阶段，如果开场讲得不流畅，很容易造成演讲者变得更加紧张，影响后续一连串的表现，甚至会出现大脑一片空白，完全讲不下去的尴尬场面（之前我就有过这样的经历）。而如果开场经过精心准备并且有了一个比较好的表现后，就可以很好地建立自信，并且在这个过程中也熟悉了面向听众的感觉，后续的演讲也就不会有什么问题了。</li></ul><p>当然，这里只是列举了我个人觉得比较重要的两个点，对于其他人不一定适用。提升演讲和分享能力是一个持久的过程，我当前也是在不断摸索和提升的过程中。希望大家也能在留言中分享下这方面的经验，大家互相学习，共同进步。</p><p>最后，再说件比较尴尬的事情。</p><p>在会后，有几家出版社（也包括 GitChat 这类在线知识付费平台）的编辑跟我联系，询问我是否有意向进行合作和出版。我当然是非常难为情啦，去年年初跟博文视点签的出版合同，本来还打算在小坚果出生前出版呢，现在儿子都快满一岁了，至今还没交稿呢（确切地说，是搁置好久了）。唉，时间是一方面，主要还是执行力不够啊。所以现在对于出书的作者我是格外佩服的，内容好坏暂且不说，能坚持下来就真的很不容易了。如今我也有幸认识了不少畅销书的作者了，向他们看齐，加油吧。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>debugtalk</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2018-10-14</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content><a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/ target=_blank>CC BY-NC-ND 4.0</a></span></p></div><footer class=post-footer><div class=post-tags><a href=https://debugtalk.com/tags/%E6%BC%94%E8%AE%B2/>演讲</a></div><nav class=post-nav><a class=prev href=/post/httprunner-2.0-release><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417l277.93508-310.326815c11.338233-12.190647 11.035334-32.285311-.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"/></svg></i><span class="prev-text nav-default">HttpRunner 2.0 正式发布</span>
+<span class="prev-text nav-mobile">上一篇</span></a>
+<a class=next href=/post/recommend-geektime/><span class="next-text nav-default">知识爆炸时代，技术人该如何克服焦虑？</span>
 <span class="prev-text nav-mobile">下一篇</span>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg>
-</i>
-</a>
-</nav>
-</footer>
-</article>
-<div class="post bg-white">
-<script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script>
-</div>
-</div>
-</div>
-</main>
-<footer id=footer class=footer>
-<div class=icon-links>
-<a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg>
-</a>
-<a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg>
-</a>
-<a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg>
-</a>
-</div>
-<div class=copyright>
-<span class=power-by>
-Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a>
-</span>
+<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18"><path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697c-11.777231-11.500939-30.216186-10.304694-41.178865 2.712784z"/></svg></i></a></nav></footer></article><div class="post bg-white"><script src=https://utteranc.es/client.js repo=debugtalk/debugtalk.github.io issue-term=pathname theme=github-light crossorigin=anonymous async></script></div></div></div></main><footer id=footer class=footer><div class=icon-links><a href=mailto:mail@debugtalk.com rel="me noopener" class=iconfont title=email><svg class="icon" viewBox="0 0 1451 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M664.781909 681.472759.0 97.881301C0 3.997201 71.046997.0 71.046997.0H474.477909 961.649408h399.992405s71.046998 3.997201 71.046998 97.881301L771.345323 681.472759S764.482731 685.154773 753.594283 688.65053V688.664858C741.602731 693.493018 729.424896 695.068979 718.077952 694.839748 706.731093 695.068979 694.553173 693.493018 682.561621 688.664858V688.65053C671.644501 685.140446 664.781909 681.472759 664.781909 681.472759zm53.281707 130.131124C693.779541 811.016482 658.879232 802.205449 619.10784 767.734955 542.989056 701.759633.0 212.052267.0 212.052267V942.809523S0 1024 83.726336 1024H682.532949 753.579947h595.368192C1432.688811 1024 1432.688811 942.809523 1432.688811 942.809523V212.052267S893.138176 701.759633 817.019477 767.734955c-39.771477 34.470494-74.671786 43.295855-98.955861 43.868928z"/></svg></a><a href=https://github.com/debugtalk rel="me noopener" class=iconfont title=github target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="36" height="36"><path d="M512 12.672c-282.88.0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667.0-12.16-.426667-44.373333-.64-87.04C242.005334 929.664 211.968 830.08 211.968 830.08 188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333.0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333.0.0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667.0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72.0 68.522667-.64 123.562667-.64 140.202666.0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"/></svg></a><a href=https://debugtalk.com/index.xml rel="noopener alternate" type=application/rss+xml class=iconfont title=rss target=_blank><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30"><path d="M819.157333 1024C819.157333 574.592 449.408 204.8.0 204.8V0c561.706667.0 1024 462.293333 1024 1024H819.157333zM140.416 743.04a140.8 140.8.0 01140.501333 140.586667A140.928 140.928.0 01140.074667 1024C62.72 1024 0 961.109333.0 883.626667S62.933333 743.082667 140.416 743.04zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667v-199.04c372.352.0 678.784 306.517333 678.784 678.826667z"/></svg></a></div><div class=copyright><span class=power-by>Powered by <a class=hexo-link href=https://gohugo.io>Hugo</a></span>
 <span class=division>|</span>
-<span class=theme-info>
-Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a>
-</span>
-<span class=copyright-year>
-&copy;
+<span class=theme-info>Theme - <a class=theme-link href=https://github.com/xianmin/hugo-theme-jane>Jane</a></span>
+<span class=copyright-year>&copy;
 2011 -
 2022
-<span class=heart>
-<i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg>
-</i>
-</span><span class=author>
-debugtalk
-</span></span>
-<span id=busuanzi_container>
-访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span>
-</span>
-</div>
-</footer>
-<div class=back-to-top id=back-to-top>
-<i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg>
-</i>
-</div>
-</div>
-<script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
+<span class=heart><i class=iconfont><svg class="icon" viewBox="0 0 1025 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14" height="14"><path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7.0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1.0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2.0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3.1-42.5-8-83.6-24-122.2z" fill="#8a8a8a"/></svg></i></span><span class=author>debugtalk</span></span>
+<span id=busuanzi_container>访客数/访问量：<span id=busuanzi_value_site_uv></span>/<span id=busuanzi_value_site_pv></span></span></div></footer><div class=back-to-top id=back-to-top><i class=iconfont><svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35"><path d="M510.866688 227.694839 95.449397 629.218702h235.761562L329.15309 958.01517h362.40389L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777h894.052392v131.813095H63.840492V63.962777zm0 0"/></svg></i></div></div><script type=text/javascript src=/lib/jquery/jquery-3.2.1.min.js></script>
 <script type=text/javascript src=/lib/slideout/slideout-1.0.1.min.js></script>
 <script type=text/javascript src=/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin=anonymous></script>
 <script type=text/javascript src=/js/load-photoswipe.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe.min.js></script>
 <script type=text/javascript src=/lib/photoswipe/photoswipe-ui-default.min.js></script>
 <script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script>
-<script src=/js/custom.js></script>
-</body>
-</html>
+<script src=/js/custom.js></script></body></html>
