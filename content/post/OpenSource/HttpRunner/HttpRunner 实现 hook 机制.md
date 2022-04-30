@@ -245,5 +245,5 @@ def teardown_hook_sleep_N_secs(response, n_secs):
 
 ## 更多内容
 
-- 中文使用说明文档：http://cn.httprunner.org/advanced/request-hook/
+- 中文使用说明文档：https://httprunner.com/docs/user-guide/request-hook/
 - 代码实现：[GitHub commit](https://github.com/HttpRunner/HttpRunner/commit/2bb84b38745d004d336ed9867df5e63534b596bc)

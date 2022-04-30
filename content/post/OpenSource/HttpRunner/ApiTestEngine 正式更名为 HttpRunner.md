@@ -49,7 +49,7 @@ tags:
 
 在链接访问方面，受益于GitHub仓库链接的自动重定向机制，仓库在改名或者过户（Transfer ownership）之后，访问原有链接会自动实现重定向，因此之前博客中的链接也都不会受到影响。
 
-新的仓库地址：https://github.com/HttpRunner/HttpRunner
+新的仓库地址：https://github.com/httprunner/httprunner
 
 在使用的命令方面，`HttpRunner`采用`httprunner`作为新的命令代替原有的`ate`命令；当然，为了考虑兼容性，`HttpRunner`对`ate`命令也进行了保留，因此`httprunner`和`ate`命令同时可用，并完全等价。在性能测试方面，`locusts`命令保持不变。
 
@@ -67,14 +67,7 @@ PyUnitReport version: 0.1.3b
 $ pip install HttpRunner
 ```
 
-同时，`HttpRunner`新增了大量使用说明文档（之前的博客主要都是开发过程记录），并托管到专业的`readthedocs`上面。在文档语言方面，英文优先，中文相对滞后。
-
-访问网址：
-
-- 英文：http://httprunner.readthedocs.io/
-- 中文（滞后）：http://httprunner-cn.readthedocs.io/
-
-另外，为了具有更高的逼格，同时购入域名`httprunner.top`，后续将作为项目的主页地址。当前还处于实名认证中，预计2~3个工作日后就可以访问了。
+同时，`HttpRunner` 新增了大量使用说明文档，访问网址：https://httprunner.com/docs
 
 关于项目改名这事儿，就说到这儿吧，希望你们也喜欢。
 

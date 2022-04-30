@@ -98,7 +98,7 @@ def get_account(num):
 
 从版本 `1.1.0` 开始，HttpRunner 便支持了上述新的数据驱动方式。详细的使用方法，可参考如下使用说明文档：
 
-http://cn.httprunner.org/advanced/data-driven/
+https://httprunner.com/docs/user-guide/data-driven/
 
 至此，HttpRunner 的数据驱动机制就比较完善和稳定了，应该可以解决绝大多数数据驱动场景的需求。
 
@@ -139,6 +139,6 @@ http://cn.httprunner.org/advanced/data-driven/
 
 
 [httprunner-data-driven]: https://debugtalk.com/post/httprunner-data-driven/
-[QuickStart]: http://cn.httprunner.org/quickstart/#_12
-[demo-quickstart-6]: http://cn.httprunner.org/data/demo-quickstart-6.json
+[QuickStart]: https://httprunner.com/docs/quickstart
+[demo-quickstart-6]: https://httprunner.com/data/demo-quickstart-6.json
 [PR]: https://github.com/HttpRunner/HttpRunner
