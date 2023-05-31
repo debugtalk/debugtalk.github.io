@@ -43,6 +43,7 @@ url: /about/
 
 年终总结：
 
+- [我的 2022 年终总结](/post/my-2022-summary)
 - [我的 2021 年终总结](/post/my-2021-summary)
 - [我的 2020 年终总结](/post/my-2020-summary)
 - [我的 2019 年终总结](/post/my-2019-summary)
