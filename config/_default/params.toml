@@ -1250,7 +1250,7 @@ font_family = "inherit"
 # Whether to enable busuanzi count.
 enable = true
 # Busuanzi count core script source. Default is https://vercount.one/js.
-source = "https://vercount.one/js"
+source = "https://www.vercount.one/js"
 # Whether to show the site views.
 site_views = true
 # Whether to show the page views.
