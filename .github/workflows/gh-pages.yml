@@ -21,8 +21,16 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: '0.110.0'
+          hugo-version: '0.167.0'
           extended: true
+
+      # FixIt v1 用 css.Sass(transpiler=dartsass) 编译 SCSS，需要原生 Dart Sass
+      # 注意：npm 的 `sass`（纯 JS 版）Hugo 不能调用，必须是原生二进制
+      - name: Setup Dart Sass
+        run: |
+          npm i --no-save --prefix "$RUNNER_TEMP/sass" sass-embedded@1.105.1
+          find "$RUNNER_TEMP/sass/node_modules" -maxdepth 2 -type d -name dart-sass \
+            -exec sh -c 'echo "$1" >> "$GITHUB_PATH"' _ {} \;
 
       - name: Build
         run: hugo --minify

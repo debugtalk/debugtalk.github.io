@@ -7,7 +7,7 @@ categories:
 tags:
   - Python
   - pip
-  - Github
+  - GitHub
   - Git
 ---
 

@@ -1,0 +1,15 @@
+# -------------------------------------------------------------------------------------
+# Imaging Configuration
+# See: https://gohugo.io/configuration/imaging/
+# -------------------------------------------------------------------------------------
+# Hugo 0.163+ 起 imaging.quality 迁移为按格式配置
+_merge = "shallow"
+
+[jpeg]
+quality = 75
+
+[webp]
+quality = 75
+
+[avif]
+quality = 75

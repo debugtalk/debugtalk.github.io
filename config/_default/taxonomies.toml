@@ -1,0 +1,8 @@
+# -------------------------------------------------------------------------------------
+# Taxonomies Configuration
+# See: https://gohugo.io/configuration/taxonomies/
+# -------------------------------------------------------------------------------------
+
+_merge = "none"
+category = "categories"
+tag = "tags"

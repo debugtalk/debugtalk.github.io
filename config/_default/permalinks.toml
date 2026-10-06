@@ -1,0 +1,12 @@
+# Permalinks Configuration
+# See: https://gohugo.io/configuration/permalinks/
+
+[page]
+# 保持与旧站一致：未显式设置 url front matter 的文章仍生成在 /archives/ 下
+post = "/archives/:filename"
+
+[section]
+
+[taxonomy]
+
+[term]
